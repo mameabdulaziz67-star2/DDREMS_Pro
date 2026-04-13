@@ -30,7 +30,7 @@ const DocumentViewer = ({ propertyId, userId, approvedKey }) => {
 
   const requestAccess = async () => {
     try {
-      await axios.post(`${API_BASE_URL}/api/document-access/request", {
+      await axios.post(`${API_BASE_URL}/api/document-access/request`, {
         property_id: propertyId,
         user_id: userId,
       });
@@ -56,7 +56,7 @@ const DocumentViewer = ({ propertyId, userId, approvedKey }) => {
     setVerifying(true);
     try {
       const response = await axios.post(
-        ${API_BASE_URL}/api/property-documents/verify-access",
+        `${API_BASE_URL}/api/property-documents/verify-access`,
         {
           document_id: selectedDoc.id,
           access_key: normalizedKey,

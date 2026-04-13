@@ -96,7 +96,7 @@ const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
 
       switch (modalType) {
         case 'request':
-          endpoint = ${API_BASE_URL}/api/real-estate-agreement/request';
+          endpoint = `${API_BASE_URL}/api/real-estate-agreement/request`;
           data = {
             property_id: formData.property_id,
             customer_id: user.id,

@@ -50,7 +50,7 @@ const CustomerAIGuide = ({ user, onClose, onRecommendations }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        ${API_BASE_URL}/api/ai/get-recommendations',
+        `${API_BASE_URL}/api/ai/get-recommendations`,
         {
           budget_min: parseInt(preferences.budget_min),
           budget_max: parseInt(preferences.budget_max),

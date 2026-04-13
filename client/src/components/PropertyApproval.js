@@ -22,7 +22,7 @@ const PropertyApproval = ({ user, onClose, onRefresh }) => {
   const fetchPendingProperties = async () => {
     try {
       const response = await axios.get(
-        ${API_BASE_URL}/api/properties/pending-verification",
+        `${API_BASE_URL}/api/properties/pending-verification`,
       );
       setPendingProperties(response.data);
     } catch (error) {
