@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './AIAdvisorWidget.css';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 
 const AIAdvisorWidget = () => {
   const [formData, setFormData] = useState({
@@ -36,7 +38,7 @@ const AIAdvisorWidget = () => {
         return;
       }
 
-      const response = await axios.get('http://localhost:5000/api/ai/predict', {
+      const response = await axios.get($\{API_BASE_URL\}/api/ai/predict', {
         params: {
           location: formData.location,
           propertyType: formData.propertyType,
@@ -64,7 +66,7 @@ const AIAdvisorWidget = () => {
     setError(null);
 
     try {
-      const response = await axios.get('http://localhost:5000/api/ai/market-stats', {
+      const response = await axios.get($\{API_BASE_URL\}/api/ai/market-stats', {
         params: {
           location: formData.location || 'all'
         }

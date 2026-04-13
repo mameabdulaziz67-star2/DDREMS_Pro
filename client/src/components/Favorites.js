@@ -11,7 +11,7 @@ const Favorites = ({ user, onLogout }) => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/favorites/${user.id}`,
+        `${API_BASE_URL}/api/favorites/${user.id}`,
       );
       setFavorites(res.data);
     } catch (e) {
@@ -28,7 +28,7 @@ const Favorites = ({ user, onLogout }) => {
   const remove = async (propertyId) => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/favorites/${user.id}/${propertyId}`,
+        `${API_BASE_URL}/api/favorites/${user.id}/${propertyId}`,
       );
       setFavorites((prev) => prev.filter((f) => f.property_id !== propertyId));
     } catch (e) {

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Messages.css';
 import PageHeader from './PageHeader';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 
 const Messages = ({ user, onLogout }) => {
   const [messages, setMessages] = useState([]);
@@ -25,7 +27,7 @@ const Messages = ({ user, onLogout }) => {
 
   const fetchMessages = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/messages/user/${user.id}?userId=${user.id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/messages/user/${user.id}?userId=${user.id}`);
       if (response.data.success !== false) {
         // Handle new API response format
         const messagesData = response.data.messages || response.data;
@@ -75,7 +77,7 @@ const Messages = ({ user, onLogout }) => {
 
   const fetchUnreadCount = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/messages/unread/${user.id}?userId=${user.id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/messages/unread/${user.id}?userId=${user.id}`);
       const count = response.data.count || 0;
       setUnreadCount(count);
     } catch (error) {
@@ -86,7 +88,7 @@ const Messages = ({ user, onLogout }) => {
 
   const fetchMessageThread = async (messageId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/messages/${messageId}/thread?userId=${user.id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/messages/${messageId}/thread?userId=${user.id}`);
       if (response.data.success !== false) {
         setMessageThread(response.data);
       }
@@ -99,7 +101,7 @@ const Messages = ({ user, onLogout }) => {
     setSelectedMessage(message);
     if (!message.is_read) {
       try {
-        await axios.put(`http://localhost:5000/api/messages/read/${message.id}?userId=${user.id}`);
+        await axios.put(`${API_BASE_URL}/api/messages/read/${message.id}?userId=${user.id}`);
         setMessages(messages.map(m => 
           m.id === message.id ? { ...m, is_read: 1 } : m
         ));
@@ -112,7 +114,7 @@ const Messages = ({ user, onLogout }) => {
 
   const handleMarkAllRead = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/messages/read-all/${user.id}?userId=${user.id}`);
+      await axios.put(`${API_BASE_URL}/api/messages/read-all/${user.id}?userId=${user.id}`);
       setMessages(messages.map(m => ({ ...m, is_read: 1 })));
       setUnreadCount(0);
     } catch (error) {
@@ -123,7 +125,7 @@ const Messages = ({ user, onLogout }) => {
   const handleDeleteMessage = async (messageId) => {
     if (window.confirm('Are you sure you want to delete this message?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/messages/${messageId}?userId=${user.id}`);
+        await axios.delete(`${API_BASE_URL}/api/messages/${messageId}?userId=${user.id}`);
         setMessages(messages.filter(m => m.id !== messageId));
         setSelectedMessage(null);
       } catch (error) {
@@ -143,7 +145,7 @@ const Messages = ({ user, onLogout }) => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/api/messages/${selectedMessage.id}?userId=${user.id}`, editForm);
+      await axios.put(`${API_BASE_URL}/api/messages/${selectedMessage.id}?userId=${user.id}`, editForm);
       setMessages(messages.map(m => 
         m.id === selectedMessage.id 
           ? { ...m, subject: editForm.subject, message: editForm.message }
@@ -171,7 +173,7 @@ const Messages = ({ user, onLogout }) => {
   const handleReplySubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:5000/api/messages/${selectedMessage.id}/reply`, {
+      await axios.post(`${API_BASE_URL}/api/messages/${selectedMessage.id}/reply`, {
         subject: replyForm.subject,
         message: replyForm.message
       }, {

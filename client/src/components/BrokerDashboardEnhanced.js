@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './BrokerDashboard.css';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 import MessageNotificationWidget from './MessageNotificationWidget';
 import AIPriceComparison from './AIPriceComparison';
 
@@ -29,13 +31,13 @@ const BrokerDashboardEnhanced = ({ user, onLogout }) => {
     setLoading(true);
     try {
       // Fetch broker profile
-      const profileRes = await axios.get(`http://localhost:5000/api/profiles/broker/${user.id}`);
+      const profileRes = await axios.get(`${API_BASE_URL}/api/profiles/broker/${user.id}`);
       setBrokerProfile(profileRes.data);
 
       // Fetch incoming requests (Dual Tables)
       const [agreementsRes, keysRes] = await Promise.all([
-        axios.get(`http://localhost:5000/api/agreement-requests/broker/${user.id}`),
-        axios.get(`http://localhost:5000/api/key-requests/broker/${user.id}`)
+        axios.get(`${API_BASE_URL}/api/agreement-requests/broker/${user.id}`),
+        axios.get(`${API_BASE_URL}/api/key-requests/broker/${user.id}`)
       ]);
 
       const combined = [
@@ -55,7 +57,7 @@ const BrokerDashboardEnhanced = ({ user, onLogout }) => {
       setStats(stats);
 
       // Fetch notifications
-      const notifRes = await axios.get(`http://localhost:5000/api/notifications/user/${user.id}`);
+      const notifRes = await axios.get(`${API_BASE_URL}/api/notifications/user/${user.id}`);
       setNotifications(notifRes.data.slice(0, 5));
     } catch (error) {
       console.error('Error fetching broker data:', error);
@@ -76,7 +78,7 @@ const BrokerDashboardEnhanced = ({ user, onLogout }) => {
 
   const handleAcceptRequest = async (requestId) => {
     try {
-      await axios.put(`http://localhost:5000/api/agreement-requests/${requestId}/respond`, {
+      await axios.put(`${API_BASE_URL}/api/agreement-requests/${requestId}/respond`, {
         status: 'accepted',
         responded_by: user.id,
         response_message: 'Request accepted'
@@ -93,7 +95,7 @@ const BrokerDashboardEnhanced = ({ user, onLogout }) => {
     if (!reason) return;
 
     try {
-      await axios.put(`http://localhost:5000/api/agreement-requests/${requestId}/respond`, {
+      await axios.put(`${API_BASE_URL}/api/agreement-requests/${requestId}/respond`, {
         status: 'rejected',
         responded_by: user.id,
         response_message: reason

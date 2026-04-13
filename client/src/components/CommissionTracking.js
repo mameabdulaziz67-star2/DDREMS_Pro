@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 import PageHeader from './PageHeader';
 import { Pie } from 'react-chartjs-2';
 import {
@@ -35,7 +37,7 @@ const CommissionTracking = ({ user, onLogout }) => {
   const fetchCommissionData = useCallback(async () => {
     try {
       // For now, use properties as proxy for "works"
-      const response = await axios.get(`http://localhost:5000/api/properties/owner/${user.id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/properties/owner/${user.id}`);
       const properties = response.data;
 
       setWorks(properties);

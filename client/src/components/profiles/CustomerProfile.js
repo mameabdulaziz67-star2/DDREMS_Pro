@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './CustomerProfile.css';
 import axios from 'axios';
+import API_BASE_URL from '../../config/api';
+
 
 const CustomerProfile = ({ user, onComplete }) => {
   const [profile, setProfile] = useState(null);
@@ -19,7 +21,7 @@ const CustomerProfile = ({ user, onComplete }) => {
 
   const fetchProfile = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/profiles/customer/${user.id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/profiles/customer/${user.id}`);
       setProfile(response.data);
       setFormData({
         full_name: response.data.full_name,
@@ -56,7 +58,7 @@ const CustomerProfile = ({ user, onComplete }) => {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/profiles/customer/request-edit', {
+      await axios.post($\{API_BASE_URL\}/api/profiles/customer/request-edit', {
         user_id: user.id,
         profile_id: profile.id
       });
@@ -126,7 +128,7 @@ const CustomerProfile = ({ user, onComplete }) => {
     try {
       if (profile) {
         // Update existing profile
-        await axios.put(`http://localhost:5000/api/profiles/customer/${profile.id}`, formData);
+        await axios.put(`${API_BASE_URL}/api/profiles/customer/${profile.id}`, formData);
         if (profile.profile_status === 'approved') {
           alert('✅ Profile photo updated successfully!');
         } else {
@@ -134,7 +136,7 @@ const CustomerProfile = ({ user, onComplete }) => {
         }
       } else {
         // Create new profile
-        await axios.post('http://localhost:5000/api/profiles/customer', {
+        await axios.post($\{API_BASE_URL\}/api/profiles/customer', {
           ...formData,
           user_id: user.id
         });

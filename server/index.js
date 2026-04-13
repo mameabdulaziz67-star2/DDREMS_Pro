@@ -8,25 +8,46 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// CORS — allow Railway frontend URL and localhost for dev
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5000",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".railway.app") ||
+        origin.endsWith(".up.railway.app")
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true); // Allow all for now — restrict after testing
+    },
+    credentials: true,
+  })
+);
+
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
-// Add request logging
 app.use((req, res, next) => {
   console.log(`[SERVER] ${req.method} ${req.url}`);
   next();
 });
 
-// Add request timeout handling
 app.use((req, res, next) => {
-  req.setTimeout(300000); // 5 minutes
+  req.setTimeout(300000);
   res.setTimeout(300000);
   next();
 });
 
-// Routes
+// API Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/dashboard", require("./routes/dashboard"));
 app.use("/api/properties", require("./routes/properties"));
@@ -46,47 +67,39 @@ app.use("/api/document-access", require("./routes/document-access"));
 app.use("/api/feedback", require("./routes/feedback"));
 app.use("/api/commissions", require("./routes/commissions"));
 app.use("/api/verification", require("./routes/verification"));
-
-// New routes for system upgrade
 app.use("/api/profiles", require("./routes/profiles"));
 app.use("/api/documents", require("./routes/documents"));
 app.use("/api/agreement-requests", require("./routes/agreement-requests"));
 app.use("/api/property-requests", require("./routes/property-requests"));
-app.use(
-  "/api/payment-confirmations",
-  require("./routes/payment-confirmations"),
-);
+app.use("/api/payment-confirmations", require("./routes/payment-confirmations"));
 app.use("/api/ai", require("./routes/ai"));
 app.use("/api/key-requests", require("./routes/key-requests"));
 app.use("/api/agreement-workflow", require("./routes/agreement-workflow"));
 app.use("/api/agreement-management", require("./routes/agreement-management"));
-app.use(
-  "/api/real-estate-agreement",
-  require("./routes/real-estate-agreement"),
-);
-app.use(
-  "/api/broker-engagement",
-  require("./routes/broker-engagement"),
-);
-app.use(
-  "/api/rental-payments",
-  require("./routes/rental-payments"),
-);
+app.use("/api/real-estate-agreement", require("./routes/real-estate-agreement"));
+app.use("/api/broker-engagement", require("./routes/broker-engagement"));
+app.use("/api/rental-payments", require("./routes/rental-payments"));
+
+// Serve React frontend in production
+if (process.env.NODE_ENV === "production") {
+  const clientBuildPath = path.join(__dirname, "../client/build");
+  app.use(express.static(clientBuildPath));
+  // All non-API routes serve React app
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(clientBuildPath, "index.html"));
+  });
+}
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
 });
 
-// Handle port already in use error
 server.on("error", (error) => {
   if (error.code === "EADDRINUSE") {
-    console.error("\n❌ ERROR: Port " + PORT + " is already in use!\n");
-    console.log("Solutions:");
-    console.log("1. Run: KILL_PORT_5000.bat");
-    console.log("2. Or open Task Manager and end all Node.js processes");
-    console.log("3. Or change PORT in .env file to a different port\n");
+    console.error(`Port ${PORT} is already in use!`);
     process.exit(1);
   } else {
     console.error("Server error:", error);

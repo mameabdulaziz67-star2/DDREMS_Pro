@@ -21,7 +21,7 @@ const PropertyApproval = ({ user, onClose, onRefresh }) => {
   const fetchPendingProperties = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/properties/pending-verification",
+        $\{API_BASE_URL\}/api/properties/pending-verification",
       );
       setPendingProperties(response.data);
     } catch (error) {
@@ -74,7 +74,7 @@ const PropertyApproval = ({ user, onClose, onRefresh }) => {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/properties/${selectedProperty.id}/verify`,
+        `${API_BASE_URL}/api/properties/${selectedProperty.id}/verify`,
         {
           status: decision,
           verified_by: user.id,

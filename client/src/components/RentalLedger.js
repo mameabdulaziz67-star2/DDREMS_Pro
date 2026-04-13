@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./RentalLedger.css";
 
-const API = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+const API = process.env.REACT_APP_API_URL || $\{API_BASE_URL\}/api";
 
 // ── Helper: human-readable schedule label ──
 const scheduleLabel = (s) => {

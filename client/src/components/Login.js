@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Login.css';
 import axios from 'axios';
 import Register from './Register';
+import API_BASE_URL from '../config/api';
 
 const Login = ({ onLogin }) => {
   const [showRegister, setShowRegister] = useState(false);
@@ -25,7 +26,7 @@ const LoginForm = ({ onLogin, onShowRegister }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         email,
         password
       });

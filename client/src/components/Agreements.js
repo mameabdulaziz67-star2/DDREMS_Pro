@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Agreements.css';
 import PageHeader from './PageHeader';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 
 const Agreements = ({ user, onLogout }) => {
     const [agreements, setAgreements] = useState([]);
@@ -37,8 +39,8 @@ const Agreements = ({ user, onLogout }) => {
     const fetchAgreements = async () => {
         try {
             const endpoint = user.role === 'user'
-                ? `http://localhost:5000/api/agreements/customer/${user.id}`
-                : `http://localhost:5000/api/agreements/owner/${user.id}`;
+                ? `${API_BASE_URL}/api/agreements/customer/${user.id}`
+                : `${API_BASE_URL}/api/agreements/owner/${user.id}`;
             const response = await axios.get(endpoint);
             setAgreements(response.data);
         } catch (error) {
@@ -53,18 +55,18 @@ const Agreements = ({ user, onLogout }) => {
             let currentBrokerId = user.id;
             if (user.role === 'broker') {
                 try {
-                    const brokerRes = await axios.get(`http://localhost:5000/api/brokers/user/${user.id}`);
+                    const brokerRes = await axios.get(`${API_BASE_URL}/api/brokers/user/${user.id}`);
                     currentBrokerId = brokerRes.data.id;
                 } catch (err) { console.error('Error fetching broker record:', err); }
             }
             const propEndpoint = user.role === 'broker'
-                ? `http://localhost:5000/api/properties`
-                : `http://localhost:5000/api/properties/owner/${user.id}`;
+                ? `${API_BASE_URL}/api/properties`
+                : `${API_BASE_URL}/api/properties/owner/${user.id}`;
             const propResponse = await axios.get(propEndpoint);
             setProperties(user.role === 'broker'
                 ? (propResponse.data || []).filter(p => String(p.broker_id) === String(currentBrokerId))
                 : (propResponse.data || []));
-            const userResponse = await axios.get('http://localhost:5000/api/users');
+            const userResponse = await axios.get($\{API_BASE_URL\}/api/users');
             setCustomers((userResponse.data || []).filter(u => u.role === 'user'));
         } catch (error) { console.error('Error fetching form data:', error); }
     };
@@ -72,7 +74,7 @@ const Agreements = ({ user, onLogout }) => {
     const handleCreateAgreement = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/agreements', { ...formData, owner_id: user.id });
+            await axios.post($\{API_BASE_URL\}/api/agreements', { ...formData, owner_id: user.id });
             alert('Agreement created successfully!');
             setShowCreateModal(false);
             fetchAgreements();
@@ -85,18 +87,18 @@ const Agreements = ({ user, onLogout }) => {
         setActionLoading(true);
         try {
             // Try to get existing document first
-            const docRes = await axios.get(`http://localhost:5000/api/agreements/${agreement.id}/document`);
+            const docRes = await axios.get(`${API_BASE_URL}/api/agreements/${agreement.id}/document`);
             if (docRes.data.success && docRes.data.html) {
                 setDocumentHtml(docRes.data.html);
             } else {
                 // Generate document if not exists
-                const genRes = await axios.post(`http://localhost:5000/api/agreements/${agreement.id}/generate-document`);
+                const genRes = await axios.post(`${API_BASE_URL}/api/agreements/${agreement.id}/generate-document`);
                 setDocumentHtml(genRes.data.html || '');
             }
         } catch (error) {
             // Auto-generate if not found
             try {
-                const genRes = await axios.post(`http://localhost:5000/api/agreements/${agreement.id}/generate-document`);
+                const genRes = await axios.post(`${API_BASE_URL}/api/agreements/${agreement.id}/generate-document`);
                 setDocumentHtml(genRes.data.html || '');
             } catch (genError) {
                 setDocumentHtml('<div style="padding:40px;text-align:center;color:#ef4444;"><h3>Could not generate document</h3><p>' + (genError.response?.data?.message || genError.message) + '</p></div>');
@@ -123,9 +125,9 @@ const Agreements = ({ user, onLogout }) => {
         e.preventDefault();
         setActionLoading(true);
         try {
-            await axios.put(`http://localhost:5000/api/agreements/${selectedAgreement.id}/update-fields`, editFields);
+            await axios.put(`${API_BASE_URL}/api/agreements/${selectedAgreement.id}/update-fields`, editFields);
             // Regenerate document with updated fields
-            await axios.post(`http://localhost:5000/api/agreements/${selectedAgreement.id}/generate-document`);
+            await axios.post(`${API_BASE_URL}/api/agreements/${selectedAgreement.id}/generate-document`);
             alert('✅ Agreement fields updated and document regenerated!');
             setShowEditModal(false);
             fetchAgreements();
@@ -214,14 +216,14 @@ const Agreements = ({ user, onLogout }) => {
                 return;
             }
 
-            await axios.put(`http://localhost:5000/api/agreements/${selectedAgreement.id}/sign`, {
+            await axios.put(`${API_BASE_URL}/api/agreements/${selectedAgreement.id}/sign`, {
                 user_id: user.id,
                 role: user.role,
                 signature_data: signatureData
             });
 
             // Regenerate document with signature
-            await axios.post(`http://localhost:5000/api/agreements/${selectedAgreement.id}/generate-document`);
+            await axios.post(`${API_BASE_URL}/api/agreements/${selectedAgreement.id}/generate-document`);
 
             alert('✅ Agreement signed successfully!');
             setShowSignModal(false);
@@ -237,7 +239,7 @@ const Agreements = ({ user, onLogout }) => {
         if (!window.confirm('Send this agreement to the other party for review?')) return;
         setActionLoading(true);
         try {
-            await axios.post(`http://localhost:5000/api/agreements/${agreement.id}/send`, { sender_id: user.id });
+            await axios.post(`${API_BASE_URL}/api/agreements/${agreement.id}/send`, { sender_id: user.id });
             alert('✅ Agreement sent successfully!');
             fetchAgreements();
         } catch (error) {
@@ -249,7 +251,7 @@ const Agreements = ({ user, onLogout }) => {
 
     const updateStatus = async (id, status) => {
         try {
-            await axios.put(`http://localhost:5000/api/agreements/${id}/status`, { status });
+            await axios.put(`${API_BASE_URL}/api/agreements/${id}/status`, { status });
             alert(`Agreement ${status} successfully`);
             fetchAgreements();
         } catch (error) { alert('Failed to update status'); }

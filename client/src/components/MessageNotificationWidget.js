@@ -20,13 +20,13 @@ const MessageNotificationWidget = ({ userId, onNavigateToMessages }) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:5000/api/messages/unread/${userId}`,
+        `${API_BASE_URL}/api/messages/unread/${userId}`,
       );
       setUnreadMessages(response.data.count || 0);
 
       // Also fetch recent notifications
       const notifResponse = await axios.get(
-        `http://localhost:5000/api/messages/notifications/${userId}`,
+        `${API_BASE_URL}/api/messages/notifications/${userId}`,
       );
       setNotifications(notifResponse.data.notifications || []);
     } catch (error) {

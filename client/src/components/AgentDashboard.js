@@ -7,6 +7,8 @@ import Announcements from './Announcements';
 import Agreements from './Agreements';
 import BrokerProfile from './profiles/BrokerProfile';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 
 const AgentDashboard = ({ user, onLogout }) => {
   const [currentPage, setCurrentPage] = useState('properties');
@@ -19,12 +21,12 @@ const AgentDashboard = ({ user, onLogout }) => {
 
   const checkProfileStatus = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/profiles/broker/${user.id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/profiles/broker/${user.id}`);
       setProfileStatus(response.data.profile_status);
       
       // Update user profile_approved and profile_completed in users table
       if (response.data.profile_status === 'approved') {
-        await axios.put(`http://localhost:5000/api/users/${user.id}`, {
+        await axios.put(`${API_BASE_URL}/api/users/${user.id}`, {
           profile_approved: true,
           profile_completed: true
         });

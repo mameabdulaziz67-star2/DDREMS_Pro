@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './OwnerProfile.css';
 import axios from 'axios';
+import API_BASE_URL from '../../config/api';
+
 
 const OwnerProfile = ({ user, onComplete }) => {
   const [profile, setProfile] = useState(null);
@@ -24,7 +26,7 @@ const OwnerProfile = ({ user, onComplete }) => {
 
   const fetchProfile = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/profiles/owner/${user.id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/profiles/owner/${user.id}`);
       setProfile(response.data);
       setFormData({
         full_name: response.data.full_name,
@@ -87,10 +89,10 @@ const OwnerProfile = ({ user, onComplete }) => {
 
     try {
       if (profile) {
-        await axios.put(`http://localhost:5000/api/profiles/owner/${profile.id}`, formData);
+        await axios.put(`${API_BASE_URL}/api/profiles/owner/${profile.id}`, formData);
         alert('✅ Profile updated successfully!');
       } else {
-        await axios.post('http://localhost:5000/api/profiles/owner', {
+        await axios.post($\{API_BASE_URL\}/api/profiles/owner', {
           ...formData,
           user_id: user.id
         });

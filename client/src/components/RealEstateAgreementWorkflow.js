@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 import './RealEstateAgreementWorkflow.css';
 
 const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
@@ -27,11 +29,11 @@ const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
       let endpoint = '';
 
       if (user.role === 'user') {
-        endpoint = `http://localhost:5000/api/real-estate-agreement/customer/${user.id}`;
+        endpoint = `${API_BASE_URL}/api/real-estate-agreement/customer/${user.id}`;
       } else if (user.role === 'property_admin' || user.role === 'system_admin') {
-        endpoint = `http://localhost:5000/api/real-estate-agreement/admin/pending`;
+        endpoint = `${API_BASE_URL}/api/real-estate-agreement/admin/pending`;
       } else if (user.role === 'owner') {
-        endpoint = `http://localhost:5000/api/real-estate-agreement/owner/${user.id}`;
+        endpoint = `${API_BASE_URL}/api/real-estate-agreement/owner/${user.id}`;
       }
 
       if (endpoint) {
@@ -48,7 +50,7 @@ const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
 
   const fetchProperties = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/properties');
+      const response = await axios.get($\{API_BASE_URL\}/api/properties');
       setProperties(response.data || []);
     } catch (error) {
       console.error('Error fetching properties:', error);
@@ -94,7 +96,7 @@ const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
 
       switch (modalType) {
         case 'request':
-          endpoint = 'http://localhost:5000/api/real-estate-agreement/request';
+          endpoint = $\{API_BASE_URL\}/api/real-estate-agreement/request';
           data = {
             property_id: formData.property_id,
             customer_id: user.id,
@@ -103,17 +105,17 @@ const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
           break;
 
         case 'generate':
-          endpoint = `http://localhost:5000/api/real-estate-agreement/${selectedAgreement.id}/generate`;
+          endpoint = `${API_BASE_URL}/api/real-estate-agreement/${selectedAgreement.id}/generate`;
           data = { admin_id: user.id };
           break;
 
         case 'forward':
-          endpoint = `http://localhost:5000/api/real-estate-agreement/${selectedAgreement.id}/forward-to-owner`;
+          endpoint = `${API_BASE_URL}/api/real-estate-agreement/${selectedAgreement.id}/forward-to-owner`;
           data = { admin_id: user.id };
           break;
 
         case 'owner_response':
-          endpoint = `http://localhost:5000/api/real-estate-agreement/${selectedAgreement.id}/owner-response`;
+          endpoint = `${API_BASE_URL}/api/real-estate-agreement/${selectedAgreement.id}/owner-response`;
           data = {
             owner_id: user.id,
             response_status: formData.response_status,
@@ -122,7 +124,7 @@ const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
           break;
 
         case 'payment':
-          endpoint = `http://localhost:5000/api/real-estate-agreement/${selectedAgreement.id}/submit-payment`;
+          endpoint = `${API_BASE_URL}/api/real-estate-agreement/${selectedAgreement.id}/submit-payment`;
           data = {
             customer_id: user.id,
             payment_method: formData.payment_method,
@@ -132,7 +134,7 @@ const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
           break;
 
         case 'verify_payment':
-          endpoint = `http://localhost:5000/api/real-estate-agreement/${selectedAgreement.id}/verify-payment`;
+          endpoint = `${API_BASE_URL}/api/real-estate-agreement/${selectedAgreement.id}/verify-payment`;
           data = {
             admin_id: user.id,
             verification_status: formData.verification_status,

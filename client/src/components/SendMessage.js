@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './SendMessage.css';
 import PageHeader from './PageHeader';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 
 const SendMessage = ({ user, onLogout }) => {
   const [users, setUsers] = useState([]);
@@ -39,7 +41,7 @@ const SendMessage = ({ user, onLogout }) => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:5000/api/users?userId=${user.id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/users?userId=${user.id}`);
       setUsers(response.data.filter(u => u.id !== user.id));
       setError('');
     } catch (error) {
@@ -71,7 +73,7 @@ const SendMessage = ({ user, onLogout }) => {
           return;
         }
 
-        const response = await axios.post(`http://localhost:5000/api/messages/bulk?userId=${user.id}`, {
+        const response = await axios.post(`${API_BASE_URL}/api/messages/bulk?userId=${user.id}`, {
           receiver_ids: selectedUsers.length > 0 ? selectedUsers : undefined,
           filter_role: filterRole && filterRole !== 'all' ? filterRole : undefined,
           subject: formData.subject,
@@ -93,7 +95,7 @@ const SendMessage = ({ user, onLogout }) => {
           return;
         }
 
-        const response = await axios.post(`http://localhost:5000/api/messages?userId=${user.id}`, {
+        const response = await axios.post(`${API_BASE_URL}/api/messages?userId=${user.id}`, {
           receiver_ids: selectedUsers,
           subject: formData.subject,
           message: formData.message,
@@ -116,7 +118,7 @@ const SendMessage = ({ user, onLogout }) => {
           return;
         }
 
-        const response = await axios.post(`http://localhost:5000/api/messages?userId=${user.id}`, {
+        const response = await axios.post(`${API_BASE_URL}/api/messages?userId=${user.id}`, {
           receiver_id: parseInt(formData.receiver_id),
           subject: formData.subject,
           message: formData.message,

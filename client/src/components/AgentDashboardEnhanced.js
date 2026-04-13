@@ -61,7 +61,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
     try {
       // Fetch ALL properties first
       const propertiesRes = await axios.get(
-        `http://localhost:5000/api/properties`,
+        `${API_BASE_URL}/api/properties`,
       );
 
       // Filter to get ONLY broker's own properties
@@ -92,7 +92,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
 
       try {
         const messagesRes = await axios.get(
-          `http://localhost:5000/api/messages/user/${user.id}`,
+          `${API_BASE_URL}/api/messages/user/${user.id}`,
         );
         setMessages(messagesRes.data.slice(0, 5));
       } catch (error) {
@@ -101,7 +101,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
 
       try {
         const announcementsRes = await axios.get(
-          "http://localhost:5000/api/announcements",
+          $\{API_BASE_URL\}/api/announcements",
         );
         setAnnouncements(announcementsRes.data.slice(0, 3));
       } catch (error) {
@@ -111,7 +111,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
       // Fetch active properties from others (for Browse Properties)
       try {
         const activePropsRes = await axios.get(
-          "http://localhost:5000/api/properties/active",
+          $\{API_BASE_URL\}/api/properties/active",
         );
         // Filter out broker's own properties
         const othersProperties = activePropsRes.data.filter(
@@ -125,7 +125,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
       // Fetch broker's agreements
       try {
         const agreementsRes = await axios.get(
-          `http://localhost:5000/api/agreements/broker/${user.id}`,
+          `${API_BASE_URL}/api/agreements/broker/${user.id}`,
         );
         setAgreements(agreementsRes.data);
       } catch (error) {
@@ -140,7 +140,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/properties",
+        $\{API_BASE_URL\}/api/properties",
         {
           ...propertyForm,
           broker_id: user.id,
@@ -171,7 +171,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
   const fetchPreviewData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/property-images/property/${newPropertyId}`,
+        `${API_BASE_URL}/api/property-images/property/${newPropertyId}`,
       );
       setPreviewImages(response.data);
     } catch (error) {
@@ -238,7 +238,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:5000/api/properties/${selectedProperty.id}`,
+        `${API_BASE_URL}/api/properties/${selectedProperty.id}`,
         {
           ...propertyForm,
         },
@@ -258,7 +258,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/properties/${propertyId}`);
+      await axios.delete(`${API_BASE_URL}/api/properties/${propertyId}`);
       alert("Property deleted successfully");
       fetchAgentData();
     } catch (error) {

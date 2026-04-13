@@ -17,7 +17,7 @@ const DocumentViewerAdmin = ({
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/property-documents/property/${propertyId}`,
+        `${API_BASE_URL}/api/property-documents/property/${propertyId}`,
       );
       setDocuments(response.data);
     } catch (error) {
@@ -46,7 +46,7 @@ const DocumentViewerAdmin = ({
       return;
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/property-documents/${doc.id}/regenerate-key`,
+        `${API_BASE_URL}/api/property-documents/${doc.id}/regenerate-key`,
       );
       alert(
         `✅ New access key: ${response.data.access_key}\n\nShare this key with the buyer when they request access.`,
@@ -67,7 +67,7 @@ const DocumentViewerAdmin = ({
       return;
     try {
       await axios.put(
-        `http://localhost:5000/api/property-documents/${doc.id}/lock`,
+        `${API_BASE_URL}/api/property-documents/${doc.id}/lock`,
         { is_locked: !doc.is_locked },
       );
       fetchDocuments();
@@ -85,7 +85,7 @@ const DocumentViewerAdmin = ({
       return;
     try {
       await axios.delete(
-        `http://localhost:5000/api/property-documents/${doc.id}`,
+        `${API_BASE_URL}/api/property-documents/${doc.id}`,
       );
       fetchDocuments();
     } catch (error) {
@@ -103,7 +103,7 @@ const DocumentViewerAdmin = ({
     if (!window.confirm(msgs[action])) return;
     try {
       await axios.put(
-        `http://localhost:5000/api/properties/${propertyId}/verify`,
+        `${API_BASE_URL}/api/properties/${propertyId}/verify`,
         {
           status: action,
           verified_by: userId,
@@ -126,7 +126,7 @@ const DocumentViewerAdmin = ({
     )
       return;
     try {
-      await axios.delete(`http://localhost:5000/api/properties/${propertyId}`);
+      await axios.delete(`${API_BASE_URL}/api/properties/${propertyId}`);
       alert("Property deleted.");
       setShowDocumentModal(false);
       if (onVerificationAction) onVerificationAction();

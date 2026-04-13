@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './AIAdviceSidebar.css';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 
 const AIAdviceSidebar = ({ user, onClose }) => {
   const [advice, setAdvice] = useState(null);
@@ -12,7 +14,7 @@ const AIAdviceSidebar = ({ user, onClose }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://localhost:5000/api/ai/advice', {
+      const response = await axios.get($\{API_BASE_URL\}/api/ai/advice', {
         params: {
           role: user?.role,
           userId: user?.id

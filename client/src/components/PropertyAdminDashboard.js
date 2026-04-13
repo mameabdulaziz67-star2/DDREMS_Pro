@@ -233,7 +233,7 @@ const PropertyAdminDashboard = ({
 
     try {
       await axios.put(
-        `http://localhost:5000/api/properties/${propertyId}/verify`,
+        `${API_BASE_URL}/api/properties/${propertyId}/verify`,
         {
           status: action,
           verified_by: user.id,

@@ -40,7 +40,7 @@ const ImageUploader = ({ propertyId, uploadedBy, onUploadComplete }) => {
             reader.readAsDataURL(file);
           });
           
-          const response = await fetch('http://localhost:5000/api/property-images', {
+          const response = await fetch($\{API_BASE_URL\}/api/property-images', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './AddBroker.css';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 
 const AddBroker = ({ onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -30,7 +32,7 @@ const AddBroker = ({ onClose, onSuccess }) => {
 
     try {
       console.log('Sending broker creation request:', formData);
-      const response = await axios.post('http://localhost:5000/api/brokers/create-account', formData);
+      const response = await axios.post($\{API_BASE_URL\}/api/brokers/create-account', formData);
       console.log('Response:', response.data);
       
       if (response.data.success && response.data.user_id) {

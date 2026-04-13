@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './AIPriceComparison.css';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 
 const AIPriceComparison = ({ property }) => {
   const [prediction, setPrediction] = useState(null);
@@ -16,7 +18,7 @@ const AIPriceComparison = ({ property }) => {
     setError(null);
 
     try {
-      const response = await axios.get('http://localhost:5000/api/ai/predict', {
+      const response = await axios.get($\{API_BASE_URL\}/api/ai/predict', {
         params: {
           location: property.location,
           propertyType: property.propertyType,

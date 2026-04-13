@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import "./AgreementWorkflow.css";
 import PageHeader from "./PageHeader";
 
-const API = "http://localhost:5000/api/agreement-workflow";
+const API = $\{API_BASE_URL\}/api/agreement-workflow";
 
 // Helper: detect rental agreement reliably
 const isRental = (agr) => agr?.agreement_type === 'rent' || agr?.property_listing_type === 'rent';
@@ -186,7 +186,7 @@ const AgreementWorkflow = ({ user, onLogout }) => {
   const fetchActiveProperties = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/properties/active",
+        $\{API_BASE_URL\}/api/properties/active",
       );
       setActiveProperties(res.data || []);
     } catch (err) {

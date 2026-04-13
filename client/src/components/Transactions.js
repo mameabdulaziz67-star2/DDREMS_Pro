@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Transactions.css';
 import PageHeader from './PageHeader';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 
 const Transactions = ({ user, onLogout }) => {
   const [transactions, setTransactions] = useState([]);
@@ -13,7 +15,7 @@ const Transactions = ({ user, onLogout }) => {
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/transactions');
+      const response = await axios.get($\{API_BASE_URL\}/api/transactions');
       setTransactions(response.data);
     } catch (error) {
       console.error('Error fetching transactions:', error);

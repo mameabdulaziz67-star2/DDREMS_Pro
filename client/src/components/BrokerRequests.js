@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PageHeader from './PageHeader';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 
 const BrokerRequests = ({ user, onLogout }) => {
     const [requests, setRequests] = useState([]);
@@ -17,8 +19,8 @@ const BrokerRequests = ({ user, onLogout }) => {
         try {
             setLoading(true);
             const [propRes, agrRes] = await Promise.all([
-                axios.get(`http://localhost:5000/api/property-requests/broker/${user.id}`).catch(() => ({ data: [] })),
-                axios.get(`http://localhost:5000/api/agreement-requests/broker/${user.id}`).catch(() => ({ data: [] }))
+                axios.get(`${API_BASE_URL}/api/property-requests/broker/${user.id}`).catch(() => ({ data: [] })),
+                axios.get(`${API_BASE_URL}/api/agreement-requests/broker/${user.id}`).catch(() => ({ data: [] }))
             ]);
             setRequests(propRes.data);
             setAgreementRequests(agrRes.data);
@@ -32,8 +34,8 @@ const BrokerRequests = ({ user, onLogout }) => {
     const handleRespondRequest = async (requestId, status, type) => {
         try {
             const endpoint = type === 'property'
-                ? `http://localhost:5000/api/property-requests/${requestId}/respond`
-                : `http://localhost:5000/api/agreement-requests/${requestId}/respond`;
+                ? `${API_BASE_URL}/api/property-requests/${requestId}/respond`
+                : `${API_BASE_URL}/api/agreement-requests/${requestId}/respond`;
             await axios.put(endpoint, { status, responded_by: user.id, response_message: status === 'accepted' ? 'Agreement approved by broker' : 'Agreement rejected by broker' });
             alert(`Request ${status} successfully!`);
             fetchRequests();

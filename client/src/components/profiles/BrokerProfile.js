@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './BrokerProfile.css';
 import axios from 'axios';
+import API_BASE_URL from '../../config/api';
+
 
 const BrokerProfile = ({ user, onComplete }) => {
   const [profile, setProfile] = useState(null);
@@ -25,7 +27,7 @@ const BrokerProfile = ({ user, onComplete }) => {
 
   const fetchProfile = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/profiles/broker/${user.id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/profiles/broker/${user.id}`);
       setProfile(response.data);
       setFormData({
         full_name: response.data.full_name,
@@ -89,10 +91,10 @@ const BrokerProfile = ({ user, onComplete }) => {
 
     try {
       if (profile) {
-        await axios.put(`http://localhost:5000/api/profiles/broker/${profile.id}`, formData);
+        await axios.put(`${API_BASE_URL}/api/profiles/broker/${profile.id}`, formData);
         alert('✅ Profile updated successfully!');
       } else {
-        await axios.post('http://localhost:5000/api/profiles/broker', {
+        await axios.post($\{API_BASE_URL\}/api/profiles/broker', {
           ...formData,
           user_id: user.id
         });

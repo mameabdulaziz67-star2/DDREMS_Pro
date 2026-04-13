@@ -64,7 +64,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
   const fetchFavorites = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/favorites/${user.id}`,
+        `${API_BASE_URL}/api/favorites/${user.id}`,
       );
       setFavorites(res.data);
     } catch (e) {
@@ -79,7 +79,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
     if (isFavorite(propertyId)) {
       try {
         await axios.delete(
-          `http://localhost:5000/api/favorites/${user.id}/${propertyId}`,
+          `${API_BASE_URL}/api/favorites/${user.id}/${propertyId}`,
         );
         setFavorites((prev) =>
           prev.filter((f) => f.property_id !== propertyId),
@@ -89,7 +89,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
       }
     } else {
       try {
-        await axios.post("http://localhost:5000/api/favorites", {
+        await axios.post($\{API_BASE_URL\}/api/favorites", {
           user_id: user.id,
           property_id: propertyId,
         });
@@ -105,10 +105,10 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
       if (user?.role === "user") {
         const [keyRes, agreementRes] = await Promise.all([
           axios.get(
-            `http://localhost:5000/api/key-requests/customer/${user.id}`,
+            `${API_BASE_URL}/api/key-requests/customer/${user.id}`,
           ),
           axios.get(
-            `http://localhost:5000/api/agreement-requests/customer/${user.id}`,
+            `${API_BASE_URL}/api/agreement-requests/customer/${user.id}`,
           ),
         ]);
         setKeyRequests(keyRes.data);
@@ -116,16 +116,16 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
       } else if (user?.role === "owner") {
         const [keyRes, agreementRes] = await Promise.all([
           axios.get(
-            `http://localhost:5000/api/key-requests/customer/${user.id}`,
+            `${API_BASE_URL}/api/key-requests/customer/${user.id}`,
           ),
-          axios.get(`http://localhost:5000/api/agreements/owner/${user.id}`),
+          axios.get(`${API_BASE_URL}/api/agreements/owner/${user.id}`),
         ]);
         setKeyRequests(keyRes.data);
         setAgreementRequests(agreementRes.data);
       } else if (user?.role === "broker") {
         const [keyRes, agreementRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/key-requests/broker/${user.id}`),
-          axios.get(`http://localhost:5000/api/agreements/broker/${user.id}`),
+          axios.get(`${API_BASE_URL}/api/key-requests/broker/${user.id}`),
+          axios.get(`${API_BASE_URL}/api/agreements/broker/${user.id}`),
         ]);
         setKeyRequests(keyRes.data);
         setAgreementRequests(agreementRes.data);
@@ -137,19 +137,19 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
 
   const fetchProperties = async () => {
     try {
-      let endpoint = "http://localhost:5000/api/properties";
+      let endpoint = $\{API_BASE_URL\}/api/properties";
 
       if (
         user?.role === "system_admin" ||
         user?.role === "admin" ||
         user?.role === "property_admin"
       ) {
-        endpoint = "http://localhost:5000/api/properties/all-with-status";
+        endpoint = $\{API_BASE_URL\}/api/properties/all-with-status";
       } else if (viewMode === "my" && user?.role === "owner") {
-        endpoint = `http://localhost:5000/api/properties/owner/${user.id}`;
+        endpoint = `${API_BASE_URL}/api/properties/owner/${user.id}`;
       } else if (user?.role === "user" || viewMode === "all") {
         // Customers or anyone browsing the public market should ONLY see active properties!
-        endpoint = "http://localhost:5000/api/properties/active";
+        endpoint = $\{API_BASE_URL\}/api/properties/active";
       }
 
       const response = await axios.get(endpoint);
@@ -173,7 +173,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
     setShowViewModal(true);
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/properties/${property.id}`,
+        `${API_BASE_URL}/api/properties/${property.id}`,
       );
       setPropertyDetail(response.data);
     } catch (error) {
@@ -186,7 +186,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
     if (!window.confirm("Are you sure you want to delete this property?"))
       return;
     try {
-      await axios.delete(`http://localhost:5000/api/properties/${propertyId}`);
+      await axios.delete(`${API_BASE_URL}/api/properties/${propertyId}`);
       alert("Property deleted successfully");
       fetchProperties();
     } catch (error) {
@@ -217,7 +217,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
 
   const requestKey = async (propertyId) => {
     try {
-      await axios.post("http://localhost:5000/api/key-requests", {
+      await axios.post($\{API_BASE_URL\}/api/key-requests", {
         property_id: propertyId,
         customer_id: user.id,
         request_message:
@@ -233,7 +233,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
 
   const requestAgreement = async (propertyId) => {
     try {
-      await axios.post("http://localhost:5000/api/agreement-requests", {
+      await axios.post($\{API_BASE_URL\}/api/agreement-requests", {
         property_id: propertyId,
         customer_id: user.id,
         request_message:
@@ -335,7 +335,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/properties",
+        $\{API_BASE_URL\}/api/properties",
         {
           ...propertyForm,
           latitude: lat !== "" ? parseFloat(lat) : null,
@@ -368,7 +368,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
   const fetchPreviewData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/property-images/property/${newPropertyId}`,
+        `${API_BASE_URL}/api/property-images/property/${newPropertyId}`,
       );
       setPreviewImages(response.data);
     } catch (error) {

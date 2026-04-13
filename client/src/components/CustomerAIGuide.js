@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
+
 import './CustomerAIGuide.css';
 
 const CustomerAIGuide = ({ user, onClose, onRecommendations }) => {
@@ -48,7 +50,7 @@ const CustomerAIGuide = ({ user, onClose, onRecommendations }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/ai/get-recommendations',
+        $\{API_BASE_URL\}/api/ai/get-recommendations',
         {
           budget_min: parseInt(preferences.budget_min),
           budget_max: parseInt(preferences.budget_max),
