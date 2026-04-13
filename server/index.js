@@ -210,6 +210,7 @@ async function runMigrations() {
     console.log("[MIGRATE] ✅ All tables created. Seed users ready (password: admin123)");
   } catch (err) {
     console.error("[MIGRATE] ❌ Error:", err.message);
+    console.error("[MIGRATE] Server will continue without database - check DATABASE_URL");
   } finally {
     client.release();
     await pool.end();
