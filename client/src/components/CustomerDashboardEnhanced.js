@@ -1,4 +1,4 @@
-// v2 - fixed
+﻿// v2 - fixed
 import React, { useState, useEffect } from "react";
 import "./CustomerDashboard.css";
 import PageHeader from "./PageHeader";
