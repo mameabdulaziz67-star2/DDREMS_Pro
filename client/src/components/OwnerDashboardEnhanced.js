@@ -10,6 +10,7 @@ import AIPriceComparison from "./AIPriceComparison";
 import AgreementWorkflow from "./AgreementWorkflow";
 import PropertyMap from "./shared/PropertyMap";
 import axios from "axios";
+import API_BASE_URL from '../config/api';
 
 const OwnerDashboardEnhanced = ({ user, onLogout }) => {
   const [stats, setStats] = useState({
@@ -87,7 +88,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
           `${API_BASE_URL}/api/agreement-requests/owner/${user.id}`,
         ),
         axios.get(`${API_BASE_URL}/api/notifications/${user.id}`),
-        axios.get($\{API_BASE_URL\}/api/announcements"),
+        axios.get(`${API_BASE_URL}/api/announcements"),
       ]);
 
       setMyProperties(propertiesRes.data);
@@ -103,7 +104,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
         0,
       );
       const pendingAgreements = agreementRequestsRes.data.length; // All fetched are pending
-      const activeAgreements = 0; // We'll calculate this differently if needed
+      const activeAgreements = 0; // We`ll calculate this differently if needed
 
       setStats({
         myProperties: propertiesRes.data.length,
@@ -154,7 +155,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
     }
     try {
       const response = await axios.post(
-        $\{API_BASE_URL\}/api/properties",
+        ${API_BASE_URL}/api/properties",
         {
           ...propertyForm,
           latitude: lat !== "" ? parseFloat(lat) : null,
@@ -348,7 +349,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
 
   const sendDocumentKey = async (document, recipientId) => {
     try {
-      await axios.post($\{API_BASE_URL\}/api/messages", {
+      await axios.post(`${API_BASE_URL}/api/messages", {
         sender_id: user.id,
         receiver_id: recipientId,
         subject: `Document Access Key for ${selectedProperty?.title}`,
@@ -365,7 +366,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
   const handleAddAnnouncement = async (e) => {
     e.preventDefault();
     try {
-      await axios.post($\{API_BASE_URL\}/api/announcements", {
+      await axios.post(`${API_BASE_URL}/api/announcements", {
         ...announcementForm,
         author_id: user.id,
       });

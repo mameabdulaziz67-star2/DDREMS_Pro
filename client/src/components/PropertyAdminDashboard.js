@@ -6,6 +6,7 @@ import ImageGallery from "./shared/ImageGallery";
 import DocumentViewerAdmin from "./shared/DocumentViewerAdmin";
 import Reports from "./Reports";
 import axios from "axios";
+import API_BASE_URL from '../config/api';
 import ProfileApproval from "./profiles/ProfileApproval";
 import { AIPriceComparison } from "./shared/AIAdvisorWidget";
 import Users from "./Users";

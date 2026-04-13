@@ -50,7 +50,7 @@ const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
 
   const fetchProperties = async () => {
     try {
-      const response = await axios.get($\{API_BASE_URL\}/api/properties');
+      const response = await axios.get(`${API_BASE_URL}/api/properties`);
       setProperties(response.data || []);
     } catch (error) {
       console.error('Error fetching properties:', error);
@@ -96,7 +96,7 @@ const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
 
       switch (modalType) {
         case 'request':
-          endpoint = $\{API_BASE_URL\}/api/real-estate-agreement/request';
+          endpoint = ${API_BASE_URL}/api/real-estate-agreement/request';
           data = {
             property_id: formData.property_id,
             customer_id: user.id,

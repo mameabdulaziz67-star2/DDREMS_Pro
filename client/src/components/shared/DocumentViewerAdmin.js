@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./DocumentViewer.css";
 import axios from "axios";
+import API_BASE_URL from '../../config/api';
 
 const DocumentViewerAdmin = ({
   propertyId,

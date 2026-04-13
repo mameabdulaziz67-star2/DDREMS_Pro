@@ -15,7 +15,7 @@ const Transactions = ({ user, onLogout }) => {
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get($\{API_BASE_URL\}/api/transactions');
+      const response = await axios.get(`${API_BASE_URL}/api/transactions`);
       setTransactions(response.data);
     } catch (error) {
       console.error('Error fetching transactions:', error);

@@ -39,14 +39,14 @@ const PaymentConfirmation = ({ agreementRequest, user, onConfirm, onCancel }) =>
         const formData = new FormData();
         formData.append('file', paymentForm.receipt_document);
         
-        const uploadRes = await axios.post($\{API_BASE_URL\}/api/upload', formData, {
+        const uploadRes = await axios.post(`${API_BASE_URL}/api/upload`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         receiptPath = uploadRes.data.path;
       }
 
       // Create payment confirmation
-      const confirmRes = await axios.post($\{API_BASE_URL\}/api/payment-confirmations', {
+      const confirmRes = await axios.post(`${API_BASE_URL}/api/payment-confirmations`, {
         agreement_request_id: agreementRequest.id,
         amount: paymentForm.amount,
         payment_method: paymentForm.payment_method,

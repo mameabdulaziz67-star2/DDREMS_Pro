@@ -8,6 +8,7 @@ import ImageGallery from "./shared/ImageGallery";
 import DocumentManager from "./shared/DocumentManager";
 import AIPriceComparison from "./AIPriceComparison";
 import axios from "axios";
+import API_BASE_URL from '../config/api';
 import MessageNotificationWidget from "./MessageNotificationWidget";
 
 const AgentDashboardEnhanced = ({ user, onLogout }) => {
@@ -101,7 +102,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
 
       try {
         const announcementsRes = await axios.get(
-          $\{API_BASE_URL\}/api/announcements",
+          ${API_BASE_URL}/api/announcements",
         );
         setAnnouncements(announcementsRes.data.slice(0, 3));
       } catch (error) {
@@ -111,7 +112,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
       // Fetch active properties from others (for Browse Properties)
       try {
         const activePropsRes = await axios.get(
-          $\{API_BASE_URL\}/api/properties/active",
+          ${API_BASE_URL}/api/properties/active",
         );
         // Filter out broker's own properties
         const othersProperties = activePropsRes.data.filter(
@@ -140,7 +141,7 @@ const AgentDashboardEnhanced = ({ user, onLogout }) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        $\{API_BASE_URL\}/api/properties",
+        ${API_BASE_URL}/api/properties",
         {
           ...propertyForm,
           broker_id: user.id,

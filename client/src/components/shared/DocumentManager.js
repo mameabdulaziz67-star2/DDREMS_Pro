@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./DocumentManager.css";
 import axios from "axios";
+import API_BASE_URL from '../../config/api';
 
 const DocumentManager = ({ propertyId, uploadedBy }) => {
   const [documents, setDocuments] = useState([]);
@@ -100,7 +101,7 @@ const DocumentManager = ({ propertyId, uploadedBy }) => {
     setShowSendModal(true);
     // Fetch users (customers) to send the key to
     try {
-      const response = await axios.get($\{API_BASE_URL\}/api/users");
+      const response = await axios.get(`${API_BASE_URL}/api/users");
       setUsers(response.data.filter((u) => u.role === "user"));
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -113,7 +114,7 @@ const DocumentManager = ({ propertyId, uploadedBy }) => {
       return;
     }
     try {
-      await axios.post($\{API_BASE_URL\}/api/messages", {
+      await axios.post(`${API_BASE_URL}/api/messages", {
         sender_id: uploadedBy,
         receiver_id: recipientId,
         subject: `Access Key for ${selectedDoc.document_name}`,

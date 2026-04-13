@@ -21,7 +21,7 @@ const Announcements = ({ user, onLogout }) => {
 
   const fetchAnnouncements = async () => {
     try {
-      const response = await axios.get($\{API_BASE_URL\}/api/announcements');
+      const response = await axios.get(`${API_BASE_URL}/api/announcements`);
       setAnnouncements(response.data);
     } catch (error) {
       console.error('Error fetching announcements:', error);
@@ -53,7 +53,7 @@ const Announcements = ({ user, onLogout }) => {
       if (editingId) {
         await axios.put(`${API_BASE_URL}/api/announcements/${editingId}`, formData);
       } else {
-        await axios.post($\{API_BASE_URL\}/api/announcements', formData);
+        await axios.post(`${API_BASE_URL}/api/announcements`, formData);
       }
       fetchAnnouncements();
       setShowModal(false);

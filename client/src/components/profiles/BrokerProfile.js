@@ -94,7 +94,7 @@ const BrokerProfile = ({ user, onComplete }) => {
         await axios.put(`${API_BASE_URL}/api/profiles/broker/${profile.id}`, formData);
         alert('✅ Profile updated successfully!');
       } else {
-        await axios.post($\{API_BASE_URL\}/api/profiles/broker', {
+        await axios.post(`${API_BASE_URL}/api/profiles/broker`, {
           ...formData,
           user_id: user.id
         });

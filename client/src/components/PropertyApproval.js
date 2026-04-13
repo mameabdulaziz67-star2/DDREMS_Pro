@@ -4,6 +4,7 @@ import ImageGallery from "./shared/ImageGallery";
 import DocumentViewerAdmin from "./shared/DocumentViewerAdmin";
 import { AIPriceComparison } from "./shared/AIAdvisorWidget";
 import axios from "axios";
+import API_BASE_URL from '../config/api';
 
 const PropertyApproval = ({ user, onClose, onRefresh }) => {
   const [pendingProperties, setPendingProperties] = useState([]);
@@ -21,7 +22,7 @@ const PropertyApproval = ({ user, onClose, onRefresh }) => {
   const fetchPendingProperties = async () => {
     try {
       const response = await axios.get(
-        $\{API_BASE_URL\}/api/properties/pending-verification",
+        ${API_BASE_URL}/api/properties/pending-verification",
       );
       setPendingProperties(response.data);
     } catch (error) {

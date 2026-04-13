@@ -38,7 +38,7 @@ const AIAdvisorWidget = () => {
         return;
       }
 
-      const response = await axios.get($\{API_BASE_URL\}/api/ai/predict', {
+      const response = await axios.get(`${API_BASE_URL}/api/ai/predict`, {
         params: {
           location: formData.location,
           propertyType: formData.propertyType,
@@ -66,7 +66,7 @@ const AIAdvisorWidget = () => {
     setError(null);
 
     try {
-      const response = await axios.get($\{API_BASE_URL\}/api/ai/market-stats', {
+      const response = await axios.get(`${API_BASE_URL}/api/ai/market-stats`, {
         params: {
           location: formData.location || 'all'
         }

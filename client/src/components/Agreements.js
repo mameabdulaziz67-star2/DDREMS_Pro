@@ -66,7 +66,7 @@ const Agreements = ({ user, onLogout }) => {
             setProperties(user.role === 'broker'
                 ? (propResponse.data || []).filter(p => String(p.broker_id) === String(currentBrokerId))
                 : (propResponse.data || []));
-            const userResponse = await axios.get($\{API_BASE_URL\}/api/users');
+            const userResponse = await axios.get(`${API_BASE_URL}/api/users`);
             setCustomers((userResponse.data || []).filter(u => u.role === 'user'));
         } catch (error) { console.error('Error fetching form data:', error); }
     };
@@ -74,7 +74,7 @@ const Agreements = ({ user, onLogout }) => {
     const handleCreateAgreement = async (e) => {
         e.preventDefault();
         try {
-            await axios.post($\{API_BASE_URL\}/api/agreements', { ...formData, owner_id: user.id });
+            await axios.post(`${API_BASE_URL}/api/agreements`, { ...formData, owner_id: user.id });
             alert('Agreement created successfully!');
             setShowCreateModal(false);
             fetchAgreements();

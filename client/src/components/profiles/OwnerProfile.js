@@ -92,7 +92,7 @@ const OwnerProfile = ({ user, onComplete }) => {
         await axios.put(`${API_BASE_URL}/api/profiles/owner/${profile.id}`, formData);
         alert('✅ Profile updated successfully!');
       } else {
-        await axios.post($\{API_BASE_URL\}/api/profiles/owner', {
+        await axios.post(`${API_BASE_URL}/api/profiles/owner`, {
           ...formData,
           user_id: user.id
         });

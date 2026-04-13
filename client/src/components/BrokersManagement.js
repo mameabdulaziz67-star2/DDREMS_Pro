@@ -32,7 +32,7 @@ const BrokersManagement = ({ onBack }) => {
   const fetchBrokers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get($\{API_BASE_URL\}/api/brokers');
+      const response = await axios.get(`${API_BASE_URL}/api/brokers`);
       setBrokers(response.data);
     } catch (error) {
       console.error('Error fetching brokers:', error);
@@ -75,7 +75,7 @@ const BrokersManagement = ({ onBack }) => {
     e.preventDefault();
     try {
       // Create user account
-      const userResponse = await axios.post($\{API_BASE_URL\}/api/auth/register', {
+      const userResponse = await axios.post(`${API_BASE_URL}/api/auth/register`, {
         name: addForm.name,
         email: addForm.email,
         phone: addForm.phone,
@@ -84,7 +84,7 @@ const BrokersManagement = ({ onBack }) => {
       });
 
       // Create broker profile
-      await axios.post($\{API_BASE_URL\}/api/brokers', {
+      await axios.post(`${API_BASE_URL}/api/brokers`, {
         user_id: userResponse.data.userId,
         full_name: addForm.full_name,
         phone: addForm.phone,

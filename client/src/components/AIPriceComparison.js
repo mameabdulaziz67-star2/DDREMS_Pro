@@ -18,7 +18,7 @@ const AIPriceComparison = ({ property }) => {
     setError(null);
 
     try {
-      const response = await axios.get($\{API_BASE_URL\}/api/ai/predict', {
+      const response = await axios.get(`${API_BASE_URL}/api/ai/predict`, {
         params: {
           location: property.location,
           propertyType: property.propertyType,

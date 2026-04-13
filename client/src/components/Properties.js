@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"; // Re-compilation trigger
 import "./Properties.css";
 import axios from "axios";
+import API_BASE_URL from '../config/api';
 import PageHeader from "./PageHeader";
 import ImageGallery from "./shared/ImageGallery";
 import ImageUploader from "./shared/ImageUploader";
@@ -89,7 +90,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
       }
     } else {
       try {
-        await axios.post($\{API_BASE_URL\}/api/favorites", {
+        await axios.post(`${API_BASE_URL}/api/favorites", {
           user_id: user.id,
           property_id: propertyId,
         });
@@ -137,19 +138,19 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
 
   const fetchProperties = async () => {
     try {
-      let endpoint = $\{API_BASE_URL\}/api/properties";
+      let endpoint = ${API_BASE_URL}/api/properties";
 
       if (
         user?.role === "system_admin" ||
         user?.role === "admin" ||
         user?.role === "property_admin"
       ) {
-        endpoint = $\{API_BASE_URL\}/api/properties/all-with-status";
+        endpoint = ${API_BASE_URL}/api/properties/all-with-status";
       } else if (viewMode === "my" && user?.role === "owner") {
         endpoint = `${API_BASE_URL}/api/properties/owner/${user.id}`;
       } else if (user?.role === "user" || viewMode === "all") {
         // Customers or anyone browsing the public market should ONLY see active properties!
-        endpoint = $\{API_BASE_URL\}/api/properties/active";
+        endpoint = ${API_BASE_URL}/api/properties/active";
       }
 
       const response = await axios.get(endpoint);
@@ -217,7 +218,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
 
   const requestKey = async (propertyId) => {
     try {
-      await axios.post($\{API_BASE_URL\}/api/key-requests", {
+      await axios.post(`${API_BASE_URL}/api/key-requests", {
         property_id: propertyId,
         customer_id: user.id,
         request_message:
@@ -233,7 +234,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
 
   const requestAgreement = async (propertyId) => {
     try {
-      await axios.post($\{API_BASE_URL\}/api/agreement-requests", {
+      await axios.post(`${API_BASE_URL}/api/agreement-requests", {
         property_id: propertyId,
         customer_id: user.id,
         request_message:
@@ -335,7 +336,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
 
     try {
       const response = await axios.post(
-        $\{API_BASE_URL\}/api/properties",
+        ${API_BASE_URL}/api/properties",
         {
           ...propertyForm,
           latitude: lat !== "" ? parseFloat(lat) : null,

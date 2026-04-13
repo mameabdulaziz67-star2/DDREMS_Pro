@@ -8,6 +8,7 @@ import AIPriceComparison from "./AIPriceComparison";
 import AgreementWorkflow from "./AgreementWorkflow";
 import AgreementManagement from "./AgreementManagement";
 import axios from "axios";
+import API_BASE_URL from '../config/api';
 
 const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
   const [favorites, setFavorites] = useState([]);
@@ -57,7 +58,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
     try {
       // Fetch ONLY ACTIVE properties
       const propertiesRes = await axios.get(
-        $\{API_BASE_URL\}/api/properties/active",
+        ${API_BASE_URL}/api/properties/active",
       );
       setAllProperties(propertiesRes.data);
 
@@ -93,7 +94,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
       // Fetch announcements
       try {
         const announcementsRes = await axios.get(
-          $\{API_BASE_URL\}/api/announcements",
+          ${API_BASE_URL}/api/announcements",
         );
         setAnnouncements(announcementsRes.data);
       } catch (error) {
@@ -130,7 +131,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
 
   const addToFavorites = async (propertyId) => {
     try {
-      await axios.post($\{API_BASE_URL\}/api/favorites", {
+      await axios.post(`${API_BASE_URL}/api/favorites", {
         user_id: user.id,
         property_id: propertyId,
       });
@@ -161,7 +162,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
 
     // Record property view
     try {
-      await axios.post($\{API_BASE_URL\}/api/property-views", {
+      await axios.post(`${API_BASE_URL}/api/property-views", {
         user_id: user.id,
         property_id: property.id,
       });
@@ -178,7 +179,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
   const submitFeedback = async (e) => {
     e.preventDefault();
     try {
-      await axios.post($\{API_BASE_URL\}/api/feedback", {
+      await axios.post(`${API_BASE_URL}/api/feedback", {
         user_id: user.id,
         property_id: selectedProperty?.id,
         rating: feedbackForm.rating,
@@ -215,7 +216,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
   const handleReply = async (e) => {
     e.preventDefault();
     try {
-      await axios.post($\{API_BASE_URL\}/api/messages", {
+      await axios.post(`${API_BASE_URL}/api/messages", {
         sender_id: user.id,
         ...replyData,
       });
@@ -239,7 +240,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
 
   const requestKey = async (propertyId) => {
     try {
-      await axios.post($\{API_BASE_URL\}/api/key-requests", {
+      await axios.post(`${API_BASE_URL}/api/key-requests", {
         property_id: propertyId,
         customer_id: user.id,
         request_message:
@@ -255,7 +256,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
 
   const requestAgreement = async (propertyId) => {
     try {
-      await axios.post($\{API_BASE_URL\}/api/agreement-requests", {
+      await axios.post(`${API_BASE_URL}/api/agreement-requests", {
         property_id: propertyId,
         customer_id: user.id,
         request_message:
@@ -509,7 +510,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
                         onError={(e) => {
                           e.target.style.display = "none";
                           e.target.parentElement.innerHTML =
-                            '<div style="width:100%;height:200px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;">🏠 No Image</div>';
+                            `<div style="width:100%;height:200px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;">🏠 No Image</div>';
                         }}
                       />
                     ) : (

@@ -54,7 +54,7 @@ const Register = ({ onBackToLogin }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post($\{API_BASE_URL\}/api/auth/register', {
+      const response = await axios.post(`${API_BASE_URL}/api/auth/register`, {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,

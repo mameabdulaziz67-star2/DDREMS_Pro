@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
+import API_BASE_URL from '../config/api';
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import "./BrokerEngagement.css";
 
-const API = $\{API_BASE_URL\}/api/broker-engagement";
+const API = ${API_BASE_URL}/api/broker-engagement";
 
 // Helper: detect rental engagement
 const isRentalEng = (eng) => eng?.engagement_type === 'rent';
@@ -85,7 +86,7 @@ const BrokerEngagement = ({ user }) => {
 
   const fetchProperties = async () => {
     try {
-      const res = await axios.get($\{API_BASE_URL\}/api/properties/active");
+      const res = await axios.get(`${API_BASE_URL}/api/properties/active");
       setProperties(res.data || []);
     } catch (err) { console.error(err); }
   };

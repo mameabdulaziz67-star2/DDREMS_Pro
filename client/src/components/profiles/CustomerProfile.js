@@ -58,7 +58,7 @@ const CustomerProfile = ({ user, onComplete }) => {
     }
 
     try {
-      await axios.post($\{API_BASE_URL\}/api/profiles/customer/request-edit', {
+      await axios.post(`${API_BASE_URL}/api/profiles/customer/request-edit`, {
         user_id: user.id,
         profile_id: profile.id
       });
@@ -136,7 +136,7 @@ const CustomerProfile = ({ user, onComplete }) => {
         }
       } else {
         // Create new profile
-        await axios.post($\{API_BASE_URL\}/api/profiles/customer', {
+        await axios.post(`${API_BASE_URL}/api/profiles/customer`, {
           ...formData,
           user_id: user.id
         });
