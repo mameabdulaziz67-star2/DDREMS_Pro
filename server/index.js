@@ -20,13 +20,14 @@ async function runMigrations() {
 
   try {
     pool = process.env.DATABASE_URL
-      ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
+      ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false }, connectionTimeoutMillis: 5000 })
       : new Pool({
           host: process.env.DB_HOST,
           user: process.env.DB_USER,
           password: String(process.env.DB_PASSWORD),
           database: process.env.DB_NAME,
           port: parseInt(process.env.DB_PORT) || 5432,
+          connectionTimeoutMillis: 5000,
         });
 
     client = await pool.connect();
