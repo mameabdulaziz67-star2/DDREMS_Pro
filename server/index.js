@@ -10,17 +10,25 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 // ── Auto-migrate database on startup ─────────────────────────
 async function runMigrations() {
-  const pool = process.env.DATABASE_URL
-    ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
-    : new Pool({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: String(process.env.DB_PASSWORD),
-        database: process.env.DB_NAME,
-        port: parseInt(process.env.DB_PORT) || 5432,
-      });
+  if (!process.env.DATABASE_URL && !process.env.DB_HOST) {
+    console.log("[MIGRATE] No database config found, skipping migrations.");
+    return;
+  }
 
-  const client = await pool.connect();
+  let pool;
+  let client;
+  try {
+    pool = process.env.DATABASE_URL
+      ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
+      : new Pool({
+          host: process.env.DB_HOST,
+          user: process.env.DB_USER,
+          password: String(process.env.DB_PASSWORD),
+          database: process.env.DB_NAME,
+          port: parseInt(process.env.DB_PORT) || 5432,
+        });
+
+    client = await pool.connect();
   try {
     console.log("[MIGRATE] Running database migrations...");
 
@@ -212,12 +220,14 @@ async function runMigrations() {
     console.error("[MIGRATE] ❌ Error:", err.message);
     console.error("[MIGRATE] Server will continue without database - check DATABASE_URL");
   } finally {
-    client.release();
-    await pool.end();
+    if (client) client.release();
+    if (pool) await pool.end();
   }
 }
 
-runMigrations();
+runMigrations().catch(err => {
+  console.error("[MIGRATE] Fatal migration error (non-blocking):", err.message);
+});
 
 const app = express();
 
