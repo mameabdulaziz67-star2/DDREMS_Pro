@@ -201,25 +201,25 @@ const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
         {/* Filter Tabs */}
         <div className="filter-tabs">
           <button
-            className={`tab ${filter === 'all' ? 'active' : ''}`}
+            className={"tab " + (filter === 'all' ? 'active' : '')}
             onClick={() => setFilter('all')}
           >
             📋 All ({agreements.length})
           </button>
           <button
-            className={`tab ${filter === 'pending_admin_review' ? 'active' : ''}`}
+            className={"tab " + (filter === 'pending_admin_review' ? 'active' : '')}
             onClick={() => setFilter('pending_admin_review')}
           >
             ⏳ Pending ({agreements.filter(a => a.status === 'pending_admin_review').length})
           </button>
           <button
-            className={`tab ${filter === 'forwarded_to_owner' ? 'active' : ''}`}
+            className={"tab " + (filter === 'forwarded_to_owner' ? 'active' : '')}
             onClick={() => setFilter('forwarded_to_owner')}
           >
             ➡️ With Owner ({agreements.filter(a => a.status === 'forwarded_to_owner').length})
           </button>
           <button
-            className={`tab ${filter === 'completed' ? 'active' : ''}`}
+            className={"tab " + (filter === 'completed' ? 'active' : '')}
             onClick={() => setFilter('completed')}
           >
             🎉 Completed ({agreements.filter(a => a.status === 'completed').length})
@@ -245,35 +245,35 @@ const RealEstateAgreementWorkflow = ({ user, onLogout }) => {
                 <div key={agreement.id} className="agreement-card">
                   {/* Workflow Progress */}
                   <div className="workflow-progress">
-                    <div className={`step ${step >= 1 ? 'active' : ''}`}>
+                    <div className={"step " + (step >= 1 ? 'active' : '')}>
                       <div className="step-number">1</div>
                       <div className="step-label">Request</div>
                     </div>
-                    <div className={`step ${step >= 2 ? 'active' : ''}`}>
+                    <div className={"step " + (step >= 2 ? 'active' : '')}>
                       <div className="step-number">2</div>
                       <div className="step-label">Owner Review</div>
                     </div>
-                    <div className={`step ${step >= 3 ? 'active' : ''}`}>
+                    <div className={"step " + (step >= 3 ? 'active' : '')}>
                       <div className="step-number">3</div>
                       <div className="step-label">Owner Approval</div>
                     </div>
-                    <div className={`step ${step >= 4 ? 'active' : ''}`}>
+                    <div className={"step " + (step >= 4 ? 'active' : '')}>
                       <div className="step-number">4</div>
                       <div className="step-label">Customer Input</div>
                     </div>
-                    <div className={`step ${step >= 5 ? 'active' : ''}`}>
+                    <div className={"step " + (step >= 5 ? 'active' : '')}>
                       <div className="step-number">5</div>
                       <div className="step-label">Customer Submit</div>
                     </div>
-                    <div className={`step ${step >= 6 ? 'active' : ''}`}>
+                    <div className={"step " + (step >= 6 ? 'active' : '')}>
                       <div className="step-number">6</div>
                       <div className="step-label">Final Approval</div>
                     </div>
-                    <div className={`step ${step >= 7 ? 'active' : ''}`}>
+                    <div className={"step " + (step >= 7 ? 'active' : '')}>
                       <div className="step-number">7</div>
                       <div className="step-label">Payment</div>
                     </div>
-                    <div className={`step ${step >= 8 ? 'active' : ''}`}>
+                    <div className={"step " + (step >= 8 ? 'active' : '')}>
                       <div className="step-number">8</div>
                       <div className="step-label">Complete</div>
                     </div>

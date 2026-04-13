@@ -241,27 +241,27 @@ const AgreementManagement = ({ user, onLogout }) => {
         {/* Filter Tabs */}
         <div className="filter-tabs">
           <button
-            className={`tab ${filter === "all" ? "active" : ""}`}
+            className={"tab " + (filter === "all" ? "active" : "")}
             onClick={() => setFilter("all")}
           >
             📋 All ({agreements.length})
           </button>
           <button
-            className={`tab ${filter === "pending" ? "active" : ""}`}
+            className={"tab " + (filter === "pending" ? "active" : "")}
             onClick={() => setFilter("pending")}
           >
             ⏳ Pending (
             {agreements.filter((a) => a.status.includes("pending")).length})
           </button>
           <button
-            className={`tab ${filter === "accepted" ? "active" : ""}`}
+            className={"tab " + (filter === "accepted" ? "active" : "")}
             onClick={() => setFilter("accepted")}
           >
             ✅ Accepted (
             {agreements.filter((a) => a.status.includes("accepted")).length})
           </button>
           <button
-            className={`tab ${filter === "completed" ? "active" : ""}`}
+            className={"tab " + (filter === "completed" ? "active" : "")}
             onClick={() => setFilter("completed")}
           >
             🎉 Completed (

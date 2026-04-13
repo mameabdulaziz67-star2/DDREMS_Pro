@@ -184,7 +184,7 @@ const CustomerProfile = ({ user, onComplete }) => {
       </div>
 
       {profile && (
-        <div className={`profile-status-banner ${profile.profile_status}`}>
+        <div className={"profile-status-banner " + (profile.profile_status)}>
           {profile.profile_status === 'pending' && (
             <>
               <span className="status-icon">⏳</span>
@@ -312,7 +312,7 @@ const CustomerProfile = ({ user, onComplete }) => {
               </div>
             ) : (
               <div 
-                className={`upload-placeholder ${profile?.profile_status === 'approved' ? 'disabled' : ''}`} 
+                className={"upload-placeholder " + (profile?.profile_status === 'approved' ? 'disabled' : '')} 
                 onClick={profile?.profile_status === 'approved' ? undefined : () => document.getElementById('doc-input').click()}
               >
                 <span className="upload-icon">📄</span>
@@ -390,7 +390,7 @@ const CustomerProfile = ({ user, onComplete }) => {
                 </div>
                 <div className="view-field">
                   <label>Profile Status:</label>
-                  <span className={`status-badge ${profile.profile_status}`}>
+                  <span className={"status-badge " + (profile.profile_status)}>
                     {profile.profile_status.charAt(0).toUpperCase() + profile.profile_status.slice(1)}
                   </span>
                 </div>

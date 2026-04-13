@@ -51,7 +51,7 @@ const MessageNotificationWidget = ({ userId, onNavigateToMessages }) => {
   return (
     <div style={{ position: "relative" }}>
       <button
-        className={`btn-secondary ${unreadMessages > 0 ? "btn-notification" : ""}`}
+        className={"btn-secondary " + (unreadMessages > 0 ? "btn-notification" : "")}
         onClick={() => setShowNotifications(!showNotifications)}
         style={{
           position: "relative",

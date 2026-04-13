@@ -110,13 +110,13 @@ const AdminMessagesView = ({ user, onClose }) => {
 
       <div className="amv-tabs">
         <button
-          className={`tab ${view === 'conversations' ? 'active' : ''}`}
+          className={"tab " + (view === 'conversations' ? 'active' : '')}
           onClick={() => setView('conversations')}
         >
           💬 Conversations ({conversations.length})
         </button>
         <button
-          className={`tab ${view === 'history' ? 'active' : ''}`}
+          className={"tab " + (view === 'history' ? 'active' : '')}
           onClick={() => setView('history')}
         >
           📋 Message History ({history.length})
@@ -257,9 +257,9 @@ const AdminMessagesView = ({ user, onClose }) => {
                 threadMessages.map((msg) => (
                   <div
                     key={msg.id}
-                    className={`thread-message ${
+                    className={"thread-message " + (
                       msg.sender_id === user.id ? 'sent' : 'received'
-                    }`}
+                    )}
                   >
                     <div className="msg-header">
                       <strong>{msg.sender_name}</strong>

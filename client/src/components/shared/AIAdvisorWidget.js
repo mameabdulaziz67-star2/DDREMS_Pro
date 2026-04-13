@@ -229,7 +229,7 @@ export const AIPriceComparison = ({ propertyData }) => {
                 </div>
             </div>
 
-            <div className={`deviation-indicator ${deviationClass}`}>
+            <div className={"deviation-indicator " + (deviationClass)}>
                 {deviationText}
             </div>
         </div>

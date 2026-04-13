@@ -346,7 +346,7 @@ const RentalLedger = ({ user }) => {
                       </td>
                       <td><strong>{Number(pay.amount).toLocaleString()} ETB</strong></td>
                       <td>
-                        <span className={`status-badge ${pay.status}`}>
+                        <span className={"status-badge " + (pay.status)}>
                           {statusEmoji[pay.status] || "❓"} {pay.status.charAt(0).toUpperCase() + pay.status.slice(1)}
                         </span>
                       </td>

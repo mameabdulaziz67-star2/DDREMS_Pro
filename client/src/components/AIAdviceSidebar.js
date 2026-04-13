@@ -66,7 +66,7 @@ const AIAdviceSidebar = ({ user, onClose }) => {
   };
 
   return (
-    <div className={`ai-advice-sidebar ${expanded ? 'expanded' : 'collapsed'}`}>
+    <div className={"ai-advice-sidebar " + (expanded ? 'expanded' : 'collapsed')}>
       {/* Header */}
       <div className="ai-advice-header">
         <div className="ai-advice-title">
@@ -132,7 +132,7 @@ const AIAdviceSidebar = ({ user, onClose }) => {
                 <div className="advice-alerts">
                   <h5>⚠️ <span className="label">Critical Alerts:</span></h5>
                   {advice.alerts.map((alert, idx) => (
-                    <div key={idx} className={`alert alert-${alert.type}`}>
+                    <div key={idx} className={"alert alert- " + (alert.type)}>
                       <strong>Status:</strong> {alert.message}
                     </div>
                   ))}

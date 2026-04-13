@@ -339,9 +339,9 @@ const SystemAdminDashboard = ({ user, onLogout, setCurrentPage }) => {
           </div>
           <div className="logs-list">
             {systemLogs.map((log, index) => (
-              <div key={index} className={`log-item ${log.level}`}>
+              <div key={index} className={"log-item " + (log.level)}>
                 <span className="log-time">{new Date(log.timestamp).toLocaleTimeString()}</span>
-                <span className={`log-level ${log.level}`}>{log.level}</span>
+                <span className={"log-level " + (log.level)}>{log.level}</span>
                 <span className="log-message">{log.message}</span>
               </div>
             ))}

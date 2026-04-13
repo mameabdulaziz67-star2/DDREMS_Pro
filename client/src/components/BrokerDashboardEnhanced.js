@@ -141,25 +141,25 @@ const BrokerDashboardEnhanced = ({ user, onLogout }) => {
       {/* Navigation Tabs */}
       <div className="broker-tabs">
         <button
-          className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
+          className={"tab-btn " + (activeTab === 'overview' ? 'active' : '')}
           onClick={() => setActiveTab('overview')}
         >
           📊 Overview
         </button>
         <button
-          className={`tab-btn ${activeTab === 'requests' ? 'active' : ''}`}
+          className={"tab-btn " + (activeTab === 'requests' ? 'active' : '')}
           onClick={() => setActiveTab('requests')}
         >
           📋 Requests ({stats.pendingRequests})
         </button>
         <button
-          className={`tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
+          className={"tab-btn " + (activeTab === 'profile' ? 'active' : '')}
           onClick={() => setActiveTab('profile')}
         >
           👤 Profile
         </button>
         <button
-          className={`tab-btn ${activeTab === 'notifications' ? 'active' : ''}`}
+          className={"tab-btn " + (activeTab === 'notifications' ? 'active' : '')}
           onClick={() => setActiveTab('notifications')}
         >
           🔔 Notifications
@@ -210,7 +210,7 @@ const BrokerDashboardEnhanced = ({ user, onLogout }) => {
                 <div key={request.id} className="request-card">
                   <div className="request-header">
                     <h4>{request.property_title}</h4>
-                    <span className={`status-badge ${request.status}`}>{request.status}</span>
+                    <span className={"status-badge " + (request.status)}>{request.status}</span>
                   </div>
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
                     <span style={{ fontSize: '10px', background: request.request_type === 'key' ? '#e0f2fe' : '#f3e8ff', color: request.request_type === 'key' ? '#0369a1' : '#7e22ce', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
@@ -254,7 +254,7 @@ const BrokerDashboardEnhanced = ({ user, onLogout }) => {
                         )}
                       </div>
                       <div className="request-status">
-                        <span className={`status-badge ${request.status}`}>{request.status}</span>
+                        <span className={"status-badge " + (request.status)}>{request.status}</span>
                         <p className="request-date">{new Date(request.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
@@ -336,7 +336,7 @@ const BrokerDashboardEnhanced = ({ user, onLogout }) => {
                 </div>
                 <div className="info-group">
                   <label>Profile Status</label>
-                  <p className={`status-badge ${brokerProfile?.profile_status}`}>
+                  <p className={"status-badge " + (brokerProfile?.profile_status)}>
                     {brokerProfile?.profile_status}
                   </p>
                 </div>

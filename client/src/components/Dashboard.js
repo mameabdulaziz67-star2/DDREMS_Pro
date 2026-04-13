@@ -213,7 +213,7 @@ const Dashboard = ({ user, onLogout }) => {
         {statCards.map((card, index) => (
           <div
             key={index}
-            className={`stat-card ${card.onClick ? 'clickable' : ''}`}
+            className={"stat-card " + (card.onClick ? 'clickable' : '')}
             style={{ borderLeft: `4px solid ${card.color}` }}
             onClick={card.onClick}
           >
@@ -247,7 +247,7 @@ const Dashboard = ({ user, onLogout }) => {
                       {new Date(activity.created_at).toLocaleDateString()}
                     </span>
                   </div>
-                  <span className={`status-badge ${activity.status}`}>
+                  <span className={"status-badge " + (activity.status)}>
                     {activity.status}
                   </span>
                 </div>

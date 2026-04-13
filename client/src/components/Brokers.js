@@ -132,7 +132,7 @@ const Brokers = ({ user, onLogout }) => {
                   {(broker.full_name || broker.name).charAt(0).toUpperCase()}
                 </div>
               </div>
-              <span className={`broker-status ${broker.account_status}`}>
+              <span className={"broker-status " + (broker.account_status)}>
                 {broker.account_status || 'active'}
               </span>
             </div>

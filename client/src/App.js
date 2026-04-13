@@ -205,7 +205,7 @@ function App() {
     ["admin", "system_admin", "property_admin"].includes(user?.role);
 
   return (
-    <div className={`App ${!showSidebar ? "no-sidebar" : ""}`}>
+    <div className={"App " + (!showSidebar ? "no-sidebar" : "")}>
       {showSidebar && (
         <Sidebar
           currentPage={currentPage}
@@ -217,7 +217,7 @@ function App() {
         />
       )}
       <div
-        className={`main-content ${isSidebarCollapsed && showSidebar ? "sidebar-collapsed" : ""}`}
+        className={"main-content " + (isSidebarCollapsed && showSidebar ? "sidebar-collapsed" : "")}
       >
         {currentPage === "reports" ? (
           <Reports

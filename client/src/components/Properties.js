@@ -464,7 +464,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
               <h3>{property.title}</h3>
               <p className="property-location">📍 {property.location}</p>
               {property.listing_type && (
-                <span className={`listing-type-badge ${property.listing_type}`}>
+                <span className={"listing-type-badge " + (property.listing_type)}>
                   {property.listing_type === "sale"
                     ? "🏷️ For Sale"
                     : "🔑 For Rent"}
@@ -1013,7 +1013,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
                     <div>
                       <strong>Status:</strong>{" "}
                       <span
-                        className={`status-badge ${selectedProperty.status}`}
+                        className={"status-badge " + (selectedProperty.status)}
                       >
                         {selectedProperty.status}
                       </span>
@@ -1064,7 +1064,7 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
                       <p>
                         <strong>Status:</strong>{" "}
                         <span
-                          className={`status-badge ${propertyDetail.verification.verification_status}`}
+                          className={"status-badge " + (propertyDetail.verification.verification_status)}
                         >
                           {propertyDetail.verification.verification_status}
                         </span>

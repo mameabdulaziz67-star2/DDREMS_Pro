@@ -186,7 +186,7 @@ const AIPricePredictor = ({ user }) => {
                 {tabs.map(tab => (
                     <button
                         key={tab.id}
-                        className={`ai-tab ${activeTab === tab.id ? 'active' : ''}`}
+                        className={"ai-tab " + (activeTab === tab.id ? 'active' : '')}
                         onClick={() => setActiveTab(tab.id)}
                     >
                         <span>{tab.icon}</span>
@@ -279,7 +279,7 @@ const AIPricePredictor = ({ user }) => {
                             <label>Has Parking</label>
                         </div>
 
-                        <button className={`predict-btn ${predicting ? 'loading' : ''}`} onClick={handlePredict} disabled={predicting}>
+                        <button className={"predict-btn " + (predicting ? 'loading' : '')} onClick={handlePredict} disabled={predicting}>
                             {predicting ? '⏳ Analyzing...' : '🚀 Predict Price'}
                         </button>
                     </div>
@@ -521,9 +521,9 @@ const AIPricePredictor = ({ user }) => {
                                             <div className="loc-stat-label">Max Price</div>
                                         </div>
                                     </div>
-                                    <span className={`affordability-badge ${loc.affordabilityIndex > 60 ? 'high' :
+                                    <span className={"affordability-badge " + (loc.affordabilityIndex > 60 ? 'high' :
                                             loc.affordabilityIndex > 35 ? 'medium' : 'low'
-                                        }`}>
+                                        )}>
                                         {loc.affordabilityIndex > 60 ? '💚 Affordable' :
                                             loc.affordabilityIndex > 35 ? '💛 Moderate' : '🔴 Premium'}
                                     </span>
@@ -619,14 +619,14 @@ const AIPricePredictor = ({ user }) => {
                             <label>Near Market</label>
                         </div>
 
-                        <button className={`predict-btn ${checkingFraud ? 'loading' : ''}`} onClick={handleFraudCheck} disabled={checkingFraud}>
+                        <button className={"predict-btn " + (checkingFraud ? 'loading' : '')} onClick={handleFraudCheck} disabled={checkingFraud}>
                             {checkingFraud ? '⏳ Analyzing...' : '🛡️ Check for Fraud'}
                         </button>
                     </div>
 
                     {fraudResult && (
                         <div className="fraud-result">
-                            <div className={`risk-display ${fraudResult.riskLevel}`}>
+                            <div className={"risk-display " + (fraudResult.riskLevel)}>
                                 <div className="risk-score-circle">{fraudResult.riskScore}</div>
                                 <div className="risk-level-text">{fraudResult.riskLevel} Risk</div>
                                 <p style={{ color: '#c0c0c0', marginBottom: 12 }}>{fraudResult.recommendation}</p>

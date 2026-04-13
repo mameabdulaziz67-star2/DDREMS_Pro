@@ -210,7 +210,7 @@ const ProfileApproval = () => {
             <div key={`${profile.type}-${profile.id}`} className="profile-card">
               <div className="profile-card-header">
                 <span className="role-badge">{getRoleIcon(profile.type)} {getRoleLabel(profile.type)}</span>
-                <span className={`status-badge ${profile.profile_status}`}>
+                <span className={"status-badge " + (profile.profile_status)}>
                   {profile.profile_status}
                 </span>
               </div>
@@ -242,7 +242,7 @@ const ProfileApproval = () => {
             <div className="modal-header">
               <div>
                 <h3>{getRoleIcon(selectedProfile.type)} {selectedProfile.full_name}</h3>
-                <span className={`status-badge ${selectedProfile.profile_status}`}>
+                <span className={"status-badge " + (selectedProfile.profile_status)}>
                   {selectedProfile.profile_status.toUpperCase()}
                 </span>
               </div>

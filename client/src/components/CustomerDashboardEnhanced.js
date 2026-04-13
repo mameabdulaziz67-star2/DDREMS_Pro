@@ -616,7 +616,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
                       🏠 No Image Available
                     </div>
                   )}
-                  <button className={`favorite-btn ${isFavorite(property.id) ? "active" : ""}`} onClick={() => isFavorite(property.id) ? removeFavorite(property.id) : addToFavorites(property.id)}>
+                  <button className={"favorite-btn " + (isFavorite(property.id) ? "active" : "")} onClick={() => isFavorite(property.id) ? removeFavorite(property.id) : addToFavorites(property.id)}>
                     {isFavorite(property.id) ? "❤️" : "🤍"}
                   </button>
                   <span className="property-badge">
@@ -736,7 +736,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
               announcements.map((ann) => (
                 <div
                   key={ann.id}
-                  className={`announcement-card ${ann.priority}`}
+                  className={"announcement-card " + (ann.priority)}
                 >
                   <div className="ann-header">
                     <span className="priority-dot"></span>
@@ -847,7 +847,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
                     <div>
                       <strong>Status:</strong>{" "}
                       <span
-                        className={`status-badge ${selectedProperty.status}`}
+                        className={"status-badge " + (selectedProperty.status)}
                       >
                         {selectedProperty.status}
                       </span>
@@ -897,7 +897,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
                     }}
                   >
                     <button
-                      className={`btn-favorite ${isFavorite(selectedProperty.id) ? "active" : ""}`}
+                      className={"btn-favorite " + (isFavorite(selectedProperty.id) ? "active" : "")}
                       onClick={() =>
                         isFavorite(selectedProperty.id)
                           ? removeFavorite(selectedProperty.id)
@@ -1003,7 +1003,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
                   (Array.isArray(messages) ? messages : []).map((msg) => (
                     <div
                       key={msg.id}
-                      className={`message-card ${!msg.is_read ? "unread" : ""}`}
+                      className={"message-card " + (!msg.is_read ? "unread" : "")}
                       onClick={() => markMessageAsRead(msg.id)}
                     >
                       <div className="message-header">
@@ -1065,7 +1065,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
                     {[1, 2, 3, 4, 5].map((star) => (
                       <span
                         key={star}
-                        className={`star ${star <= feedbackForm.rating ? "active" : ""}`}
+                        className={"star " + (star <= feedbackForm.rating ? "active" : "")}
                         onClick={() =>
                           setFeedbackForm({ ...feedbackForm, rating: star })
                         }

@@ -71,13 +71,13 @@ const Transactions = ({ user, onLogout }) => {
                 <td>{transaction.user_name}</td>
                 <td className="amount">{(transaction.amount / 1000000).toFixed(2)}M ETB</td>
                 <td>
-                  <span className={`type-badge ${transaction.transaction_type}`}>
+                  <span className={"type-badge " + (transaction.transaction_type)}>
                     {transaction.transaction_type}
                   </span>
                 </td>
                 <td>{transaction.payment_method}</td>
                 <td>
-                  <span className={`status-badge ${transaction.status}`}>
+                  <span className={"status-badge " + (transaction.status)}>
                     {transaction.status}
                   </span>
                 </td>

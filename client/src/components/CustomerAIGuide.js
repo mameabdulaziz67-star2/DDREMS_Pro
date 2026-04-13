@@ -287,15 +287,15 @@ const CustomerAIGuide = ({ user, onClose, onRecommendations }) => {
 
       {/* Progress Indicator */}
       <div className="guide-progress">
-        <div className={`progress-step ${step >= 1 ? 'active' : ''}`}>
+        <div className={"progress-step " + (step >= 1 ? 'active' : '')}>
           <span>1</span>
           <p>Budget</p>
         </div>
-        <div className={`progress-step ${step >= 2 ? 'active' : ''}`}>
+        <div className={"progress-step " + (step >= 2 ? 'active' : '')}>
           <span>2</span>
           <p>Preferences</p>
         </div>
-        <div className={`progress-step ${step >= 3 ? 'active' : ''}`}>
+        <div className={"progress-step " + (step >= 3 ? 'active' : '')}>
           <span>3</span>
           <p>Recommendations</p>
         </div>

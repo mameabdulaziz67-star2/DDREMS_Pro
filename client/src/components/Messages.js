@@ -254,19 +254,19 @@ const Messages = ({ user, onLogout }) => {
         <div className="messages-sidebar">
           <div className="message-filters">
             <button 
-              className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
+              className={"filter-btn " + (filter === 'all' ? 'active' : '')}
               onClick={() => setFilter('all')}
             >
               All Messages ({messages.length})
             </button>
             <button 
-              className={`filter-btn ${filter === 'unread' ? 'active' : ''}`}
+              className={"filter-btn " + (filter === 'unread' ? 'active' : '')}
               onClick={() => setFilter('unread')}
             >
               Unread ({unreadCount})
             </button>
             <button 
-              className={`filter-btn ${filter === 'read' ? 'active' : ''}`}
+              className={"filter-btn " + (filter === 'read' ? 'active' : '')}
               onClick={() => setFilter('read')}
             >
               Read ({messages.length - unreadCount})

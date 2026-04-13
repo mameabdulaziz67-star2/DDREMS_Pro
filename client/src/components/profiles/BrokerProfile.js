@@ -122,7 +122,7 @@ const BrokerProfile = ({ user, onComplete }) => {
       </div>
 
       {profile && (
-        <div className={`profile-status-banner ${profile.profile_status}`}>
+        <div className={"profile-status-banner " + (profile.profile_status)}>
           {profile.profile_status === 'pending' && (
             <>
               <span className="status-icon">⏳</span>

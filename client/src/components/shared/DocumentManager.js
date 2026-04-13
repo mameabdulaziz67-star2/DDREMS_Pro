@@ -215,7 +215,7 @@ const DocumentManager = ({ propertyId, uploadedBy }) => {
                   📤 Send
                 </button>
                 <button
-                  className={`btn-doc-action ${doc.is_locked ? "unlock" : "lock"}`}
+                  className={"btn-doc-action " + (doc.is_locked ? "unlock" : "lock")}
                   onClick={() => toggleLock(doc.id, doc.is_locked)}
                   title={doc.is_locked ? "Unlock Document" : "Lock Document"}
                 >

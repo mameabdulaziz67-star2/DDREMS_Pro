@@ -493,12 +493,12 @@ const Agreements = ({ user, onLogout }) => {
                             Sign agreement <strong>#{selectedAgreement.id}</strong> for <strong>{selectedAgreement.property_title}</strong>
                         </p>
                         <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-                            <button className={`mode-btn ${signatureType === 'draw' ? 'active' : ''}`}
+                            <button className={"mode-btn " + (signatureType === 'draw' ? 'active' : '')}
                                 onClick={() => { setSignatureType('draw'); setTimeout(initCanvas, 50); }}
                                 style={{ padding: '8px 16px', borderRadius: '8px', border: signatureType === 'draw' ? '2px solid #3b82f6' : '1px solid #e2e8f0', background: signatureType === 'draw' ? '#eff6ff' : '#fff', cursor: 'pointer' }}>
                                 ✍️ Draw
                             </button>
-                            <button className={`mode-btn ${signatureType === 'type' ? 'active' : ''}`}
+                            <button className={"mode-btn " + (signatureType === 'type' ? 'active' : '')}
                                 onClick={() => setSignatureType('type')}
                                 style={{ padding: '8px 16px', borderRadius: '8px', border: signatureType === 'type' ? '2px solid #3b82f6' : '1px solid #e2e8f0', background: signatureType === 'type' ? '#eff6ff' : '#fff', cursor: 'pointer' }}>
                                 ⌨️ Type

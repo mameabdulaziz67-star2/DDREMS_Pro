@@ -130,7 +130,7 @@ const Sidebar = ({
   const menuItems = getMenuItems();
 
   return (
-    <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
+    <div className={"sidebar " + (isCollapsed ? "collapsed" : "")}>
       <div className="sidebar-header">
         <h2>🏢 {!isCollapsed && "DDREMS"}</h2>
         {!isCollapsed && <p>Real Estate Management</p>}
@@ -169,12 +169,12 @@ const Sidebar = ({
 
             {!isCollapsed && item.subItems && (
               <div
-                className={`sub-menu ${expandedMenus.includes(item.id) ? "expanded" : ""}`}
+                className={"sub-menu " + (expandedMenus.includes(item.id) ? "expanded" : "")}
               >
                 {item.subItems.map((subItem) => (
                   <button
                     key={subItem.id}
-                    className={`nav-sub-item ${currentPage === subItem.id ? "active" : ""}`}
+                    className={"nav-sub-item " + (currentPage === subItem.id ? "active" : "")}
                     onClick={() => setCurrentPage(subItem.id)}
                   >
                     <span className="nav-icon" style={{ fontSize: "14px" }}>

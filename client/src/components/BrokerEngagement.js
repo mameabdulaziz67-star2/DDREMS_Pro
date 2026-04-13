@@ -634,7 +634,7 @@ const BrokerEngagement = ({ user }) => {
           <div className="advice-panel">
             <div className="advice-header">
               <h4>🧑‍💼 Broker Advice</h4>
-              <span className={`rec-badge ${eng.broker_recommendation}`}>
+              <span className={"rec-badge " + (eng.broker_recommendation)}>
                 {eng.broker_recommendation === "accept" ? "✅ Accept" : eng.broker_recommendation === "counter" ? "🔄 Counter" : "🚫 Walk Away"}
               </span>
             </div>
@@ -650,13 +650,13 @@ const BrokerEngagement = ({ user }) => {
         {/* Signature status */}
         {["pending_signatures", "fully_signed", "completed"].includes(eng.status) && (
           <div className="sig-section">
-            <div className={`sig-item ${eng.status === "fully_signed" || eng.status === "completed" ? "signed" : "unsigned"}`}>
+            <div className={"sig-item " + (eng.status === "fully_signed" || eng.status === "completed" ? "signed" : "unsigned")}>
               ✍️ {bt(eng)}
             </div>
-            <div className={`sig-item ${eng.status === "fully_signed" || eng.status === "completed" ? "signed" : "unsigned"}`}>
+            <div className={"sig-item " + (eng.status === "fully_signed" || eng.status === "completed" ? "signed" : "unsigned")}>
               ✍️ Broker
             </div>
-            <div className={`sig-item ${eng.status === "fully_signed" || eng.status === "completed" ? "signed" : "unsigned"}`}>
+            <div className={"sig-item " + (eng.status === "fully_signed" || eng.status === "completed" ? "signed" : "unsigned")}>
               ✍️ {ol(eng)}
             </div>
           </div>
@@ -694,7 +694,7 @@ const BrokerEngagement = ({ user }) => {
               <div className="broker-selection-grid">
                 {brokers.map((b) => (
                   <div key={b.id}
-                    className={`broker-select-card ${formData.broker_id === b.id ? "selected" : ""}`}
+                    className={"broker-select-card " + (formData.broker_id === b.id ? "selected" : "")}
                     onClick={() => setFormData({ ...formData, broker_id: b.id })}
                   >
                     <div className="broker-avatar">{b.name?.charAt(0).toUpperCase()}</div>
@@ -919,7 +919,7 @@ const BrokerEngagement = ({ user }) => {
               <div className="advice-panel" style={{ marginBottom: 16 }}>
                 <div className="advice-header">
                   <h4>🧑‍💼 Broker's Recommendation</h4>
-                  <span className={`rec-badge ${selectedEngagement.broker_recommendation}`}>
+                  <span className={"rec-badge " + (selectedEngagement.broker_recommendation)}>
                     {selectedEngagement.broker_recommendation === "accept" ? "✅ Accept" :
                      selectedEngagement.broker_recommendation === "counter" ? "🔄 Counter" : "🚫 Walk Away"}
                   </span>
@@ -1200,7 +1200,7 @@ const BrokerEngagement = ({ user }) => {
                   {["buyer", "broker", "owner"].map((role) => {
                     const sig = signatures.find((s) => s.signer_role === role);
                     return (
-                      <div key={role} className={`sig-item ${sig ? "signed" : "unsigned"}`}>
+                      <div key={role} className={"sig-item " + (sig ? "signed" : "unsigned")}>
                         {sig ? "✅" : "⬜"} {role === 'buyer' ? bt(eng) : role === 'owner' ? ol(eng) : 'Broker'}
                         {sig && <div className="sig-time">{new Date(sig.signed_at).toLocaleString()}</div>}
                       </div>
@@ -1218,10 +1218,10 @@ const BrokerEngagement = ({ user }) => {
                 const isMine = msg.sender_id === user.id;
                 const isSystem = msg.sender_role === "system";
                 return (
-                  <div key={msg.id} className={`eng-msg ${isSystem ? "system-msg" : isMine ? "sent" : "received"}`}>
+                  <div key={msg.id} className={"eng-msg " + (isSystem ? "system-msg" : isMine ? "sent" : "received")}>
                     <div className="eng-msg-bubble">
                       {msg.message_type && msg.message_type !== "general" && msg.message_type !== "system" && (
-                        <span className={`eng-msg-type-badge ${msg.message_type}`}>{msg.message_type}</span>
+                        <span className={"eng-msg-type-badge " + (msg.message_type)}>{msg.message_type}</span>
                       )}
                       {msg.message}
                     </div>

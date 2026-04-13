@@ -607,7 +607,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
                     <td>{property.type}</td>
                     <td>
                       <span
-                        className={`listing-badge ${property.listing_type || "sale"}`}
+                        className={"listing-badge " + (property.listing_type || "sale")}
                       >
                         {property.listing_type || "sale"}
                       </span>
@@ -616,7 +616,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
                     <td>📍 {property.location}</td>
                     <td>
                       <span
-                        className={`status-badge ${property.status}`}
+                        className={"status-badge " + (property.status)}
                         style={{ color: getStatusBadge(property.status).color }}
                       >
                         {getStatusBadge(property.status).emoji}{" "}
@@ -676,7 +676,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
             {announcements.length > 0 ? (
               announcements.map((announcement) => (
                 <div key={announcement.id} className="announcement-item">
-                  <span className={`priority-badge ${announcement.priority}`}>
+                  <span className={"priority-badge " + (announcement.priority)}>
                     {announcement.priority}
                   </span>
                   <h4>{announcement.title}</h4>
@@ -701,7 +701,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
             {notifications.slice(0, 5).map((notification) => (
               <div
                 key={notification.id}
-                className={`notification-item ${notification.is_read ? "read" : "unread"}`}
+                className={"notification-item " + (notification.is_read ? "read" : "unread")}
               >
                 <div className="notification-icon">
                   {notification.type === "success"
@@ -1299,14 +1299,14 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
                           ✅ Property details saved to database
                         </div>
                         <div
-                          className={`status-item ${previewImages.length > 0 ? "success" : "warning"}`}
+                          className={"status-item " + (previewImages.length > 0 ? "success" : "warning")}
                         >
                           {previewImages.length > 0
                             ? `✅ ${previewImages.length} image(s) uploaded`
                             : "⚠️ No images uploaded"}
                         </div>
                         <div
-                          className={`status-item ${previewDocs.length > 0 ? "success" : "warning"}`}
+                          className={"status-item " + (previewDocs.length > 0 ? "success" : "warning")}
                         >
                           {previewDocs.length > 0
                             ? `✅ ${previewDocs.length} document(s) uploaded`
@@ -1412,7 +1412,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
                     <div>
                       <strong>Status:</strong>{" "}
                       <span
-                        className={`status-badge ${selectedProperty.status}`}
+                        className={"status-badge " + (selectedProperty.status)}
                         style={{
                           color: getStatusBadge(selectedProperty.status).color,
                         }}

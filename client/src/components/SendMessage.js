@@ -223,7 +223,7 @@ const SendMessage = ({ user, onLogout }) => {
 
           <div className="send-mode-toggle">
             <button
-              className={`mode-btn ${sendMode === 'single' ? 'active' : ''}`}
+              className={"mode-btn " + (sendMode === 'single' ? 'active' : '')}
               onClick={() => {
                 setSendMode('single');
                 setFilterRole('all');
@@ -234,7 +234,7 @@ const SendMessage = ({ user, onLogout }) => {
               📧 Single User
             </button>
             <button
-              className={`mode-btn ${sendMode === 'group' ? 'active' : ''}`}
+              className={"mode-btn " + (sendMode === 'group' ? 'active' : '')}
               onClick={() => {
                 setSendMode('group');
                 setFilterRole('all');
@@ -246,7 +246,7 @@ const SendMessage = ({ user, onLogout }) => {
             </button>
             {canSendBulk && (
               <button
-                className={`mode-btn ${sendMode === 'bulk' ? 'active' : ''}`}
+                className={"mode-btn " + (sendMode === 'bulk' ? 'active' : '')}
                 onClick={() => {
                   setSendMode('bulk');
                   setFilterRole('all');
@@ -405,7 +405,7 @@ const SendMessage = ({ user, onLogout }) => {
             </div>
             <div className="preview-type">
               <strong>Type:</strong>
-              <span className={`type-badge ${formData.message_type}`}>
+              <span className={"type-badge " + (formData.message_type)}>
                 {formData.message_type}
               </span>
             </div>

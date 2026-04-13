@@ -2131,7 +2131,7 @@ const PropertyAdminDashboard = ({
                 <div className="chart-label">{item.label}</div>
                 <div className="chart-bar">
                   <div
-                    className={`chart-fill ${item.className}`}
+                    className={"chart-fill " + (item.className)}
                     style={{
                       width: `${stats.totalProperties > 0 ? (item.count / stats.totalProperties) * 100 : 0}%`,
                     }}
