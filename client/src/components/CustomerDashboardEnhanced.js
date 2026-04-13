@@ -511,7 +511,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
                         onError={(e) => {
                           e.target.style.display = "none";
                           e.target.parentElement.innerHTML =
-                            `<div style="width:100%;height:200px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;">🏠 No Image</div>';
+                            `<div style="width:100%;height:200px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;">🏠 No Image</div>`;
                         }}
                       />
                     ) : (
