@@ -616,14 +616,7 @@ const CustomerDashboardEnhanced = ({ user, onLogout, setCurrentPage }) => {
                       🏠 No Image Available
                     </div>
                   )}
-                  <button
-                    className={`favorite-btn ${isFavorite(property.id) ? "active" : ""}`}
-                    onClick={() =>
-                      isFavorite(property.id)
-                        ? removeFavorite(property.id)
-                        : addToFavorites(property.id)
-                    }
-                  >
+                  <button className={`favorite-btn ${isFavorite(property.id) ? "active" : ""}`} onClick={() => isFavorite(property.id) ? removeFavorite(property.id) : addToFavorites(property.id)}>
                     {isFavorite(property.id) ? "❤️" : "🤍"}
                   </button>
                   <span className="property-badge">
