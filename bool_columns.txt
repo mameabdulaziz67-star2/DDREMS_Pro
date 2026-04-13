@@ -1,0 +1,13 @@
+﻿ agreement_fields        | is_editable
+ agreement_notifications | is_read
+ agreement_requests      | payment_confirmed
+ agreements              | terms_accepted
+ message_recipients      | is_read
+ messages                | is_read
+ messages                | is_group
+ notifications           | is_read
+ properties              | verified
+ users                   | profile_completed
+ users                   | profile_approved
+ v_agreement_requests    | payment_confirmed
+

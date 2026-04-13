@@ -1,0 +1,60 @@
+13: pending_buyer_approval: { emoji: "⏳", label: "Pending Buyer Approval", color: "#f59e0b" },
+16: awaiting_buyer_authorization: { emoji: "🔔", label: "Awaiting Your Authorization", color: "#dc2626" },
+47: const isBuyer = user.role === "user" || user.role === "customer";
+59: else endpoint = `${API}/buyer/${user.id}`;
+233: buyer_id: user.id,
+237: buyer_message: formData.message,
+268: case "buyer_review_draft":
+269: url = `${API}/${id}/buyer-approve-draft`;
+271: data = { buyer_id: user.id, decision: formData.decision, reject_reason: formData.reject_reason };
+292: case "buyer_authorize":
+293: url = `${API}/${id}/buyer-authorize`;
+296: buyer_id: user.id,
+319: signer_role: isBuyer ? "buyer" : isBroker ? "broker" : "owner",
+328: sender_role: isBuyer ? "buyer" : isBroker ? "broker" : isOwner ? "owner" : "admin",
+339: buyer_id: user.id,
+412: // Broker: draft offer for buyer approval
+416: 📝 Draft Offer for Buyer
+421: // Buyer: review broker's draft offer
+422: if (isBuyer && eng.status === "pending_buyer_approval") {
+424: <button key="review_draft" className="eng-btn eng-btn-warning" onClick={() => openModal("buyer_review_draft", eng)}>
+430: // Broker: advise buyer
+434: 📋 Advise Buyer
+457: // Buyer: authorize
+458: if (isBuyer && eng.status === "awaiting_buyer_authorization") {
+460: <button key="authorize" className="eng-btn eng-btn-danger" onClick={() => openModal("buyer_authorize", eng)}>
+477: const myRole = isBuyer ? "buyer" : isBroker ? "broker" : isOwner ? "owner" : null;
+496: // Buyer: pay now (after fully_signed or if payment_rejected)
+497: if (isBuyer && (eng.status === "fully_signed" || eng.status === "payment_rejected")) {
+517: // Buyer or Owner: confirm handover
+518: if ((isBuyer || isOwner) && eng.status === "payment_verified") {
+519: const hasConfirmed = isBuyer ? eng.buyer_handover_confirmed : eng.owner_handover_confirmed;
+584: <div className="info-item"><span className="info-label">👤 {eng.engagement_type === 'rent' ? 'Tenant' : 'Buyer'}</span><span className="info-value">{eng.buyer_name || "N/A"}</span></div>
+612: {(!isOwner || !["pending_broker_acceptance", "broker_declined", "pending_buyer_approval"].includes(eng.status)) && (
+648: ✍️ Buyer
+741: You will represent the buyer in negotiations to purchase <strong>{selectedEngagement?.property_title}</strong>.
+752: You are declining to represent the buyer for <strong>{selectedEngagement?.property_title}</strong>.
+773: ⚠️ This offer will be sent to the buyer for approval before going to the owner.
+787: case "buyer_review_draft":
+868: <option value="accept">✅ Recommend Accept — Good deal for the buyer</option>
+874: <label>Advice Message to Buyer *</label>
+876: placeholder="Explain your recommendation to the buyer..." rows="4" />
+881: case "buyer_authorize":
+954: This will create the binding contract for: Buyer, Broker, and Owner.
+955: All three parties will need to sign in order: Buyer → Broker → Owner.
+971: Signing as: <strong>{user.name}</strong> ({isBuyer ? "Buyer" : isBroker ? "Broker" : "Owner"})
+1035: <h4 style={{ margin: "0 0 12px", color: "#1e293b" }}>Verify Buyer Payment</h4>
+1067: The payment will be rejected, and the buyer will need to submit payment again.
+1150: <div className="detail-item"><span className="detail-label">{eng?.engagement_type === 'rent' ? 'Tenant' : 'Buyer'}</span><span className="detail-value">{eng?.buyer_name}</span></div>
+1177: {["buyer", "broker", "owner"].map((role) => {
+1225: sender_role: isBuyer ? "buyer" : isBroker ? "broker" : isOwner ? "owner" : "admin",
+1327: case "broker_negotiate": return "📝 Draft Offer for Buyer Approval";
+1328: case "buyer_review_draft": return "📋 Review Draft Offer";
+1330: case "broker_advise": return "📋 Advise the Buyer";
+1331: case "buyer_authorize": return "🔔 Authorize Action";
+1355: {isBuyer && "Hire a broker to negotiate property purchases on your behalf."}
+1356: {isBroker && "Manage your buyer engagements and negotiate with property owners."}
+1357: {isOwner && "View and respond to offers from brokers representing buyers."}
+1363: {isBuyer && (
+1379: {isBuyer && "No broker engagements yet. Click \"Hire a Broker\" to get started!"}
+1380: {isBroker && "No engagement requests yet. Buyers will contact you when they need representation."}

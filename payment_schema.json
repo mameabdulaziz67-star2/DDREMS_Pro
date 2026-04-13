@@ -1,0 +1,148 @@
+{
+  "payments": [
+    {
+      "column_name": "id",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "transaction_id",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "amount",
+      "data_type": "numeric"
+    },
+    {
+      "column_name": "payment_date",
+      "data_type": "date"
+    },
+    {
+      "column_name": "status",
+      "data_type": "character varying"
+    },
+    {
+      "column_name": "payment_method",
+      "data_type": "character varying"
+    },
+    {
+      "column_name": "reference_number",
+      "data_type": "character varying"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp without time zone"
+    }
+  ],
+  "agreement_payments": [
+    {
+      "column_name": "id",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "agreement_request_id",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "agreement_id",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "payment_method",
+      "data_type": "character varying"
+    },
+    {
+      "column_name": "payment_amount",
+      "data_type": "numeric"
+    },
+    {
+      "column_name": "receipt_file_path",
+      "data_type": "text"
+    },
+    {
+      "column_name": "receipt_file_name",
+      "data_type": "character varying"
+    },
+    {
+      "column_name": "receipt_uploaded_date",
+      "data_type": "timestamp without time zone"
+    },
+    {
+      "column_name": "payment_date",
+      "data_type": "timestamp without time zone"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp without time zone"
+    },
+    {
+      "column_name": "transaction_reference",
+      "data_type": "character varying"
+    },
+    {
+      "column_name": "payment_status",
+      "data_type": "character varying"
+    },
+    {
+      "column_name": "verified_by_id",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "verified_date",
+      "data_type": "timestamp without time zone"
+    },
+    {
+      "column_name": "verification_notes",
+      "data_type": "text"
+    }
+  ],
+  "transactions": [
+    {
+      "column_name": "id",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "property_id",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "broker_id",
+      "data_type": "integer"
+    },
+    {
+      "column_name": "amount",
+      "data_type": "numeric"
+    },
+    {
+      "column_name": "transaction_type",
+      "data_type": "character varying"
+    },
+    {
+      "column_name": "payment_method",
+      "data_type": "character varying"
+    },
+    {
+      "column_name": "status",
+      "data_type": "character varying"
+    },
+    {
+      "column_name": "installment_plan",
+      "data_type": "jsonb"
+    },
+    {
+      "column_name": "commission_amount",
+      "data_type": "numeric"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp without time zone"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp without time zone"
+    }
+  ]
+}

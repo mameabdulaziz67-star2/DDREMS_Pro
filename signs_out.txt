@@ -1,0 +1,148 @@
+Agreements.js:12: const [showSignModal, setShowSignModal] = useState(false);
+Agreements.js:20: const [signatureType, setSignatureType] = useState('draw'); // draw or type
+Agreements.js:21: const [typedSignature, setTypedSignature] = useState('');
+Agreements.js:139: const handleSignAgreement = (agreement) => {
+Agreements.js:141: setSignatureType('draw');
+Agreements.js:142: setTypedSignature('');
+Agreements.js:143: setShowSignModal(true);
+Agreements.js:190: const handleSubmitSignature = async () => {
+Agreements.js:193: let signatureData;
+Agreements.js:194: if (signatureType === 'draw') {
+Agreements.js:196: signatureData = canvas ? canvas.toDataURL('image/png') : null;
+Agreements.js:198: // Create typed signature as data URL
+Agreements.js:207: ctx.fillText(typedSignature, 200, 90);
+Agreements.js:208: signatureData = tmpCanvas.toDataURL('image/png');
+Agreements.js:211: if (!signatureData) {
+Agreements.js:212: alert('Please provide a signature');
+Agreements.js:217: await axios.put(`http://localhost:5000/api/agreements/${selectedAgreement.id}/sign`, {
+Agreements.js:220: signature_data: signatureData
+Agreements.js:223: // Regenerate document with signature
+Agreements.js:226: alert('✅ Agreement signed successfully!');
+Agreements.js:227: setShowSignModal(false);
+Agreements.js:230: alert('❌ Failed to sign: ' + (error.response?.data?.message || error.message));
+Agreements.js:270: subtitle="Manage, sign, and view your property agreements"
+Agreements.js:331: {/* Signature status */}
+Agreements.js:335: background: agreement.owner_signature ? '#dcfce7' : '#fef3c7',
+Agreements.js:336: color: agreement.owner_signature ? '#166534' : '#92400e'
+Agreements.js:338: {agreement.owner_signature ? '✅ Owner Signed' : '⏳ Owner Pending'}
+Agreements.js:342: background: agreement.customer_signature ? '#dcfce7' : '#fef3c7',
+Agreements.js:343: color: agreement.customer_signature ? '#166534' : '#92400e'
+Agreements.js:345: {agreement.customer_signature ? '✅ Customer Signed' : '⏳ Customer Pending'}
+Agreements.js:360: {/* Sign */}
+Agreements.js:362: (user.role === 'owner' && !agreement.owner_signature) ||
+Agreements.js:363: (user.role === 'user' && !agreement.customer_signature)
+Agreements.js:365: <button className="btn-success" onClick={() => handleSignAgreement(agreement)} disabled={actionLoading}>
+Agreements.js:366: 🖊️ Sign
+Agreements.js:416: (user.role === 'owner' && !selectedAgreement.owner_signature) ||
+Agreements.js:417: (user.role === 'user' && !selectedAgreement.customer_signature)
+Agreements.js:419: <button className="btn-success" onClick={() => { setShowDocumentModal(false); handleSignAgreement(selectedAgreement); }}>🖊️ Sign Agreement</button>
+Agreements.js:482: {/* ===== SIGN MODAL ===== */}
+Agreements.js:483: {showSignModal && selectedAgreement && (
+Agreements.js:484: <div className="modal-overlay" onClick={() => setShowSignModal(false)}>
+Agreements.js:487: <h2>🖊️ Sign Agreement</h2>
+Agreements.js:488: <button className="close-btn" onClick={() => setShowSignModal(false)}>✕</button>
+Agreements.js:491: Sign agreement <strong>#{selectedAgreement.id}</strong> for <strong>{selectedAgreement.property_title}</strong>
+Agreements.js:494: <button className={`mode-btn ${signatureType === 'draw' ? 'active' : ''}`}
+Agreements.js:495: onClick={() => { setSignatureType('draw'); setTimeout(initCanvas, 50); }}
+Agreements.js:496: style={{ padding: '8px 16px', borderRadius: '8px', border: signatureType === 'draw' ? '2px solid #3b82f6' : '1px solid #e2e8f0', background: signatureType === 'draw' ? '#eff6ff' : '#fff', cursor: 'pointer' }}>
+Agreements.js:499: <button className={`mode-btn ${signatureType === 'type' ? 'active' : ''}`}
+Agreements.js:500: onClick={() => setSignatureType('type')}
+Agreements.js:501: style={{ padding: '8px 16px', borderRadius: '8px', border: signatureType === 'type' ? '2px solid #3b82f6' : '1px solid #e2e8f0', background: signatureType === 'type' ? '#eff6ff' : '#fff', cursor: 'pointer' }}>
+Agreements.js:505: {signatureType === 'draw' ? (
+Agreements.js:520: <input type="text" value={typedSignature}
+Agreements.js:521: onChange={(e) => setTypedSignature(e.target.value)}
+Agreements.js:522: placeholder="Type your full name as signature"
+Agreements.js:528: {typedSignature && (
+Agreements.js:533: {typedSignature}
+Agreements.js:539: <button type="button" className="btn-secondary" onClick={() => setShowSignModal(false)}>Cancel</button>
+Agreements.js:540: <button type="button" className="btn-success" onClick={handleSubmitSignature} disabled={actionLoading}>
+Agreements.js:541: {actionLoading ? '⏳ Signing...' : '✅ Confirm Signature'}
+AgreementWorkflow.js:15: { num: 5, label: "Buyer Signs", icon: "✍️" },
+AgreementWorkflow.js:16: { num: 6, label: "Owner Signs", icon: "✍️" },
+AgreementWorkflow.js:78: buyer_signed: {
+AgreementWorkflow.js:80: label: "Buyer Signed",
+AgreementWorkflow.js:84: fully_signed: {
+AgreementWorkflow.js:283: case "buyer_sign":
+AgreementWorkflow.js:284: url = `${API}/${id}/buyer-sign`;
+AgreementWorkflow.js:288: case "owner_sign":
+AgreementWorkflow.js:289: url = `${API}/${id}/owner-sign`;
+AgreementWorkflow.js:435: {/* ── Signature Status ── */}
+AgreementWorkflow.js:438: <span className={agr.buyer_signed ? "signed" : "unsigned"}>
+AgreementWorkflow.js:439: {agr.buyer_signed ? "✅" : "⬜"} Buyer{" "}
+AgreementWorkflow.js:440: {agr.buyer_signed ? "Signed" : "Not Signed"}
+AgreementWorkflow.js:442: <span className={agr.owner_signed ? "signed" : "unsigned"}>
+AgreementWorkflow.js:443: {agr.owner_signed ? "✅" : "⬜"} Owner{" "}
+AgreementWorkflow.js:444: {agr.owner_signed ? "Signed" : "Not Signed"}
+AgreementWorkflow.js:539: {isOwner && agr.status === "buyer_signed" && (
+AgreementWorkflow.js:542: onClick={() => openModal(agr, "owner_sign")}
+AgreementWorkflow.js:544: ✍️ Sign Agreement
+AgreementWorkflow.js:562: onClick={() => openModal(agr, "buyer_sign")}
+AgreementWorkflow.js:564: ✍️ Sign Agreement
+AgreementWorkflow.js:567: {isBuyer && agr.status === "fully_signed" && (
+AgreementWorkflow.js:583: {["agreement_generated", "buyer_signed", "fully_signed", "payment_submitted", "payment_verified", "handover_confirmed"].includes(agr.status) && (
+AgreementWorkflow.js:655: <strong>Buyer Signed</strong>
+AgreementWorkflow.js:656: <span>{a.buyer_signed ? "✅ Yes" : "❌ No"}</span>
+AgreementWorkflow.js:659: <strong>Owner Signed</strong>
+AgreementWorkflow.js:660: <span>{a.owner_signed ? "✅ Yes" : "❌ No"}</span>
+AgreementWorkflow.js:1672: if (modalType === "buyer_sign") {
+AgreementWorkflow.js:1677: <h3>Digitally Sign Agreement</h3>
+AgreementWorkflow.js:1679: By clicking confirm, you digitally sign this agreement. After you
+AgreementWorkflow.js:1680: sign, the owner will be notified to add their signature.
+AgreementWorkflow.js:1699: ⚠️ You must view the PDF agreement before you can sign.
+AgreementWorkflow.js:1708: if (modalType === "owner_sign") {
+AgreementWorkflow.js:1713: <h3>Sign as Owner</h3>
+AgreementWorkflow.js:1715: The buyer has already signed. By signing, the contract becomes
+AgreementWorkflow.js:1720: ✅ <strong>Buyer Signed:</strong>{" "}
+AgreementWorkflow.js:1721: {selectedAgreement?.buyer_signed_date
+AgreementWorkflow.js:1723: selectedAgreement.buyer_signed_date,
+AgreementWorkflow.js:1738: ⚠️ After both signatures, the contract is locked.
+AgreementWorkflow.js:1742: ⚠️ You must view the PDF agreement before you can sign.
+AgreementWorkflow.js:1754: 💰 The contract is signed. Submit your payment details below.
+AgreementWorkflow.js:2008: buyer_sign: "✍️ Sign Agreement",
+AgreementWorkflow.js:2009: owner_sign: "✍️ Sign as Owner",
+AgreementWorkflow.js:2078: ((modalType === "buyer_sign" || modalType === "owner_sign") && !viewedAgreements[selectedAgreement?.id])
+AIPriceComparison.js:81: indicator = 'significant';
+AIPriceComparison.js:83: indicatorLabel = '❌ Significant Discrepancy';
+BrokerEngagement.js:19: pending_signatures: { emoji: "✍️", label: "Pending Signatures", color: "#6366f1" },
+BrokerEngagement.js:20: fully_signed: { emoji: "🔒", label: "Fully Signed", color: "#059669" },
+BrokerEngagement.js:41: const [signatures, setSignatures] = useState([]);
+BrokerEngagement.js:97: setSignatures(res.data.signatures || []);
+BrokerEngagement.js:133: setSignatures([]);
+BrokerEngagement.js:308: case "sign":
+BrokerEngagement.js:309: url = `${API}/${id}/sign`;
+BrokerEngagement.js:312: signer_id: user.id,
+BrokerEngagement.js:313: signer_role: isBuyer ? "buyer" : isBroker ? "broker" : "owner",
+BrokerEngagement.js:314: signature_data: "digital_signature_" + user.name + "_" + Date.now(),
+BrokerEngagement.js:469: // Any party: sign (when pending_signatures)
+BrokerEngagement.js:470: if (eng.status === "pending_signatures") {
+BrokerEngagement.js:473: const hasSigned = eng.signed_roles && eng.signed_roles.includes(myRole);
+BrokerEngagement.js:474: if (hasSigned) {
+BrokerEngagement.js:476: <button key="sign" className="eng-btn eng-btn-outline" disabled style={{ cursor: "not-allowed", opacity: 0.7, background: "#f8fafc" }}>
+BrokerEngagement.js:477: ✅ Signed
+BrokerEngagement.js:482: <button key="sign" className="eng-btn eng-btn-success" onClick={() => openModal("sign", eng)}>
+BrokerEngagement.js:483: ✍️ Sign Contract
+BrokerEngagement.js:490: // Buyer: pay now (after fully_signed or if payment_rejected)
+BrokerEngagement.js:491: if (isBuyer && (eng.status === "fully_signed" || eng.status === "payment_rejected")) {
+BrokerEngagement.js:540: if (["pending_signatures", "fully_signed", "payment_submitted", "payment_rejected", "payment_verified", "handover_confirmed", "completed"].includes(eng.status)) {
+BrokerEngagement.js:628: {/* Signature status */}
+BrokerEngagement.js:629: {["pending_signatures", "fully_signed", "completed"].includes(eng.status) && (
+BrokerEngagement.js:631: <div className={`sig-item ${eng.status === "fully_signed" || eng.status === "completed" ? "signed" : "unsigned"}`}>
+BrokerEngagement.js:634: <div className={`sig-item ${eng.status === "fully_signed" || eng.status === "completed" ? "signed" : "unsigned"}`}>
+BrokerEngagement.js:637: <div className={`sig-item ${eng.status === "fully_signed" || eng.status === "completed" ? "signed" : "unsigned"}`}>
+BrokerEngagement.js:897: Clicking "Finalize" will notify the admin to generate the contract for all three parties to sign.
+BrokerEngagement.js:912: All three parties will need to sign in order: Buyer → Broker → Owner.
+BrokerEngagement.js:917: case "sign":
+BrokerEngagement.js:921: <h4 style={{ margin: "0 0 8px", color: "#1e293b" }}>Digital Signature</h4>
+BrokerEngagement.js:923: By signing, you agree to the terms of the contract for the agreed price of{" "}
+BrokerEngagement.js:927: Signing as: <strong>{user.name}</strong> ({isBuyer ? "Buyer" : isBroker ? "Broker" : "Owner"})
+BrokerEngagement.js:1111: {/* Signatures */}
+BrokerEngagement.js:1112: {signatures.length > 0 && (
+BrokerEngagement.js:1114: <h4 style={{ fontSize: 14, fontWeight: 700, marginBottom: 8, color: "#1e293b" }}>✍️ Signatures</h4>
+BrokerEngagement.js:1117: const sig = signatures.find((s) => s.signer_role === role);
+BrokerEngagement.js:1119: <div key={role} className={`sig-item ${sig ? "signed" : "unsigned"}`}>
+BrokerEngagement.js:1121: {sig && <div className="sig-time">{new Date(sig.signed_at).toLocaleString()}</div>}
+BrokerEngagement.js:1273: case "sign": return "✍️ Sign Contract";
+Brokers.js:143: <p>🆔 License: {broker.license_number || 'Not assigned'}</p>
+Brokers.js:248: <div style={{ fontWeight: '600', color: '#1e40af' }}>{selectedBroker.license_number || 'Not assigned'}</div>
+PaymentConfirmation.js:76: <p>Confirm payment before signing the agreement</p>
+PaymentConfirmation.js:162: <li>✓ Payment must be confirmed before agreement signing</li>

@@ -1,0 +1,53 @@
+.transactions {
+  max-width: 1400px;
+}
+
+.amount {
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.type-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.type-badge.sale {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.type-badge.rent {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.type-badge.installment {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 96%;
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .btn-primary,
+  .btn-success,
+  .btn-danger {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}

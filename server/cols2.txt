@@ -1,0 +1,1 @@
+id, title, description, price, location, address, city, state, zip_code, latitude, longitude, type, bedrooms, bathrooms, area, images, main_image, features, status, broker_id, owner_id, property_admin_id, listing_date, expiry_date, verified, verification_date, views, favorites, created_at, updated_at
