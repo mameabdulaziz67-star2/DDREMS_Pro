@@ -354,13 +354,17 @@ for (const [path_, router] of routes) {
   }
 }
 
-// ── Serve React frontend in production ────────────────────────
-if (process.env.NODE_ENV === "production") {
-  const buildPath = path.join(__dirname, "../client/build");
+// ── Serve React frontend ──────────────────────────────────────
+const buildPath = path.join(__dirname, "../client/build");
+const fs = require("fs");
+if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
   app.get("*", (req, res) => {
     res.sendFile(path.join(buildPath, "index.html"));
   });
+  console.log(`[STATIC] Serving React build from ${buildPath}`);
+} else {
+  console.warn(`[STATIC] Build directory not found at ${buildPath} — React frontend will not be served`);
 }
 
 // ── Global error handler ──────────────────────────────────────
