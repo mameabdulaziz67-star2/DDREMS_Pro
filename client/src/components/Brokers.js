@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import './Brokers.css';
 import PageHeader from './PageHeader';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 const Brokers = ({ user, onLogout }) => {
   const [brokers, setBrokers] = useState([]);
@@ -17,7 +18,7 @@ const Brokers = ({ user, onLogout }) => {
     license_number: ''
   });
 
-  const API_BASE = `http://${window.location.hostname}:5000/api`;
+  const API_BASE = `${API_BASE_URL}/api`;
 
   const fetchBrokers = useCallback(async () => {
     try {

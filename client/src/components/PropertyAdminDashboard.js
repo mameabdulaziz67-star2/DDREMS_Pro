@@ -16,7 +16,7 @@ import MessageNotificationWidget from "./MessageNotificationWidget";
 import AdminMessagesView from "./AdminMessagesView";
 import AgreementWorkflow from "./AgreementWorkflow";
 import AgreementManagement from "./AgreementManagement";
-const API_BASE = `http://${window.location.hostname}:5000/api`;
+const API_BASE = `${API_BASE_URL}/api`;
 
 const PropertyAdminDashboard = ({
   user,

@@ -108,7 +108,7 @@ const BrokersManagement = ({ onBack }) => {
   const handleEditBroker = async (e) => {
     e.preventDefault();
     try {
-      const API_BASE = `http://${window.location.hostname}:5000/api`;
+      const API_BASE = `${API_BASE_URL}/api`;
 
       // 1. Update User Account
       await axios.put(`${API_BASE}/users/update/${selectedBroker.user_id}`, {

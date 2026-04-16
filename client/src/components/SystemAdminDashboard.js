@@ -10,6 +10,7 @@ import {
   Legend
 } from 'chart.js';
 
+import API_BASE_URL from '../config/api';
 import ProfileApproval from './profiles/ProfileApproval';
 import Users from './Users';
 import AddBroker from './AddBroker';
@@ -21,7 +22,7 @@ import AgreementManagement from './AgreementManagement';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const API_BASE = `http://${window.location.hostname}:5000/api`;
+const API_BASE = `${API_BASE_URL}/api`;
 
 const SystemAdminDashboard = ({ user, onLogout, setCurrentPage }) => {
   const [currentView, setCurrentView] = useState('dashboard'); // dashboard, profileApproval, users

@@ -3,6 +3,7 @@ import './Users.css';
 import PageHeader from './PageHeader';
 import axios from 'axios';
 import AddUserModal from './AddUserModal';
+import API_BASE_URL from '../config/api';
 
 const Users = ({ user, onLogout, initialRole }) => {
   const [users, setUsers] = useState([]);
@@ -23,7 +24,7 @@ const Users = ({ user, onLogout, initialRole }) => {
   const [editForm, setEditForm] = useState({ name: '', email: '', role: '', status: '' });
   const [userProfile, setUserProfile] = useState(null);
 
-  const API_BASE = `http://${window.location.hostname}:5000/api`;
+  const API_BASE = `${API_BASE_URL}/api`;
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -63,7 +64,7 @@ const Users = ({ user, onLogout, initialRole }) => {
 
     if (u.role === 'user') {
       try {
-        const keyRes = await axios.get(`http://${window.location.hostname}:5000/api/key-requests/customer/${u.id}`);
+        const keyRes = await axios.get(`${API_BASE_URL}/api/key-requests/customer/${u.id}`);
         setSelectedUserKeyRequests(keyRes.data);
       } catch (err) {
         console.error('Error fetching user key requests:', err);

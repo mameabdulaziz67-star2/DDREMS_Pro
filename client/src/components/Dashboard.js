@@ -39,11 +39,11 @@ const Dashboard = ({ user, onLogout }) => {
 
   const fetchUnreadMessages = async () => {
     try {
-      const response = await axios.get(`$API_BASE_URL/api/messages/unread/${user.id}`);
+      const response = await axios.get(`${API_BASE_URL}/api/messages/unread/${user.id}`);
       setUnreadMessages(response.data.count || 0);
       
       // Also fetch recent notifications
-      const notifResponse = await axios.get(`$API_BASE_URL/api/messages/notifications/${user.id}`);
+      const notifResponse = await axios.get(`${API_BASE_URL}/api/messages/notifications/${user.id}`);
       setNotifications(notifResponse.data.notifications || []);
     } catch (error) {
       console.error('Error fetching unread messages:', error);
@@ -56,25 +56,25 @@ const Dashboard = ({ user, onLogout }) => {
     try {
       // 1. Fetch main stats
       try {
-        const statsRes = await axios.get('$API_BASE_URL/api/dashboard/stats');
+        const statsRes = await axios.get(`${API_BASE_URL}/api/dashboard/stats`);
         setStats(prev => ({ ...prev, ...statsRes.data }));
       } catch (err) { console.error('Stats error:', err); }
 
       // 2. Get pending approvals count
       try {
-        const pendingRes = await axios.get('$API_BASE_URL/api/properties/pending-verification');
+        const pendingRes = await axios.get(`${API_BASE_URL}/api/properties/pending-verification`);
         setStats(prev => ({ ...prev, pendingApprovals: pendingRes.data.length }));
       } catch (err) { console.error('Approvals error:', err); }
 
       // 3. Get pending profiles count
       try {
-        const pendingProfilesRes = await axios.get('$API_BASE_URL/api/profiles/pending');
+        const pendingProfilesRes = await axios.get(`${API_BASE_URL}/api/profiles/pending`);
         setStats(prev => ({ ...prev, pendingProfiles: pendingProfilesRes.data.total }));
       } catch (err) { console.error('Profiles error:', err); }
 
       // 4. Get activities
       try {
-        const activitiesRes = await axios.get('$API_BASE_URL/api/dashboard/activities');
+        const activitiesRes = await axios.get(`${API_BASE_URL}/api/dashboard/activities`);
         setActivities(activitiesRes.data);
       } catch (err) { console.error('Activities error:', err); }
 
@@ -103,8 +103,7 @@ const Dashboard = ({ user, onLogout }) => {
       value: stats.pendingApprovals,
       icon: '⏳',
       color: '#f59e0b',
-      bgColor: '#fef3c7',
-      onClick: () => setCurrentView('approval')
+      bgColor: '#fef3c7'
     },
     {
       title: 'Pending Profiles',

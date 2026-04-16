@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './AddUserModal.css';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 const AddUserModal = ({ onClose, onSuccess, initialRole }) => {
   const [formData, setFormData] = useState({
@@ -12,7 +13,7 @@ const AddUserModal = ({ onClose, onSuccess, initialRole }) => {
   });
   const [submitting, setSubmitting] = useState(false);
 
-  const API_BASE = `http://${window.location.hostname}:5000/api`;
+  const API_BASE = `${API_BASE_URL}/api`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();

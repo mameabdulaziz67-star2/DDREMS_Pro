@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 const KeyRequests = ({ user }) => {
   const [requests, setRequests] = useState([]);
@@ -15,19 +16,18 @@ const KeyRequests = ({ user }) => {
 
         if (user.role === 'property_admin') {
           const [pending, history] = await Promise.all([
-            axios.get(`http://${window.location.hostname}:5000/api/key-requests/admin/pending`),
-            axios.get(`http://${window.location.hostname}:5000/api/key-requests/admin/history`)
+            axios.get(`${API_BASE_URL}/api/key-requests/admin/pending`),
+            axios.get(`${API_BASE_URL}/api/key-requests/admin/history`)
           ]);
           setRequests([...pending.data, ...history.data]);
         } else if (user.role === 'broker') {
-          response = await axios.get(`http://${window.location.hostname}:5000/api/key-requests/broker/${user.id}`);
+          response = await axios.get(`${API_BASE_URL}/api/key-requests/broker/${user.id}`);
           setRequests(response.data);
         } else if (user.role === 'user') {
-          response = await axios.get(`http://${window.location.hostname}:5000/api/key-requests/customer/${user.id}`);
+          response = await axios.get(`${API_BASE_URL}/api/key-requests/customer/${user.id}`);
           setRequests(response.data);
         } else if (user.role === 'owner') {
-          // owners currently may not have a dedicated route; show customer style by default
-          response = await axios.get(`http://${window.location.hostname}:5000/api/key-requests/customer/${user.id}`);
+          response = await axios.get(`${API_BASE_URL}/api/key-requests/customer/${user.id}`);
           setRequests(response.data);
         } else {
           setRequests([]);
