@@ -1351,7 +1351,17 @@ router.get("/:id/history", async (req, res) => {
 router.get("/buyer/:buyerId", async (req, res) => {
   try {
     const [engagements] = await db.query(
-      "SELECT * FROM v_broker_engagements WHERE buyer_id = ? ORDER BY created_at DESC",
+      `SELECT be.*,
+        buyer.name as buyer_name, buyer.email as buyer_email,
+        broker.name as broker_name, broker.email as broker_email,
+        owner.name as owner_name,
+        p.title as property_title, p.location as property_location, p.price as property_price
+       FROM broker_engagements be
+       LEFT JOIN users buyer ON be.buyer_id = buyer.id
+       LEFT JOIN users broker ON be.broker_id = broker.id
+       LEFT JOIN users owner ON be.owner_id = owner.id
+       LEFT JOIN properties p ON be.property_id = p.id
+       WHERE be.buyer_id = ? ORDER BY be.created_at DESC`,
       [req.params.buyerId]
     );
     res.json({ success: true, engagements });
@@ -1368,7 +1378,17 @@ router.get("/buyer/:buyerId", async (req, res) => {
 router.get("/broker/:brokerId", async (req, res) => {
   try {
     const [engagements] = await db.query(
-      "SELECT * FROM v_broker_engagements WHERE broker_id = ? ORDER BY created_at DESC",
+      `SELECT be.*,
+        buyer.name as buyer_name, buyer.email as buyer_email,
+        broker.name as broker_name, broker.email as broker_email,
+        owner.name as owner_name,
+        p.title as property_title, p.location as property_location, p.price as property_price
+       FROM broker_engagements be
+       LEFT JOIN users buyer ON be.buyer_id = buyer.id
+       LEFT JOIN users broker ON be.broker_id = broker.id
+       LEFT JOIN users owner ON be.owner_id = owner.id
+       LEFT JOIN properties p ON be.property_id = p.id
+       WHERE be.broker_id = ? ORDER BY be.created_at DESC`,
       [req.params.brokerId]
     );
     res.json({ success: true, engagements });
@@ -1385,7 +1405,17 @@ router.get("/broker/:brokerId", async (req, res) => {
 router.get("/owner/:ownerId", async (req, res) => {
   try {
     const [engagements] = await db.query(
-      "SELECT * FROM v_broker_engagements WHERE owner_id = ? ORDER BY created_at DESC",
+      `SELECT be.*,
+        buyer.name as buyer_name, buyer.email as buyer_email,
+        broker.name as broker_name, broker.email as broker_email,
+        owner.name as owner_name,
+        p.title as property_title, p.location as property_location, p.price as property_price
+       FROM broker_engagements be
+       LEFT JOIN users buyer ON be.buyer_id = buyer.id
+       LEFT JOIN users broker ON be.broker_id = broker.id
+       LEFT JOIN users owner ON be.owner_id = owner.id
+       LEFT JOIN properties p ON be.property_id = p.id
+       WHERE be.owner_id = ? ORDER BY be.created_at DESC`,
       [req.params.ownerId]
     );
     res.json({ success: true, engagements });
@@ -1402,7 +1432,17 @@ router.get("/owner/:ownerId", async (req, res) => {
 router.get("/admin/all", async (req, res) => {
   try {
     const [engagements] = await db.query(
-      "SELECT * FROM v_broker_engagements ORDER BY created_at DESC"
+      `SELECT be.*,
+        buyer.name as buyer_name, buyer.email as buyer_email,
+        broker.name as broker_name, broker.email as broker_email,
+        owner.name as owner_name,
+        p.title as property_title, p.location as property_location, p.price as property_price
+       FROM broker_engagements be
+       LEFT JOIN users buyer ON be.buyer_id = buyer.id
+       LEFT JOIN users broker ON be.broker_id = broker.id
+       LEFT JOIN users owner ON be.owner_id = owner.id
+       LEFT JOIN properties p ON be.property_id = p.id
+       ORDER BY be.created_at DESC`
     );
     res.json({ success: true, engagements });
   } catch (error) {
