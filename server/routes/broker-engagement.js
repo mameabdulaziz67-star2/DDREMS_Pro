@@ -104,6 +104,7 @@ router.post("/hire", async (req, res) => {
 
     // Create engagement
     const offer = starting_offer || property[0].price;
+    console.log(`[HIRE] buyer=${buyer_id} broker=${broker_id} property=${property_id} owner=${owner_id}`);
     const [result] = await db.query(
       `INSERT INTO broker_engagements
          (buyer_id, broker_id, property_id, owner_id, status, starting_offer, current_offer, buyer_message,
@@ -1220,9 +1221,10 @@ router.get("/buyer/:buyerId", async (req, res) => {
   }
 });
 
-// GET /api/broker-engagement/broker/:brokerId
 router.get("/broker/:brokerId", async (req, res) => {
   try {
+    const brokerId = parseInt(req.params.brokerId);
+    console.log(`[BROKER-ENG] Fetching engagements for broker user_id: ${brokerId}`);
     const [engagements] = await db.query(
       `SELECT be.*,
         buyer.name as buyer_name, buyer.email as buyer_email,
@@ -1235,10 +1237,12 @@ router.get("/broker/:brokerId", async (req, res) => {
        LEFT JOIN users owner ON be.owner_id = owner.id
        LEFT JOIN properties p ON be.property_id = p.id
        WHERE be.broker_id = ? ORDER BY be.created_at DESC`,
-      [req.params.brokerId]
+      [brokerId]
     );
+    console.log(`[BROKER-ENG] Found ${engagements.length} engagements for broker ${brokerId}`);
     res.json({ success: true, engagements });
   } catch (error) {
+    console.error("Error fetching broker engagements:", error);
     res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 });
