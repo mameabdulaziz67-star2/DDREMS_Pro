@@ -42,9 +42,19 @@ const LoginForm = ({ onLogin, onShowRegister }) => {
   return (
     <div className="login-container">
       <div className="login-card">
-        <div className="login-header">
-          <h1>🏢 DDREMS</h1>
-          <p>Dire Dawa Real Estate Management System</p>
+        <div className="login-logo">
+          <div className="logo-icon">
+            <div className="buildings">
+              <div className="building"></div>
+              <div className="building"></div>
+              <div className="building"></div>
+            </div>
+            <div className="wave"></div>
+          </div>
+          <div className="logo-text">
+            <h1>DD<span className="highlight">REMS</span></h1>
+            <p>Dire Dawa Real Estate Management System</p>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -52,24 +62,30 @@ const LoginForm = ({ onLogin, onShowRegister }) => {
           
           <div className="form-group">
             <label>Email Address</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@ddrems.com"
-              required
-            />
+            <div className="input-wrapper">
+              <span className="input-icon">✉️</span>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@ddrems.com"
+                required
+              />
+            </div>
           </div>
 
           <div className="form-group">
             <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              required
-            />
+            <div className="input-wrapper">
+              <span className="input-icon">🔒</span>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+              />
+            </div>
           </div>
 
           <button type="submit" className="login-btn" disabled={loading}>
@@ -77,18 +93,19 @@ const LoginForm = ({ onLogin, onShowRegister }) => {
           </button>
         </form>
 
-        <div className="login-footer">
-          <p>Demo: admin@ddrems.com / admin123</p>
-          <div className="register-section">
-            <p>Don't have an account?</p>
-            <button 
-              type="button"
-              className="btn-show-register" 
-              onClick={onShowRegister}
-            >
-              Create Account
-            </button>
-          </div>
+        <div className="demo-info">
+          <p><strong>Demo:</strong> admin@ddrems.com / admin123</p>
+        </div>
+
+        <div className="register-section">
+          <p>Don't have an account?</p>
+          <button 
+            type="button"
+            className="btn-create-account" 
+            onClick={onShowRegister}
+          >
+            Create Account
+          </button>
         </div>
       </div>
     </div>
