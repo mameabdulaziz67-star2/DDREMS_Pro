@@ -405,6 +405,28 @@ async function runMigrations() {
         status VARCHAR(20) DEFAULT 'pending',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
+      `CREATE TABLE IF NOT EXISTS agreement_workflow_history (
+        id SERIAL PRIMARY KEY,
+        agreement_request_id INT REFERENCES agreement_requests(id) ON DELETE CASCADE,
+        step_number INT,
+        step_name VARCHAR(100),
+        action VARCHAR(50),
+        action_by_id INT REFERENCES users(id) ON DELETE SET NULL,
+        previous_status VARCHAR(50),
+        new_status VARCHAR(50),
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS agreement_notifications (
+        id SERIAL PRIMARY KEY,
+        agreement_request_id INT REFERENCES agreement_requests(id) ON DELETE CASCADE,
+        recipient_id INT REFERENCES users(id) ON DELETE CASCADE,
+        notification_type VARCHAR(50),
+        notification_title VARCHAR(255),
+        notification_message TEXT,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
     ];
 
     for (const sql of tables) {
@@ -455,7 +477,29 @@ async function runMigrations() {
          END IF;
        END $$`,
       `ALTER TABLE broker_engagements ALTER COLUMN status TYPE VARCHAR(50)`,
-    ];
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS customer_id INT REFERENCES users(id) ON DELETE CASCADE`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS owner_id INT REFERENCES users(id) ON DELETE SET NULL`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS property_admin_id INT REFERENCES users(id) ON DELETE SET NULL`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS current_step INT DEFAULT 1`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS customer_notes TEXT`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS property_price DECIMAL(15,2)`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS proposed_price DECIMAL(15,2)`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS move_in_date DATE`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS agreement_type VARCHAR(20) DEFAULT 'sale'`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS rental_duration_months INT`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS payment_schedule VARCHAR(20)`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS security_deposit DECIMAL(15,2)`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS admin_notes TEXT`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS owner_decision VARCHAR(20)`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS owner_decision_date TIMESTAMP`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS owner_notes TEXT`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS forwarded_to_owner_date TIMESTAMP`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS responded_at TIMESTAMP`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS responded_by INT REFERENCES users(id) ON DELETE SET NULL`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS response_message TEXT`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS admin_action INT`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS admin_action_date TIMESTAMP`,
+      `ALTER TABLE agreement_requests ALTER COLUMN status TYPE VARCHAR(50)`,    ];
     for (const sql of alterations) {
       await client.query(sql);
     }    // Seed default users
