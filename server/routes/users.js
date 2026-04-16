@@ -5,7 +5,7 @@ const db = require('../config/db');
 // Get all users
 router.get('/', async (req, res) => {
   try {
-    const [users] = await db.query('SELECT id, name, email, role, status, profile_approved, created_at FROM users ORDER BY created_at DESC');
+    const [users] = await db.query('SELECT id, name, email, role, status, phone, created_at FROM users ORDER BY created_at DESC');
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -60,7 +60,6 @@ router.put('/update/:id', async (req, res) => {
     if (email !== undefined) { updates.push('email = ?'); params.push(email); }
     if (role !== undefined) { updates.push('role = ?'); params.push(role); }
     if (status !== undefined) { updates.push('status = ?'); params.push(status); }
-    if (profile_approved !== undefined) { updates.push('profile_approved = ?'); params.push(!!profile_approved); }
 
     if (updates.length === 0) {
       return res.status(400).json({ message: 'No fields to update' });
@@ -81,10 +80,8 @@ router.put('/update/:id', async (req, res) => {
 // Legacy/Rest update for compatibility
 router.put('/:id', async (req, res) => {
   try {
-    const { name, email, role, status, profile_approved } = req.body;
+    const { name, email, role, status } = req.body;
     const userId = req.params.id;
-
-    console.log(`[USER-API] Legacy PUT received for ID: ${userId}`, req.body);
 
     const updates = [];
     const params = [];
@@ -93,7 +90,6 @@ router.put('/:id', async (req, res) => {
     if (email !== undefined) { updates.push('email = ?'); params.push(email); }
     if (role !== undefined) { updates.push('role = ?'); params.push(role); }
     if (status !== undefined) { updates.push('status = ?'); params.push(status); }
-    if (profile_approved !== undefined) { updates.push('profile_approved = ?'); params.push(!!profile_approved); }
 
     if (updates.length === 0) return res.status(400).json({ message: 'No fields to update' });
 
@@ -128,7 +124,7 @@ router.post('/add', async (req, res) => {
 
     // Insert user
     const [result] = await db.query(
-      "INSERT INTO users (name, email, password, phone, role, status, profile_approved, profile_completed) VALUES (?, ?, ?, ?, ?, 'active', FALSE, FALSE)",
+      "INSERT INTO users (name, email, password, phone, role, status) VALUES (?, ?, ?, ?, ?, 'active')",
       [name, email, hashedPassword, phone || null, role]
     );
 
