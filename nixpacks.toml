@@ -3,6 +3,10 @@ CI = "false"
 DISABLE_ESLINT_PLUGIN = "true"
 NODE_OPTIONS = "--max-old-space-size=4096"
 NODE_ENV = "production"
+# Empty string = relative URLs, so frontend calls same domain as backend
+REACT_APP_API_URL = ""
+# Fallback JWT secret — override this in Railway dashboard with a strong secret
+JWT_SECRET = "ddrems_jwt_secret_change_in_production"
 
 [phases.install]
 cmds = ["npm ci"]
