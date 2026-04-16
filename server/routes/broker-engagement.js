@@ -1196,6 +1196,99 @@ router.put("/:id/sign", async (req, res) => {
 });
 
 // ============================================================================
+// GET /api/broker-engagement/buyer/:buyerId
+// ============================================================================
+router.get("/buyer/:buyerId", async (req, res) => {
+  try {
+    const [engagements] = await db.query(
+      `SELECT be.*,
+        buyer.name as buyer_name, buyer.email as buyer_email,
+        broker.name as broker_name, broker.email as broker_email,
+        owner.name as owner_name,
+        p.title as property_title, p.location as property_location, p.price as property_price
+       FROM broker_engagements be
+       LEFT JOIN users buyer ON be.buyer_id = buyer.id
+       LEFT JOIN users broker ON be.broker_id = broker.id
+       LEFT JOIN users owner ON be.owner_id = owner.id
+       LEFT JOIN properties p ON be.property_id = p.id
+       WHERE be.buyer_id = ? ORDER BY be.created_at DESC`,
+      [req.params.buyerId]
+    );
+    res.json({ success: true, engagements });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+});
+
+// GET /api/broker-engagement/broker/:brokerId
+router.get("/broker/:brokerId", async (req, res) => {
+  try {
+    const [engagements] = await db.query(
+      `SELECT be.*,
+        buyer.name as buyer_name, buyer.email as buyer_email,
+        broker.name as broker_name, broker.email as broker_email,
+        owner.name as owner_name,
+        p.title as property_title, p.location as property_location, p.price as property_price
+       FROM broker_engagements be
+       LEFT JOIN users buyer ON be.buyer_id = buyer.id
+       LEFT JOIN users broker ON be.broker_id = broker.id
+       LEFT JOIN users owner ON be.owner_id = owner.id
+       LEFT JOIN properties p ON be.property_id = p.id
+       WHERE be.broker_id = ? ORDER BY be.created_at DESC`,
+      [req.params.brokerId]
+    );
+    res.json({ success: true, engagements });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+});
+
+// GET /api/broker-engagement/owner/:ownerId
+router.get("/owner/:ownerId", async (req, res) => {
+  try {
+    const [engagements] = await db.query(
+      `SELECT be.*,
+        buyer.name as buyer_name, buyer.email as buyer_email,
+        broker.name as broker_name, broker.email as broker_email,
+        owner.name as owner_name,
+        p.title as property_title, p.location as property_location, p.price as property_price
+       FROM broker_engagements be
+       LEFT JOIN users buyer ON be.buyer_id = buyer.id
+       LEFT JOIN users broker ON be.broker_id = broker.id
+       LEFT JOIN users owner ON be.owner_id = owner.id
+       LEFT JOIN properties p ON be.property_id = p.id
+       WHERE be.owner_id = ? ORDER BY be.created_at DESC`,
+      [req.params.ownerId]
+    );
+    res.json({ success: true, engagements });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+});
+
+// GET /api/broker-engagement/admin/all
+router.get("/admin/all", async (req, res) => {
+  try {
+    const [engagements] = await db.query(
+      `SELECT be.*,
+        buyer.name as buyer_name, buyer.email as buyer_email,
+        broker.name as broker_name, broker.email as broker_email,
+        owner.name as owner_name,
+        p.title as property_title, p.location as property_location, p.price as property_price
+       FROM broker_engagements be
+       LEFT JOIN users buyer ON be.buyer_id = buyer.id
+       LEFT JOIN users broker ON be.broker_id = broker.id
+       LEFT JOIN users owner ON be.owner_id = owner.id
+       LEFT JOIN properties p ON be.property_id = p.id
+       ORDER BY be.created_at DESC`
+    );
+    res.json({ success: true, engagements });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+});
+
+// ============================================================================
 // GET /api/broker-engagement/:id
 // Get engagement details
 // ============================================================================
@@ -1203,7 +1296,20 @@ router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const [engagement] = await db.query("SELECT * FROM v_broker_engagements WHERE id = ?", [id]);
+    const [engagement] = await db.query(
+      `SELECT be.*,
+        buyer.name as buyer_name, buyer.email as buyer_email,
+        broker.name as broker_name, broker.email as broker_email,
+        owner.name as owner_name,
+        p.title as property_title, p.location as property_location, p.price as property_price
+       FROM broker_engagements be
+       LEFT JOIN users buyer ON be.buyer_id = buyer.id
+       LEFT JOIN users broker ON be.broker_id = broker.id
+       LEFT JOIN users owner ON be.owner_id = owner.id
+       LEFT JOIN properties p ON be.property_id = p.id
+       WHERE be.id = ?`,
+      [id]
+    );
     if (engagement.length === 0) return res.status(404).json({ success: false, message: "Engagement not found" });
 
     // Get signatures
@@ -1348,109 +1454,6 @@ router.get("/:id/history", async (req, res) => {
 // GET /api/broker-engagement/buyer/:buyerId
 // Get buyer's engagements
 // ============================================================================
-router.get("/buyer/:buyerId", async (req, res) => {
-  try {
-    const [engagements] = await db.query(
-      `SELECT be.*,
-        buyer.name as buyer_name, buyer.email as buyer_email,
-        broker.name as broker_name, broker.email as broker_email,
-        owner.name as owner_name,
-        p.title as property_title, p.location as property_location, p.price as property_price
-       FROM broker_engagements be
-       LEFT JOIN users buyer ON be.buyer_id = buyer.id
-       LEFT JOIN users broker ON be.broker_id = broker.id
-       LEFT JOIN users owner ON be.owner_id = owner.id
-       LEFT JOIN properties p ON be.property_id = p.id
-       WHERE be.buyer_id = ? ORDER BY be.created_at DESC`,
-      [req.params.buyerId]
-    );
-    res.json({ success: true, engagements });
-  } catch (error) {
-    console.error("Error fetching buyer engagements:", error);
-    res.status(500).json({ success: false, message: "Server error", error: error.message });
-  }
-});
-
-// ============================================================================
-// GET /api/broker-engagement/broker/:brokerId
-// Get broker's engagements
-// ============================================================================
-router.get("/broker/:brokerId", async (req, res) => {
-  try {
-    const [engagements] = await db.query(
-      `SELECT be.*,
-        buyer.name as buyer_name, buyer.email as buyer_email,
-        broker.name as broker_name, broker.email as broker_email,
-        owner.name as owner_name,
-        p.title as property_title, p.location as property_location, p.price as property_price
-       FROM broker_engagements be
-       LEFT JOIN users buyer ON be.buyer_id = buyer.id
-       LEFT JOIN users broker ON be.broker_id = broker.id
-       LEFT JOIN users owner ON be.owner_id = owner.id
-       LEFT JOIN properties p ON be.property_id = p.id
-       WHERE be.broker_id = ? ORDER BY be.created_at DESC`,
-      [req.params.brokerId]
-    );
-    res.json({ success: true, engagements });
-  } catch (error) {
-    console.error("Error fetching broker engagements:", error);
-    res.status(500).json({ success: false, message: "Server error", error: error.message });
-  }
-});
-
-// ============================================================================
-// GET /api/broker-engagement/owner/:ownerId
-// Get owner's engagements
-// ============================================================================
-router.get("/owner/:ownerId", async (req, res) => {
-  try {
-    const [engagements] = await db.query(
-      `SELECT be.*,
-        buyer.name as buyer_name, buyer.email as buyer_email,
-        broker.name as broker_name, broker.email as broker_email,
-        owner.name as owner_name,
-        p.title as property_title, p.location as property_location, p.price as property_price
-       FROM broker_engagements be
-       LEFT JOIN users buyer ON be.buyer_id = buyer.id
-       LEFT JOIN users broker ON be.broker_id = broker.id
-       LEFT JOIN users owner ON be.owner_id = owner.id
-       LEFT JOIN properties p ON be.property_id = p.id
-       WHERE be.owner_id = ? ORDER BY be.created_at DESC`,
-      [req.params.ownerId]
-    );
-    res.json({ success: true, engagements });
-  } catch (error) {
-    console.error("Error fetching owner engagements:", error);
-    res.status(500).json({ success: false, message: "Server error", error: error.message });
-  }
-});
-
-// ============================================================================
-// GET /api/broker-engagement/admin/all
-// Get all engagements for admin dashboard
-// ============================================================================
-router.get("/admin/all", async (req, res) => {
-  try {
-    const [engagements] = await db.query(
-      `SELECT be.*,
-        buyer.name as buyer_name, buyer.email as buyer_email,
-        broker.name as broker_name, broker.email as broker_email,
-        owner.name as owner_name,
-        p.title as property_title, p.location as property_location, p.price as property_price
-       FROM broker_engagements be
-       LEFT JOIN users buyer ON be.buyer_id = buyer.id
-       LEFT JOIN users broker ON be.broker_id = broker.id
-       LEFT JOIN users owner ON be.owner_id = owner.id
-       LEFT JOIN properties p ON be.property_id = p.id
-       ORDER BY be.created_at DESC`
-    );
-    res.json({ success: true, engagements });
-  } catch (error) {
-    console.error("Error fetching all engagements:", error);
-    res.status(500).json({ success: false, message: "Server error", error: error.message });
-  }
-});
-
 // ============================================================================
 // PUT /api/broker-engagement/:id/submit-payment
 // Buyer submits payment details (Step 7)
