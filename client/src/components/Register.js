@@ -75,8 +75,9 @@ const Register = ({ onBackToLogin }) => {
 
   return (
     <div className="register-container">
-      <div className="register-card">
-        <div className="register-logo">
+      <div className="register-content">
+        {/* Logo Section */}
+        <div className="register-logo-section">
           <div className="logo-icon">
             <div className="buildings">
               <div className="building"></div>
@@ -91,12 +92,13 @@ const Register = ({ onBackToLogin }) => {
           </div>
         </div>
 
-        <div className="register-title">
-          <h2>Join DDREMS</h2>
-          <p>Dire Dawa Real Estate Management System</p>
+        {/* Join Title */}
+        <div className="join-title">
+          <h2>Join DDREMS <span className="subtitle">- Dire Dawa Real Estate Management System</span></h2>
         </div>
 
-        <div className="form-section">
+        {/* Form Card */}
+        <div className="register-form-card">
           <h3>Create Account</h3>
 
           {error && (
@@ -153,21 +155,13 @@ const Register = ({ onBackToLogin }) => {
 
             <div className="form-group">
               <label>Register As</label>
-              <div className="role-options">
-                <label className="role-option">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="user"
-                    checked={formData.role === 'user'}
-                    onChange={handleChange}
-                  />
-                  <span className="radio-custom"></span>
-                  <span className="role-label">Customer - Browse and buy properties</span>
-                </label>
+              <div className="register-as-row">
+                <span className="radio-indicator">●</span>
+                <span className="role-text">Customer - Browse and buy properties</span>
               </div>
-              <div className="admin-note">
-                ℹ️ Admin accounts are created by the system only
+              <div className="admin-info">
+                <span className="info-icon">ℹ️</span>
+                <span>Admin accounts are created by the system only</span>
               </div>
             </div>
 
@@ -203,38 +197,40 @@ const Register = ({ onBackToLogin }) => {
             </div>
 
             <button type="submit" className="btn-create-account" disabled={loading}>
-              {loading ? '⏳ Creating Account...' : '✓ Create Account'}
+              <span className="btn-icon">✓</span>
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
 
-            <div className="already-account">
+            <div className="already-have-account">
               <p>Already have an account?</p>
-              <button type="button" className="btn-back-login" onClick={onBackToLogin}>
+              <button type="button" className="link-back" onClick={onBackToLogin}>
                 ← Back to Login
               </button>
             </div>
           </form>
         </div>
 
-        <div className="info-section">
+        {/* What Happens Section */}
+        <div className="what-happens-section">
           <h3>What happens after registration?</h3>
-          <div className="info-steps">
-            <div className="info-step">
+          <div className="steps-grid">
+            <div className="step-card">
               <div className="step-number">1</div>
-              <div className="step-content">
+              <div className="step-info">
                 <h4>Complete Your Profile</h4>
                 <p>After login, complete your profile with required documents</p>
               </div>
             </div>
-            <div className="info-step">
+            <div className="step-card">
               <div className="step-number">2</div>
-              <div className="step-content">
+              <div className="step-info">
                 <h4>Admin Approval</h4>
                 <p>Your profile will be reviewed and approved by our admin team</p>
               </div>
             </div>
-            <div className="info-step">
+            <div className="step-card">
               <div className="step-number">3</div>
-              <div className="step-content">
+              <div className="step-info">
                 <h4>Full Access</h4>
                 <p>Once approved, you'll have full access to all features</p>
               </div>
@@ -242,9 +238,10 @@ const Register = ({ onBackToLogin }) => {
           </div>
         </div>
 
-        <div className="footer-link">
+        {/* Bottom Link */}
+        <div className="bottom-link">
           <p>Already have an account?</p>
-          <button type="button" className="link-button" onClick={onBackToLogin}>
+          <button type="button" className="link-back" onClick={onBackToLogin}>
             ← Back to Login
           </button>
         </div>
