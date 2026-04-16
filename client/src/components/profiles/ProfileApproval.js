@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './ProfileApproval.css';
 import axios from 'axios';
+import API_BASE_URL from '../../config/api';
 
 const ProfileApproval = () => {
   const [profiles, setProfiles] = useState([]);
@@ -10,7 +11,7 @@ const ProfileApproval = () => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const API_BASE = `http://${window.location.hostname}:5000/api`;
+  const API_BASE = `${API_BASE_URL}/api`;
 
   useEffect(() => {
     fetchProfiles();
