@@ -430,6 +430,17 @@ async function runMigrations() {
       `ALTER TABLE broker_engagements ADD COLUMN IF NOT EXISTS buyer_auth_counter_price DECIMAL(15,2)`,
       `ALTER TABLE broker_engagements ADD COLUMN IF NOT EXISTS buyer_auth_message TEXT`,
       `ALTER TABLE broker_engagements ADD COLUMN IF NOT EXISTS buyer_authorized_at TIMESTAMP`,
+      // Drop old broker_id FK that references brokers table, re-add referencing users
+      `DO $$ BEGIN
+         IF EXISTS (
+           SELECT 1 FROM information_schema.table_constraints
+           WHERE table_name='broker_engagements' AND constraint_type='FOREIGN KEY'
+           AND constraint_name LIKE '%broker_id%'
+         ) THEN
+           ALTER TABLE broker_engagements DROP CONSTRAINT IF EXISTS broker_engagements_broker_id_fkey;
+         END IF;
+       END $$`,
+      `ALTER TABLE broker_engagements ALTER COLUMN status TYPE VARCHAR(50)`,
     ];
     for (const sql of alterations) {
       await client.query(sql);

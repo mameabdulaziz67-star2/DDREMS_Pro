@@ -148,7 +148,7 @@ router.post("/hire", async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating broker engagement:", error);
-    res.status(500).json({ success: false, message: "Server error", error: error.message });
+    res.status(500).json({ success: false, message: "Server error", error: error.message, detail: error.detail || null });
   }
 });
 
