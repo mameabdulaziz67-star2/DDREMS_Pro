@@ -31,12 +31,12 @@ router.post('/register', async (req, res) => {
 
     // Insert new user
     const [result] = await db.query(
-      'INSERT INTO users (name, email, phone, password, role, profile_approved, profile_completed) VALUES (?, ?, ?, ?, ?, FALSE, FALSE)',
-      [name, email, phone || null, hashedPassword, role]
+      'INSERT INTO users (name, email, phone, password, role, status) VALUES (?, ?, ?, ?, ?, ?)',
+      [name, email, phone || null, hashedPassword, role, 'active']
     );
 
     res.status(201).json({
-      message: 'Registration successful! Please login and complete your profile.',
+      message: 'Registration successful! Please login.',
       userId: result.insertId
     });
   } catch (error) {
@@ -64,28 +64,12 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Get profile image based on role
-    let profileImage = user.profile_image; // Default from users table
-
-    if (user.role === 'user') {
-      // Get from customer_profiles
-      const [customerProfiles] = await db.query("SELECT profile_photo FROM customer_profiles WHERE user_id = ? AND profile_status = 'approved'", [user.id]);
-      if (customerProfiles.length > 0 && customerProfiles[0].profile_photo) {
-        profileImage = customerProfiles[0].profile_photo;
-      }
-    } else if (user.role === 'owner') {
-      // Get from owner_profiles
-      const [ownerProfiles] = await db.query("SELECT profile_photo FROM owner_profiles WHERE user_id = ? AND profile_status = 'approved'", [user.id]);
-      if (ownerProfiles.length > 0 && ownerProfiles[0].profile_photo) {
-        profileImage = ownerProfiles[0].profile_photo;
-      }
-    } else if (user.role === 'broker') {
-      // Get from broker_profiles
-      const [brokerProfiles] = await db.query("SELECT profile_photo FROM broker_profiles WHERE user_id = ? AND profile_status = 'approved'", [user.id]);
-      if (brokerProfiles.length > 0 && brokerProfiles[0].profile_photo) {
-        profileImage = brokerProfiles[0].profile_photo;
-      }
-    }
+    // Get profile image from profiles table if available
+    let profileImage = null;
+    try {
+      const [profiles] = await db.query('SELECT profile_image FROM profiles WHERE user_id = ?', [user.id]);
+      if (profiles.length > 0) profileImage = profiles[0].profile_image;
+    } catch (_) {}
 
     const token = jwt.sign(
       { id: user.id, role: user.role },
@@ -100,8 +84,7 @@ router.post('/login', async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        profile_approved: user.profile_approved,
-        profile_completed: user.profile_completed,
+        status: user.status,
         profile_image: profileImage
       }
     });
