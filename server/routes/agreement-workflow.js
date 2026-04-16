@@ -1973,7 +1973,7 @@ router.get("/owner/:ownerId", async (req, res) => {
       WHERE ar.owner_id = ? AND ar.status != 'pending_admin_review'
       ORDER BY ar.created_at DESC
     `, [req.params.ownerId]);
-    res.json({ success: true, agreements, count: agreements.length });
+    res.json({ success: true, engagements: agreements, agreements, count: agreements.length });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message, success: false });
   }

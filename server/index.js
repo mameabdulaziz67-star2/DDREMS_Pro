@@ -206,9 +206,9 @@ async function runMigrations() {
         id SERIAL PRIMARY KEY,
         property_id INT REFERENCES properties(id) ON DELETE CASCADE,
         requester_id INT REFERENCES users(id) ON DELETE CASCADE,
-        broker_id INT REFERENCES brokers(id) ON DELETE SET NULL,
+        broker_id INT REFERENCES users(id) ON DELETE SET NULL,
         request_type VARCHAR(50),
-        status VARCHAR(30) DEFAULT 'pending',
+        status VARCHAR(50) DEFAULT 'pending',
         message TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -479,6 +479,11 @@ async function runMigrations() {
       `ALTER TABLE broker_engagements ALTER COLUMN status TYPE VARCHAR(50)`,
       `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS customer_id INT REFERENCES users(id) ON DELETE CASCADE`,
       `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS owner_id INT REFERENCES users(id) ON DELETE SET NULL`,
+      // Drop old broker_id FK that references brokers table
+      `DO $$ BEGIN
+         ALTER TABLE agreement_requests DROP CONSTRAINT IF EXISTS agreement_requests_broker_id_fkey;
+       EXCEPTION WHEN OTHERS THEN NULL;
+       END $$`,
       `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS property_admin_id INT REFERENCES users(id) ON DELETE SET NULL`,
       `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS current_step INT DEFAULT 1`,
       `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS customer_notes TEXT`,
