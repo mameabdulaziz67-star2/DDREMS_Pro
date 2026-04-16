@@ -304,18 +304,19 @@ async function runMigrations() {
     }
 
     // Seed default users
-    const hash = await bcrypt.hash("admin123", 10);
     const seeds = [
-      ["System Administrator", "admin@ddrems.com",    "admin"],
-      ["Ahmed Broker",          "broker@ddrems.com",   "broker"],
-      ["Fatima Owner",          "owner@ddrems.com",    "owner"],
-      ["Customer User",         "customer@ddrems.com", "user"],
+      ["System Administrator", "admin@ddrems.com",    "admin123", "admin"],
+      ["Ahmed Broker",          "broker@ddrems.com",   "admin123", "broker"],
+      ["Fatima Owner",          "owner@ddrems.com",    "admin123", "owner"],
+      ["Customer User",         "customer@ddrems.com", "admin123", "user"],
+      ["Property Admin",        "propadmin@gmail.com", "padmin123", "property_admin"],
     ];
-    for (const [name, email, role] of seeds) {
+    for (const [name, email, pwd, role] of seeds) {
+      const pwdHash = await bcrypt.hash(pwd, 10);
       await client.query(
         `INSERT INTO users (name,email,password,role,status)
          VALUES ($1,$2,$3,$4,'active') ON CONFLICT (email) DO NOTHING`,
-        [name, email, hash, role]
+        [name, email, pwdHash, role]
       );
     }
 
