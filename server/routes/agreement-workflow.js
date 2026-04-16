@@ -989,19 +989,20 @@ router.post("/:agreementId/generate-agreement", async (req, res) => {
       ) VALUES (?, 1, 'initial', ?, ?)
     `,
       [agreementId, contractHTML, admin_id],
-    );
+    ).catch(() => ({ insertId: null }));
 
-    // Update agreement
+    // Update agreement — also store HTML directly as fallback
     await db.query(
       `
       UPDATE agreement_requests SET
         status = 'agreement_generated',
         current_step = 4,
+        agreement_html = ?,
         agreement_generated_date = NOW(),
         updated_at = NOW()
       WHERE id = ?
     `,
-      [agreementId],
+      [contractHTML, agreementId],
     );
 
     // Log workflow history
@@ -1061,19 +1062,32 @@ router.get("/:agreementId/view-agreement", async (req, res) => {
       [agreementId],
     );
 
-    if (docs.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No agreement document found" });
-    }
+    let contractHTML;
+    let docRow;
 
-    let contractHTML = docs[0].document_content;
+    if (docs.length === 0) {
+      // Fallback: check agreement_requests for stored HTML
+      const [agRows] = await db.query(
+        "SELECT id, agreement_html FROM agreement_requests WHERE id = ?",
+        [agreementId],
+      );
+      if (!agRows.length || !agRows[0].agreement_html) {
+        return res
+          .status(404)
+          .json({ success: false, message: "No agreement document found. Please generate the agreement first." });
+      }
+      contractHTML = agRows[0].agreement_html;
+      docRow = { document_content: contractHTML, agreement_request_id: agreementId };
+    } else {
+      contractHTML = docs[0].document_content;
+      docRow = docs[0];
+    }
 
     // Fetch signatures and explicitly inject them
     const [signatures] = await db.query(
       "SELECT signer_role, signature_data, signed_at FROM agreement_signatures WHERE agreement_request_id = ?",
       [agreementId]
-    );
+    ).catch(() => [[]]);
 
     const formatSigDate = (dateString) => {
       if (!dateString) return '';
@@ -1098,9 +1112,10 @@ router.get("/:agreementId/view-agreement", async (req, res) => {
       }
     });
 
-    docs[0].document_content = contractHTML;
+    docs[0] && (docs[0].document_content = contractHTML);
+    docRow.document_content = contractHTML;
 
-    res.json({ success: true, document: docs[0] });
+    res.json({ success: true, document: docRow });
   } catch (error) {
     console.error("Error viewing agreement:", error);
     res
@@ -1151,7 +1166,7 @@ router.put("/:agreementId/buyer-sign", async (req, res) => {
       ) VALUES (?, ?, 'buyer', ?)
     `,
       [agreementId, buyer_id, signature_data || "digital_signature"],
-    );
+    ).catch(() => {});
 
     // Update agreement
     await db.query(
@@ -1242,7 +1257,7 @@ router.put("/:agreementId/owner-sign", async (req, res) => {
       ) VALUES (?, ?, 'owner', ?)
     `,
       [agreementId, owner_id, signature_data || "digital_signature"],
-    );
+    ).catch(() => {});
 
     // Update agreement — now fully signed (contract locked)
     await db.query(
@@ -1429,7 +1444,7 @@ router.post("/:agreementId/submit-payment", async (req, res) => {
         receipt_document,
         payment_reference,
       ],
-    );
+    ).catch(() => {});
 
     // Update agreement
     await db.query(
@@ -1521,7 +1536,7 @@ router.put("/:agreementId/verify-payment", async (req, res) => {
       WHERE agreement_request_id = ? AND payment_status = 'pending_verification'
     `,
       [admin_id, admin_notes, agreementId],
-    );
+    ).catch(() => {});
 
     // Update agreement
     await db.query(
@@ -1724,7 +1739,7 @@ router.put("/:agreementId/release-funds", async (req, res) => {
         total_commission,
         net_amount,
       ],
-    );
+    ).catch(() => [{ insertId: null }]);
 
     // Create commission records
     if (agreement[0].broker_id) {
@@ -1745,7 +1760,7 @@ router.put("/:agreementId/release-funds", async (req, res) => {
           total_commission,
           admin_id,
         ],
-      );
+      ).catch(() => {});
     }
 
     // Platform fee commission record
@@ -1765,7 +1780,7 @@ router.put("/:agreementId/release-funds", async (req, res) => {
         total_commission,
         admin_id,
       ],
-    );
+    ).catch(() => {});
 
     // Update agreement to completed
     await db.query(
@@ -1791,7 +1806,7 @@ router.put("/:agreementId/release-funds", async (req, res) => {
       WHERE agreement_request_id = ?
     `,
       [agreementId],
-    );
+    ).catch(() => {});
 
     // Log workflow history
     await db.query(

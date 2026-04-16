@@ -510,8 +510,95 @@ async function runMigrations() {
       `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS customer_signature TEXT`,
       `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS owner_signed_at TIMESTAMP`,
       `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS customer_signed_at TIMESTAMP`,
-      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS user_id INT REFERENCES users(id) ON DELETE SET NULL`,    ];
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS user_id INT REFERENCES users(id) ON DELETE SET NULL`,
+      // agreement_requests — signing & payment tracking columns
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS buyer_signed BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS buyer_signed_date TIMESTAMP`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS owner_signed BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS owner_signed_date TIMESTAMP`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS broker_signed BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS broker_signed_date TIMESTAMP`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS agreement_generated_date TIMESTAMP`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS payment_submitted BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS payment_verified BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS payment_verified_date TIMESTAMP`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS payment_verified_by INT REFERENCES users(id) ON DELETE SET NULL`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS handover_confirmed BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS handover_confirmed_date TIMESTAMP`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS funds_released BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS funds_released_date TIMESTAMP`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS funds_released_by INT REFERENCES users(id) ON DELETE SET NULL`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS commission_percentage DECIMAL(5,2)`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS total_commission DECIMAL(15,2)`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS completed_date TIMESTAMP`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS listed_price DECIMAL(15,2)`,
+      `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS agreement_html TEXT`,
+    ];
     for (const sql of alterations) {
+      await client.query(sql);
+    }
+
+    // Create auxiliary agreement workflow tables
+    const auxTables = [
+      `CREATE TABLE IF NOT EXISTS agreement_documents (
+        id SERIAL PRIMARY KEY,
+        agreement_request_id INT REFERENCES agreement_requests(id) ON DELETE CASCADE,
+        version INT DEFAULT 1,
+        document_type VARCHAR(50) DEFAULT 'initial',
+        document_content TEXT,
+        generated_by_id INT REFERENCES users(id) ON DELETE SET NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS agreement_signatures (
+        id SERIAL PRIMARY KEY,
+        agreement_request_id INT REFERENCES agreement_requests(id) ON DELETE CASCADE,
+        signer_id INT REFERENCES users(id) ON DELETE SET NULL,
+        signer_role VARCHAR(20),
+        signature_data TEXT,
+        signed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS agreement_payments (
+        id SERIAL PRIMARY KEY,
+        agreement_request_id INT REFERENCES agreement_requests(id) ON DELETE CASCADE,
+        payment_method VARCHAR(50),
+        payment_amount DECIMAL(15,2),
+        receipt_file_path TEXT,
+        transaction_reference VARCHAR(100),
+        payment_status VARCHAR(30) DEFAULT 'pending_verification',
+        payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        verified_by_id INT REFERENCES users(id) ON DELETE SET NULL,
+        verified_date TIMESTAMP,
+        verification_notes TEXT
+      )`,
+      `CREATE TABLE IF NOT EXISTS agreement_transactions (
+        id SERIAL PRIMARY KEY,
+        agreement_request_id INT REFERENCES agreement_requests(id) ON DELETE CASCADE,
+        transaction_type VARCHAR(20) DEFAULT 'sale',
+        transaction_status VARCHAR(20) DEFAULT 'completed',
+        buyer_id INT REFERENCES users(id) ON DELETE SET NULL,
+        seller_id INT REFERENCES users(id) ON DELETE SET NULL,
+        broker_id INT REFERENCES users(id) ON DELETE SET NULL,
+        property_id INT REFERENCES properties(id) ON DELETE SET NULL,
+        transaction_amount DECIMAL(15,2),
+        commission_amount DECIMAL(15,2),
+        net_amount DECIMAL(15,2),
+        completion_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS agreement_commissions (
+        id SERIAL PRIMARY KEY,
+        agreement_request_id INT REFERENCES agreement_requests(id) ON DELETE CASCADE,
+        commission_type VARCHAR(20),
+        recipient_id INT REFERENCES users(id) ON DELETE SET NULL,
+        property_price DECIMAL(15,2),
+        commission_percentage DECIMAL(5,2),
+        commission_amount DECIMAL(15,2),
+        payment_status VARCHAR(20) DEFAULT 'pending',
+        calculated_by_id INT REFERENCES users(id) ON DELETE SET NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
+    ];
+    for (const sql of auxTables) {
       await client.query(sql);
     }    // Seed default users
     const seeds = [

@@ -78,6 +78,12 @@ const STATUS_MAP = {
     color: "#ef4444",
     step: 3,
   },
+  owner_accepted: {
+    emoji: "✅",
+    label: "Owner Accepted",
+    color: "#22c55e",
+    step: 3,
+  },
   agreement_generated: {
     emoji: "📄",
     label: "Agreement Ready",
