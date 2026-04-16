@@ -161,7 +161,9 @@ async function runMigrations() {
         id SERIAL PRIMARY KEY,
         property_id INT REFERENCES properties(id) ON DELETE CASCADE,
         image_data TEXT,
-        image_url VARCHAR(500),
+        image_url TEXT,
+        image_type VARCHAR(20) DEFAULT 'gallery',
+        uploaded_by INT REFERENCES users(id) ON DELETE SET NULL,
         is_primary BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
@@ -293,6 +295,9 @@ async function runMigrations() {
       `ALTER TABLE properties ADD COLUMN IF NOT EXISTS zip_code VARCHAR(20)`,
       `ALTER TABLE properties ADD COLUMN IF NOT EXISTS features TEXT`,
       `ALTER TABLE properties ADD COLUMN IF NOT EXISTS views INT DEFAULT 0`,
+      `ALTER TABLE property_images ADD COLUMN IF NOT EXISTS image_type VARCHAR(20) DEFAULT 'gallery'`,
+      `ALTER TABLE property_images ADD COLUMN IF NOT EXISTS uploaded_by INT REFERENCES users(id) ON DELETE SET NULL`,
+      `ALTER TABLE property_images ALTER COLUMN image_url TYPE TEXT`,
     ];
     for (const sql of alterations) {
       await client.query(sql);

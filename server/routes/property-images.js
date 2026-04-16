@@ -20,37 +20,14 @@ router.post('/', async (req, res) => {
   try {
     const { property_id, image_url, image_type, uploaded_by } = req.body;
     
-    // Validate required fields
     if (!property_id || !image_url) {
       return res.status(400).json({ message: 'Property ID and image URL are required' });
     }
     
-    // Insert the image
     const [result] = await db.query(
       'INSERT INTO property_images (property_id, image_url, image_type, uploaded_by) VALUES (?, ?, ?, ?)',
       [property_id, image_url, image_type || 'gallery', uploaded_by]
     );
-    
-    // If this is a main image, update the properties table
-    if (image_type === 'main') {
-      await db.query(
-        'UPDATE properties SET main_image = ? WHERE id = ?',
-        [image_url, property_id]
-      );
-    } else {
-      // If no main image exists, set this as the main image
-      const [existingMain] = await db.query(
-        'SELECT main_image FROM properties WHERE id = ?',
-        [property_id]
-      );
-      
-      if (existingMain.length > 0 && (!existingMain[0].main_image || existingMain[0].main_image === '')) {
-        await db.query(
-          'UPDATE properties SET main_image = ? WHERE id = ?',
-          [image_url, property_id]
-        );
-      }
-    }
     
     res.json({ id: result.insertId, message: 'Image uploaded successfully' });
   } catch (error) {
