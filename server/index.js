@@ -499,7 +499,18 @@ async function runMigrations() {
       `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS response_message TEXT`,
       `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS admin_action INT`,
       `ALTER TABLE agreement_requests ADD COLUMN IF NOT EXISTS admin_action_date TIMESTAMP`,
-      `ALTER TABLE agreement_requests ALTER COLUMN status TYPE VARCHAR(50)`,    ];
+      `ALTER TABLE agreement_requests ALTER COLUMN status TYPE VARCHAR(50)`,
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS customer_id INT REFERENCES users(id) ON DELETE SET NULL`,
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS agreement_html TEXT`,
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS duration VARCHAR(100)`,
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS payment_terms TEXT`,
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS special_conditions TEXT`,
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS additional_terms TEXT`,
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS owner_signature TEXT`,
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS customer_signature TEXT`,
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS owner_signed_at TIMESTAMP`,
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS customer_signed_at TIMESTAMP`,
+      `ALTER TABLE agreements ADD COLUMN IF NOT EXISTS user_id INT REFERENCES users(id) ON DELETE SET NULL`,    ];
     for (const sql of alterations) {
       await client.query(sql);
     }    // Seed default users
