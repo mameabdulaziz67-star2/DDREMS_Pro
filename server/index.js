@@ -74,6 +74,10 @@ async function runMigrations() {
         description TEXT,
         price DECIMAL(15,2) NOT NULL,
         location VARCHAR(255) NOT NULL,
+        address VARCHAR(255),
+        city VARCHAR(100),
+        state VARCHAR(100),
+        zip_code VARCHAR(20),
         latitude DECIMAL(10,8),
         longitude DECIMAL(11,8),
         type VARCHAR(50) NOT NULL DEFAULT 'house',
@@ -81,6 +85,8 @@ async function runMigrations() {
         bedrooms INT,
         bathrooms INT,
         area DECIMAL(10,2),
+        features TEXT,
+        views INT DEFAULT 0,
         status VARCHAR(20) DEFAULT 'pending',
         broker_id INT REFERENCES brokers(id) ON DELETE SET NULL,
         owner_id INT REFERENCES users(id) ON DELETE SET NULL,
@@ -91,6 +97,15 @@ async function runMigrations() {
         images TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS property_verification (
+        id SERIAL PRIMARY KEY,
+        property_id INT REFERENCES properties(id) ON DELETE CASCADE,
+        verification_status VARCHAR(20) DEFAULT 'pending',
+        verification_notes TEXT,
+        verified_by INT REFERENCES users(id) ON DELETE SET NULL,
+        verified_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
       `CREATE TABLE IF NOT EXISTS transactions (
         id SERIAL PRIMARY KEY,
@@ -267,6 +282,19 @@ async function runMigrations() {
     ];
 
     for (const sql of tables) {
+      await client.query(sql);
+    }
+
+    // Add missing columns to existing tables (safe — IF NOT EXISTS)
+    const alterations = [
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS address VARCHAR(255)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS city VARCHAR(100)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS state VARCHAR(100)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS zip_code VARCHAR(20)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS features TEXT`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS views INT DEFAULT 0`,
+    ];
+    for (const sql of alterations) {
       await client.query(sql);
     }
 
