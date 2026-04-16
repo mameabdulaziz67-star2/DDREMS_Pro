@@ -281,6 +281,72 @@ async function runMigrations() {
         status VARCHAR(20) DEFAULT 'pending',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
+      `CREATE TABLE IF NOT EXISTS customer_profiles (
+        id SERIAL PRIMARY KEY,
+        user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+        full_name VARCHAR(255),
+        phone_number VARCHAR(20),
+        address VARCHAR(255),
+        profile_photo TEXT,
+        id_document TEXT,
+        profile_status VARCHAR(20) DEFAULT 'pending',
+        approved_by INT REFERENCES users(id) ON DELETE SET NULL,
+        approved_at TIMESTAMP,
+        rejection_reason TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS owner_profiles (
+        id SERIAL PRIMARY KEY,
+        user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+        full_name VARCHAR(255),
+        phone_number VARCHAR(20),
+        address VARCHAR(255),
+        profile_photo TEXT,
+        id_document TEXT,
+        business_license TEXT,
+        profile_status VARCHAR(20) DEFAULT 'pending',
+        approved_by INT REFERENCES users(id) ON DELETE SET NULL,
+        approved_at TIMESTAMP,
+        rejection_reason TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS broker_profiles (
+        id SERIAL PRIMARY KEY,
+        user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+        full_name VARCHAR(255),
+        phone_number VARCHAR(20),
+        address VARCHAR(255),
+        profile_photo TEXT,
+        id_document TEXT,
+        broker_license TEXT,
+        license_number VARCHAR(100),
+        profile_status VARCHAR(20) DEFAULT 'pending',
+        approved_by INT REFERENCES users(id) ON DELETE SET NULL,
+        approved_at TIMESTAMP,
+        rejection_reason TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS profile_status_history (
+        id SERIAL PRIMARY KEY,
+        profile_id INT NOT NULL,
+        profile_type VARCHAR(20) NOT NULL,
+        old_status VARCHAR(20),
+        new_status VARCHAR(20),
+        changed_by INT REFERENCES users(id) ON DELETE SET NULL,
+        reason TEXT,
+        changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
+      `CREATE TABLE IF NOT EXISTS profile_edit_requests (
+        id SERIAL PRIMARY KEY,
+        user_id INT REFERENCES users(id) ON DELETE CASCADE,
+        profile_id INT,
+        request_type VARCHAR(20),
+        status VARCHAR(20) DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
     ];
 
     for (const sql of tables) {
@@ -301,9 +367,7 @@ async function runMigrations() {
     ];
     for (const sql of alterations) {
       await client.query(sql);
-    }
-
-    // Seed default users
+    }    // Seed default users
     const seeds = [
       ["System Administrator", "admin@ddrems.com",    "admin123", "admin"],
       ["Ahmed Broker",          "broker@ddrems.com",   "admin123", "broker"],

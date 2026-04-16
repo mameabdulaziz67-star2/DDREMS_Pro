@@ -66,7 +66,7 @@ router.post('/customer', async (req, res) => {
     );
 
     // Update user table
-    await db.query('UPDATE users SET profile_completed = TRUE WHERE id = ?', [user_id]);
+    // profile_completed column removed
 
     res.status(201).json({
       message: 'Profile created successfully. Waiting for admin approval.',
@@ -193,7 +193,7 @@ router.post('/owner', async (req, res) => {
     );
 
     // Update user table
-    await db.query('UPDATE users SET profile_completed = TRUE WHERE id = ?', [user_id]);
+    // profile_completed column removed
 
     res.status(201).json({
       message: 'Profile created successfully. Waiting for admin approval.',
@@ -279,7 +279,7 @@ router.post('/broker', async (req, res) => {
     );
 
     // Update user table
-    await db.query('UPDATE users SET profile_completed = TRUE WHERE id = ?', [user_id]);
+    // profile_completed column removed
 
     res.status(201).json({
       message: 'Profile created successfully. Waiting for admin approval.',
@@ -377,7 +377,7 @@ router.post('/approve/:profileType/:profileId', async (req, res) => {
     );
 
     // Update user table
-    await db.query('UPDATE users SET profile_approved = TRUE WHERE id = ?', [userId]);
+    // profile_approved column removed
 
     // Log the change
     await db.query(
@@ -429,7 +429,7 @@ router.post('/suspend/:profileType/:profileId', async (req, res) => {
     );
 
     // Update user table (de-approve)
-    await db.query('UPDATE users SET profile_approved = FALSE WHERE id = ?', [userId]);
+    // profile_approved column removed
 
     // Log the change
     await db.query(
@@ -481,7 +481,7 @@ router.post('/reject/:profileType/:profileId', async (req, res) => {
     );
 
     // Update user table (ensure not approved)
-    await db.query('UPDATE users SET profile_approved = FALSE WHERE id = ?', [userId]);
+    // profile_approved column removed
 
     // Log the change
     await db.query(
@@ -562,7 +562,7 @@ router.post('/change-status/:profileType/:profileId', async (req, res) => {
 
     // Update user table based on new status
     const isApproved = newStatus === 'approved';
-    await db.query('UPDATE users SET profile_approved = ? WHERE id = ?', [isApproved, userId]);
+    // profile_approved column removed
 
     // Log the change
     await db.query(
