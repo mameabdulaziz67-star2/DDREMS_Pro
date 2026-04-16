@@ -222,6 +222,20 @@ async function runMigrations() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
+      `CREATE TABLE IF NOT EXISTS request_key (
+        id SERIAL PRIMARY KEY,
+        property_id INT REFERENCES properties(id) ON DELETE CASCADE,
+        customer_id INT REFERENCES users(id) ON DELETE CASCADE,
+        owner_id INT REFERENCES users(id) ON DELETE SET NULL,
+        admin_id INT REFERENCES users(id) ON DELETE SET NULL,
+        status VARCHAR(20) DEFAULT 'pending',
+        request_message TEXT,
+        response_message TEXT,
+        key_code VARCHAR(50),
+        responded_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`,
       `CREATE TABLE IF NOT EXISTS profiles (
         id SERIAL PRIMARY KEY,
         user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,

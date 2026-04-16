@@ -165,13 +165,12 @@ router.put("/:id/respond-key", async (req, res) => {
 
     // Notify customer
     await db.query(
-      "INSERT INTO notifications (user_id, title, message, type, notification_type) VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)",
       [
         request.customer_id,
         `Key Request ${status === "accepted" ? "Approved" : "Rejected"}`,
         status === "accepted" ? `Your key is: ${final_key}` : response_message,
         status === "accepted" ? "success" : "error",
-        "request",
       ],
     );
 
