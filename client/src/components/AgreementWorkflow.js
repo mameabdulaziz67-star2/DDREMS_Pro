@@ -509,6 +509,24 @@ const AgreementWorkflow = ({ user, onLogout }) => {
             ➡️ Forward to Owner
           </button>
         )}
+        {isAdmin && (agr.status === "pending_admin_review" || agr.status === "owner_rejected" || agr.status === "buyer_rejected") && (
+          <button
+            className="btn-danger"
+            style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '8px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}
+            onClick={async () => {
+              if (!window.confirm('Delete this agreement request? This cannot be undone.')) return;
+              try {
+                await (await import('axios')).default.delete(`${API}/${agr.id}`);
+                alert('✅ Agreement deleted');
+                fetchAgreements();
+              } catch (err) {
+                alert('❌ Failed to delete: ' + (err.response?.data?.message || err.message));
+              }
+            }}
+          >
+            🗑️ Delete
+          </button>
+        )}
         {isAdmin && agr.status === "counter_offer" && (
           <button
             className="btn-warning"

@@ -4,6 +4,26 @@ const db = require("../config/db");
 const { generateRentalSchedule } = require("./rental-payments");
 
 // ============================================================================
+// DELETE: Admin deletes an agreement request
+// ============================================================================
+router.delete("/:agreementId", async (req, res) => {
+  try {
+    const { agreementId } = req.params;
+    const [existing] = await db.query("SELECT id FROM agreement_requests WHERE id = ?", [agreementId]);
+    if (existing.length === 0) return res.status(404).json({ message: "Agreement not found", success: false });
+
+    await db.query("DELETE FROM agreement_workflow_history WHERE agreement_request_id = ?", [agreementId]).catch(() => {});
+    await db.query("DELETE FROM agreement_notifications WHERE agreement_request_id = ?", [agreementId]).catch(() => {});
+    await db.query("DELETE FROM agreement_requests WHERE id = ?", [agreementId]);
+
+    res.json({ success: true, message: "Agreement request deleted successfully" });
+  } catch (error) {
+    console.error("Delete agreement error:", error);
+    res.status(500).json({ message: "Server error", error: error.message, success: false });
+  }
+});
+
+// ============================================================================
 // STEP 1: CUSTOMER INITIATES REQUEST
 // ============================================================================
 
@@ -204,6 +224,20 @@ router.put("/:agreementId/forward-to-owner", async (req, res) => {
     `,
       [agreementId, agreement[0].owner_id],
     );
+
+    // Also notify buyer that their request is being processed
+    await db.query(
+      "INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)",
+      [agreement[0].customer_id, "📋 Agreement Request in Progress",
+       "Your agreement request has been reviewed and forwarded to the property owner.", "info"]
+    ).catch(() => {});
+
+    // Notify owner via notifications table too
+    await db.query(
+      "INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)",
+      [agreement[0].owner_id, "📋 Agreement Request Awaiting Your Decision",
+       "A buyer has requested an agreement for your property. Please review and decide.", "info"]
+    ).catch(() => {});
 
     res.json({
       success: true,
@@ -1921,7 +1955,8 @@ router.get("/owner/:ownerId", async (req, res) => {
       FROM agreement_requests ar
       LEFT JOIN properties p ON ar.property_id = p.id
       LEFT JOIN users c ON ar.customer_id = c.id
-      WHERE ar.owner_id = ? ORDER BY ar.created_at DESC
+      WHERE ar.owner_id = ? AND ar.status != 'pending_admin_review'
+      ORDER BY ar.created_at DESC
     `, [req.params.ownerId]);
     res.json({ success: true, agreements, count: agreements.length });
   } catch (error) {
