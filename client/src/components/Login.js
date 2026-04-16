@@ -44,7 +44,6 @@ const LoginForm = ({ onLogin, onShowRegister }) => {
       <div className="login-card">
         <div className="login-header">
           <h1>🏢 DDREMS</h1>
-          <h2>Admin Dashboard</h2>
           <p>Dire Dawa Real Estate Management System</p>
         </div>
 
