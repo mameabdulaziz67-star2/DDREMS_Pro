@@ -1,0 +1,58 @@
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: linear-gradient(rgba(5, 10, 35, 0.75), rgba(5, 10, 35, 0.75)), url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1400&q=80') center/cover no-repeat fixed;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.register-content { width: 100%; max-width: 560px; }
+.register-logo-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 18px; gap: 10px; }
+.logo-icon { position: relative; width: 80px; height: 80px; background: linear-gradient(135deg, #1a2a6c, #0d47a1); border-radius: 50%; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; border: 3px solid rgba(100,180,255,0.4); box-shadow: 0 0 24px rgba(30,100,255,0.5); }
+.buildings { display: flex; align-items: flex-end; gap: 3px; padding-bottom: 12px; z-index: 2; }
+.building { background: linear-gradient(to top, #f5c518, #ffd700); border-radius: 2px 2px 0 0; }
+.building:nth-child(1) { width: 10px; height: 28px; }
+.building:nth-child(2) { width: 16px; height: 42px; }
+.building:nth-child(3) { width: 10px; height: 22px; }
+.wave { position: absolute; bottom: 0; left: 0; right: 0; height: 18px; background: linear-gradient(90deg, #1565c0, #0288d1, #1565c0); border-radius: 50% 50% 0 0; }
+.logo-text { text-align: center; }
+.logo-text h1 { font-size: 48px; font-weight: 900; color: #ffffff; letter-spacing: 2px; margin: 0; line-height: 1; text-shadow: 0 3px 15px rgba(0,0,0,0.6); }
+.logo-text h1 .highlight { color: #f5c518; }
+.logo-text p { font-size: 13px; color: rgba(220,235,255,0.9); margin: 5px 0 0; letter-spacing: 0.5px; }
+.join-title { text-align: center; margin-bottom: 20px; }
+.join-title h2 { font-size: 17px; font-weight: 600; color: #ffffff; margin: 0; }
+.join-title .subtitle { font-weight: 300; color: rgba(200,220,255,0.85); }
+.register-form-card { background: rgba(15,25,65,0.78); border: 1px solid rgba(100,160,255,0.3); border-radius: 16px; padding: 26px 30px 30px; box-shadow: 0 8px 40px rgba(0,0,0,0.6); backdrop-filter: blur(14px); margin-bottom: 28px; }
+.register-form-card h3 { font-size: 20px; font-weight: 700; color: #ffffff; margin: 0 0 18px; }
+.register-form { display: flex; flex-direction: column; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group label { font-size: 13px; font-weight: 600; color: rgba(220,235,255,0.95); }
+.input-wrapper { position: relative; display: flex; align-items: center; }
+.input-icon { position: absolute; left: 13px; font-size: 15px; pointer-events: none; z-index: 1; }
+.input-wrapper input { width: 100%; padding: 12px 13px 12px 40px; background: rgba(255,255,255,0.07); border: 1px solid rgba(100,160,255,0.3); border-radius: 8px; font-size: 14px; color: #ffffff; transition: all 0.25s; box-sizing: border-box; }
+.input-wrapper input::placeholder { color: rgba(180,200,255,0.5); }
+.input-wrapper input:focus { outline: none; border-color: #3b82f6; background: rgba(255,255,255,0.11); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+.register-as-row { display: flex; align-items: center; gap: 10px; padding: 11px 13px; background: rgba(255,255,255,0.06); border: 1px solid rgba(100,160,255,0.25); border-radius: 8px; }
+.radio-indicator { color: #4ade80; font-size: 14px; line-height: 1; }
+.role-text { font-size: 13px; color: rgba(220,235,255,0.9); }
+.admin-info { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(100,180,255,0.8); padding: 6px 10px; background: rgba(30,80,180,0.2); border-radius: 6px; margin-top: 2px; }
+.error-message { padding: 10px 13px; background: rgba(220,38,38,0.2); border: 1px solid rgba(220,38,38,0.4); color: #fca5a5; border-radius: 8px; font-size: 13px; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.btn-create-account { margin-top: 6px; padding: 14px; background: linear-gradient(135deg, #1565c0 0%, #1e88e5 50%, #1565c0 100%); color: white; border: none; border-radius: 8px; font-size: 17px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; transition: all 0.3s; box-shadow: 0 4px 20px rgba(21,101,192,0.6); display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; }
+.btn-icon { font-size: 18px; font-weight: 900; }
+.btn-create-account:hover:not(:disabled) { background: linear-gradient(135deg, #1976d2 0%, #42a5f5 50%, #1976d2 100%); box-shadow: 0 6px 28px rgba(21,101,192,0.8); transform: translateY(-1px); }
+.btn-create-account:disabled { opacity: 0.6; cursor: not-allowed; }
+.already-have-account { margin-top: 14px; text-align: center; }
+.already-have-account p { font-size: 13px; color: rgba(180,200,255,0.8); margin: 0 0 5px; }
+.link-back { background: transparent; color: rgba(120,190,255,0.95); border: none; padding: 0; font-size: 13px; font-weight: 600; cursor: pointer; transition: color 0.2s; }
+.link-back:hover { color: #ffffff; text-decoration: underline; }
+.what-happens-section { margin-bottom: 22px; }
+.what-happens-section h3 { font-size: 19px; font-weight: 600; color: #ffffff; text-align: center; margin: 0 0 18px; }
+.steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.step-card { background: rgba(15,25,65,0.78); border: 1px solid rgba(100,160,255,0.3); border-radius: 14px; padding: 18px 14px; backdrop-filter: blur(14px); display: flex; flex-direction: row; align-items: flex-start; gap: 12px; }
+.step-number { width: 42px; height: 42px; min-width: 42px; background: linear-gradient(135deg, #1565c0, #1e88e5); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; box-shadow: 0 3px 10px rgba(21,101,192,0.5); border: 2px solid rgba(100,180,255,0.35); }
+.step-info h4 { font-size: 14px; font-weight: 700; color: #ffffff; margin: 0 0 5px; }
+.step-info p { font-size: 12px; color: rgba(180,200,255,0.75); margin: 0; line-height: 1.5; }
+.bottom-link { text-align: center; margin-top: 4px; }
+.bottom-link p { font-size: 13px; color: rgba(180,200,255,0.8); margin: 0 0 5px; }
+@media (max-width: 600px) { .steps-grid { grid-template-columns: 1fr; } .register-form-card { padding: 20px 16px; } .logo-text h1 { font-size: 38px; } }
