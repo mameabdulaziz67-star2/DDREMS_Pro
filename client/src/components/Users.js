@@ -123,21 +123,18 @@ const Users = ({ user, onLogout, initialRole }) => {
   };
 
   const handleToggleApproval = async (u) => {
-    const newStatus = u.profile_approved ? false : true;
-    const action = newStatus ? 'approve' : 'unapprove';
-    if (!window.confirm(`${action.charAt(0).toUpperCase() + action.slice(1)} ${u.name}'s profile?`)) return;
+    const isCurrentlyActive = u.status === 'active';
+    const newStatus = isCurrentlyActive ? 'inactive' : 'active';
+    const action = isCurrentlyActive ? 'deactivate' : 'activate';
+    if (!window.confirm(`${action.charAt(0).toUpperCase() + action.slice(1)} ${u.name}'s account?`)) return;
 
     try {
-      console.log(`[Users] Toggling approval for ${u.id} to ${newStatus}`);
-      await axios.put(`${API_BASE}/users/update/${u.id}`, {
-        profile_approved: newStatus
-      });
+      await axios.put(`${API_BASE}/users/update/${u.id}`, { status: newStatus });
       alert(`✅ User ${action}d successfully!`);
       fetchUsers();
     } catch (error) {
-      console.error('Error toggling approval:', error);
       const msg = error.response?.data?.message || error.message;
-      alert(`❌ Failed to update user: ${msg}\n(Target: ${API_BASE}/users/update/${u.id})`);
+      alert(`❌ Failed to update user: ${msg}`);
     }
   };
 
