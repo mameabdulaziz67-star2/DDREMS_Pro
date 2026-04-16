@@ -17,6 +17,7 @@ const Login = ({ onLogin }) => {
 const LoginForm = ({ onLogin, onShowRegister }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -88,14 +89,22 @@ const LoginForm = ({ onLogin, onShowRegister }) => {
             </div>
           </div>
 
+          <div className="remember-me">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              <span className="checkbox-custom"></span>
+              <span className="checkbox-text">Remember me</span>
+            </label>
+          </div>
+
           <button type="submit" className="login-btn" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-
-        <div className="demo-info">
-          <p><strong>Demo:</strong> admin@ddrems.com / admin123</p>
-        </div>
 
         <div className="register-section">
           <p>Don't have an account?</p>

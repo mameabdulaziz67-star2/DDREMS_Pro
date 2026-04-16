@@ -154,6 +154,55 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
+/* ── Remember Me ── */
+.remember-me {
+  margin-top: -4px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(100, 160, 255, 0.5);
+  border-radius: 4px;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.25s;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom {
+  background: linear-gradient(135deg, #1565c0, #1e88e5);
+  border-color: #1565c0;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.checkbox-text {
+  font-size: 13px;
+  color: rgba(210, 230, 255, 0.9);
+  letter-spacing: 0.3px;
+}
+
 /* ── Error ── */
 .error-message {
   padding: 10px 14px;
@@ -190,21 +239,6 @@
 .login-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-/* ── Demo info ── */
-.demo-info {
-  margin-top: 16px;
-  text-align: center;
-}
-
-.demo-info p {
-  font-size: 12px;
-  color: rgba(180, 200, 255, 0.7);
-}
-
-.demo-info strong {
-  color: rgba(210, 230, 255, 0.9);
 }
 
 /* ── Register section ── */
