@@ -1870,209 +1870,130 @@ router.put("/:agreementId/release-funds", async (req, res) => {
 // GET ENDPOINTS FOR DASHBOARD VIEWS
 // ============================================================================
 
-// GET /api/agreement-workflow/:agreementId
-// Get agreement details
-router.get("/:agreementId", async (req, res) => {
-  try {
-    const { agreementId } = req.params;
-
-    const [agreement] = await db.query(
-      "SELECT * FROM v_agreement_status WHERE id = ?",
-      [agreementId],
-    );
-
-    if (agreement.length === 0) {
-      return res.status(404).json({
-        message: "Agreement not found",
-        success: false,
-      });
-    }
-
-    // Get documents
-    const [documents] = await db.query(
-      "SELECT * FROM agreement_documents WHERE agreement_request_id = ? ORDER BY version DESC",
-      [agreementId],
-    );
-
-    // Get payments
-    const [payments] = await db.query(
-      "SELECT * FROM agreement_payments WHERE agreement_request_id = ?",
-      [agreementId],
-    );
-
-    // Get commissions
-    const [commissions] = await db.query(
-      "SELECT * FROM agreement_commissions WHERE agreement_request_id = ?",
-      [agreementId],
-    );
-
-    // Get workflow history
-    const [history] = await db.query(
-      "SELECT * FROM agreement_workflow_history WHERE agreement_request_id = ? ORDER BY action_date DESC",
-      [agreementId],
-    );
-
-    res.json({
-      success: true,
-      agreement: agreement[0],
-      documents,
-      payments,
-      commissions,
-      history,
-    });
-  } catch (error) {
-    console.error("Error fetching agreement:", error);
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-      success: false,
-    });
-  }
-});
-
-// GET /api/agreement-workflow/user/:userId
-// Get all agreements for a user
-router.get("/user/:userId", async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    const [agreements] = await db.query(
-      `
-      SELECT * FROM v_agreement_status 
-      WHERE customer_id = ? OR owner_id = ?
-      ORDER BY created_at DESC
-    `,
-      [userId, userId],
-    );
-
-    res.json({
-      success: true,
-      agreements,
-      count: agreements.length,
-    });
-  } catch (error) {
-    console.error("Error fetching user agreements:", error);
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-      success: false,
-    });
-  }
-});
-
 // GET /api/agreement-workflow/admin/pending
-// Get all agreements that need admin action
 router.get("/admin/pending", async (req, res) => {
   try {
     const [agreements] = await db.query(`
-      SELECT v.*, (SELECT receipt_file_path FROM agreement_payments p WHERE p.agreement_request_id = v.id ORDER BY p.id DESC LIMIT 1) as receipt_document 
-      FROM v_agreement_status v
-      WHERE status IN (
-        'pending_admin_review',
-        'owner_accepted',
-        'payment_submitted',
-        'handover_confirmed'
-      )
-      ORDER BY created_at ASC
+      SELECT ar.*, p.title as property_title, p.location as property_location,
+        p.listing_type as property_listing_type, p.price as property_price_val,
+        c.name as customer_name, c.email as customer_email,
+        o.name as owner_name, o.email as owner_email
+      FROM agreement_requests ar
+      LEFT JOIN properties p ON ar.property_id = p.id
+      LEFT JOIN users c ON ar.customer_id = c.id
+      LEFT JOIN users o ON ar.owner_id = o.id
+      WHERE ar.status IN ('pending_admin_review','owner_accepted','payment_submitted','handover_confirmed')
+      ORDER BY ar.created_at ASC
     `);
-
-    res.json({
-      success: true,
-      agreements,
-      count: agreements.length,
-    });
+    res.json({ success: true, agreements, count: agreements.length });
   } catch (error) {
-    console.error("Error fetching pending agreements:", error);
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-      success: false,
-    });
+    res.status(500).json({ message: "Server error", error: error.message, success: false });
   }
 });
 
 // GET /api/agreement-workflow/admin/all
-// Get ALL agreements for admin dashboard
 router.get("/admin/all", async (req, res) => {
   try {
     const [agreements] = await db.query(`
-      SELECT v.*, (SELECT receipt_file_path FROM agreement_payments p WHERE p.agreement_request_id = v.id ORDER BY p.id DESC LIMIT 1) as receipt_document 
-      FROM v_agreement_status v
-      ORDER BY created_at DESC
+      SELECT ar.*, p.title as property_title, p.location as property_location,
+        p.listing_type as property_listing_type,
+        c.name as customer_name, c.email as customer_email,
+        o.name as owner_name, o.email as owner_email
+      FROM agreement_requests ar
+      LEFT JOIN properties p ON ar.property_id = p.id
+      LEFT JOIN users c ON ar.customer_id = c.id
+      LEFT JOIN users o ON ar.owner_id = o.id
+      ORDER BY ar.created_at DESC
     `);
-
-    res.json({
-      success: true,
-      agreements,
-      count: agreements.length,
-    });
+    res.json({ success: true, agreements, count: agreements.length });
   } catch (error) {
-    console.error("Error fetching all agreements:", error);
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-      success: false,
-    });
+    res.status(500).json({ message: "Server error", error: error.message, success: false });
   }
 });
 
 // GET /api/agreement-workflow/owner/:ownerId
-// Get agreements for a specific owner
 router.get("/owner/:ownerId", async (req, res) => {
   try {
-    const { ownerId } = req.params;
-    const [agreements] = await db.query(
-      `
-      SELECT v.*, (SELECT receipt_file_path FROM agreement_payments p WHERE p.agreement_request_id = v.id ORDER BY p.id DESC LIMIT 1) as receipt_document 
-      FROM v_agreement_status v
-      WHERE owner_id = ?
-      ORDER BY created_at DESC
-    `,
-      [ownerId],
-    );
-
-    res.json({
-      success: true,
-      agreements,
-      count: agreements.length,
-    });
+    const [agreements] = await db.query(`
+      SELECT ar.*, p.title as property_title, p.location as property_location,
+        p.listing_type as property_listing_type,
+        c.name as customer_name, c.email as customer_email
+      FROM agreement_requests ar
+      LEFT JOIN properties p ON ar.property_id = p.id
+      LEFT JOIN users c ON ar.customer_id = c.id
+      WHERE ar.owner_id = ? ORDER BY ar.created_at DESC
+    `, [req.params.ownerId]);
+    res.json({ success: true, agreements, count: agreements.length });
   } catch (error) {
-    console.error("Error fetching owner agreements:", error);
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-      success: false,
-    });
+    res.status(500).json({ message: "Server error", error: error.message, success: false });
   }
 });
 
 // GET /api/agreement-workflow/buyer/:buyerId
-// Get agreements for a specific buyer
 router.get("/buyer/:buyerId", async (req, res) => {
   try {
-    const { buyerId } = req.params;
-    const [agreements] = await db.query(
-      `
-      SELECT v.*, (SELECT receipt_file_path FROM agreement_payments p WHERE p.agreement_request_id = v.id ORDER BY p.id DESC LIMIT 1) as receipt_document 
-      FROM v_agreement_status v
-      WHERE customer_id = ?
-      ORDER BY created_at DESC
-    `,
-      [buyerId],
-    );
-
-    res.json({
-      success: true,
-      agreements,
-      count: agreements.length,
-    });
+    const [agreements] = await db.query(`
+      SELECT ar.*, p.title as property_title, p.location as property_location,
+        p.listing_type as property_listing_type,
+        o.name as owner_name, o.email as owner_email
+      FROM agreement_requests ar
+      LEFT JOIN properties p ON ar.property_id = p.id
+      LEFT JOIN users o ON ar.owner_id = o.id
+      WHERE ar.customer_id = ? ORDER BY ar.created_at DESC
+    `, [req.params.buyerId]);
+    res.json({ success: true, agreements, count: agreements.length });
   } catch (error) {
-    console.error("Error fetching buyer agreements:", error);
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-      success: false,
-    });
+    res.status(500).json({ message: "Server error", error: error.message, success: false });
+  }
+});
+
+// GET /api/agreement-workflow/user/:userId
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const [agreements] = await db.query(`
+      SELECT ar.*, p.title as property_title, p.location as property_location,
+        p.listing_type as property_listing_type,
+        c.name as customer_name, o.name as owner_name
+      FROM agreement_requests ar
+      LEFT JOIN properties p ON ar.property_id = p.id
+      LEFT JOIN users c ON ar.customer_id = c.id
+      LEFT JOIN users o ON ar.owner_id = o.id
+      WHERE ar.customer_id = ? OR ar.owner_id = ?
+      ORDER BY ar.created_at DESC
+    `, [req.params.userId, req.params.userId]);
+    res.json({ success: true, agreements, count: agreements.length });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message, success: false });
+  }
+});
+
+// GET /api/agreement-workflow/:agreementId
+router.get("/:agreementId", async (req, res) => {
+  try {
+    const [agreement] = await db.query(`
+      SELECT ar.*, p.title as property_title, p.location as property_location,
+        p.listing_type as property_listing_type,
+        c.name as customer_name, c.email as customer_email,
+        o.name as owner_name, o.email as owner_email
+      FROM agreement_requests ar
+      LEFT JOIN properties p ON ar.property_id = p.id
+      LEFT JOIN users c ON ar.customer_id = c.id
+      LEFT JOIN users o ON ar.owner_id = o.id
+      WHERE ar.id = ?
+    `, [req.params.agreementId]);
+
+    if (agreement.length === 0) {
+      return res.status(404).json({ message: "Agreement not found", success: false });
+    }
+
+    const [history] = await db.query(
+      "SELECT * FROM agreement_workflow_history WHERE agreement_request_id = ? ORDER BY created_at DESC",
+      [req.params.agreementId]
+    ).catch(() => [[]]);
+
+    res.json({ success: true, agreement: agreement[0], documents: [], payments: [], commissions: [], history });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message, success: false });
   }
 });
 
