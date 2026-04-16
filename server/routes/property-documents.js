@@ -7,7 +7,7 @@ const crypto = require("crypto");
 router.get("/property/:propertyId", async (req, res) => {
   try {
     const [documents] = await db.query(
-      "SELECT *, document_path as document_url FROM property_documents WHERE property_id = ? ORDER BY uploaded_at DESC",
+      "SELECT * FROM property_documents WHERE property_id = ? ORDER BY created_at DESC",
       [req.params.propertyId],
     );
     res.json(documents);
@@ -49,7 +49,7 @@ router.post("/", async (req, res) => {
     const access_key = crypto.randomBytes(4).toString("hex").toUpperCase();
 
     const [result] = await db.query(
-      "INSERT INTO property_documents (property_id, document_name, document_path, document_type, access_key, uploaded_by) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO property_documents (property_id, document_name, document_data, document_type, access_key, uploaded_by) VALUES (?, ?, ?, ?, ?, ?)",
       [
         property_id,
         document_name,
