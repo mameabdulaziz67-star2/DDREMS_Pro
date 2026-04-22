@@ -28,7 +28,11 @@ const ForgotPassword = ({ onBackToLogin }) => {
 
     setLoading(true);
     try {
-      await axios.post(`${API_BASE_URL}/api/auth/forgot-password`, { email });
+      const response = await axios.post(`${API_BASE_URL}/api/auth/forgot-password`, { email });
+      // Store the OTP from response for display
+      if (response.data.otp) {
+        localStorage.setItem('testOTP', response.data.otp);
+      }
       setStep('otp');
       setError('');
     } catch (err) {
@@ -138,6 +142,11 @@ const ForgotPassword = ({ onBackToLogin }) => {
                   />
                 </div>
                 <p className="otp-hint">Check your email for the OTP code</p>
+                {localStorage.getItem('testOTP') && (
+                  <p className="otp-hint" style={{ color: '#60a5fa', marginTop: '8px' }}>
+                    💡 Test OTP: {localStorage.getItem('testOTP')}
+                  </p>
+                )}
               </div>
 
               <button type="submit" className="btn-submit" disabled={loading}>

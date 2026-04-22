@@ -263,7 +263,7 @@ router.post('/forgot-password', async (req, res) => {
       console.log('OTP generated but email failed to send. OTP:', otp);
     }
 
-    res.json({ message: 'OTP sent to your email. Please check your inbox.' });
+    res.json({ message: 'OTP sent to your email. Please check your inbox.', otp: otp });
   } catch (error) {
     console.error('Forgot password error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
