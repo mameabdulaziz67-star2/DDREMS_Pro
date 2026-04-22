@@ -10,6 +10,7 @@ import DocumentViewer from "./shared/DocumentViewer";
 import DocumentViewerAdmin from "./shared/DocumentViewerAdmin";
 import { AIPriceComparison } from "./shared/AIAdvisorWidget";
 import PropertyMap from "./shared/PropertyMap";
+import Property3DViewer from "./Property3DViewer";
 
 const Properties = ({ user, onLogout, viewMode = "all" }) => {
   const [properties, setProperties] = useState([]);
@@ -18,6 +19,8 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [showViewModal, setShowViewModal] = useState(false);
   const [propertyDetail, setPropertyDetail] = useState(null);
+  const [show3DViewer, setShow3DViewer] = useState(false);
+  const [property3D, setProperty3D] = useState(null);
   const [keyRequests, setKeyRequests] = useState([]);
   const [agreementRequests, setAgreementRequests] = useState([]);
   const [favorites, setFavorites] = useState([]);
@@ -253,6 +256,11 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
   const openDocumentViewer = (property) => {
     setDocumentProperty(property);
     setShowDocumentViewer(true);
+  };
+
+  const open3DViewer = (property) => {
+    setProperty3D(property);
+    setShow3DViewer(true);
   };
 
   const filteredProperties = properties.filter((property) => {
@@ -500,6 +508,13 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
                     onClick={() => openDocumentViewer(property)}
                   >
                     📄
+                  </button>
+                  <button
+                    className="btn-icon"
+                    title="3D View"
+                    onClick={() => open3DViewer(property)}
+                  >
+                    🏢
                   </button>
                   {user?.role === "user" && (
                     <button
@@ -1218,6 +1233,15 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
             </div>
           </div>
         </div>
+      )}
+      {show3DViewer && property3D && (
+        <Property3DViewer 
+          property={property3D} 
+          onClose={() => {
+            setShow3DViewer(false);
+            setProperty3D(null);
+          }} 
+        />
       )}
     </div>
   );
