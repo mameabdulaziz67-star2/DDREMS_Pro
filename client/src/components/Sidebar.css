@@ -47,6 +47,10 @@
   padding: 30px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: padding 0.3s ease;
+  position: sticky;
+  top: 0;
+  background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
+  z-index: 10;
 }
 
 .sidebar.collapsed .sidebar-header {
@@ -80,6 +84,10 @@
   gap: 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
+  position: sticky;
+  top: 120px;
+  background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
+  z-index: 9;
 }
 
 .sidebar.collapsed .user-info {
@@ -127,28 +135,14 @@
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar styling */
+/* Hide scrollbar but keep scrolling functionality */
 .sidebar-nav::-webkit-scrollbar {
-  width: 8px;
+  display: none;
 }
 
-.sidebar-nav::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-}
-
-.sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-/* Firefox scrollbar */
 .sidebar-nav {
-  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.05);
-  scrollbar-width: thin;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .nav-item {
@@ -249,6 +243,10 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
+  z-index: 10;
 }
 
 .ai-advice-btn {
