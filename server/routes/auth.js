@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const nodemailer = require('nodemailer');
-const crypto = require('crypto');
 
 // Configure email transporter
 const transporter = nodemailer.createTransport({
@@ -37,6 +36,23 @@ const generateTempPassword = () => {
     pwd.push(all[Math.floor(Math.random() * all.length)]);
   }
   return pwd.sort(() => Math.random() - 0.5).join('');
+};
+
+// Ensure password_resets table exists
+const ensurePasswordResetsTable = async () => {
+  try {
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS password_resets (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        otp VARCHAR(6) NOT NULL,
+        otp_expiry TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+  } catch (error) {
+    console.error('Error creating password_resets table:', error);
+  }
 };
 
 // Register
@@ -137,6 +153,12 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(400).json({ message: 'Email is required' });
     }
 
+    // Check if email configuration is set
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      console.error('Email configuration missing');
+      return res.status(500).json({ message: 'Email service not configured. Please contact support.' });
+    }
+
     // Check if user exists
     const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
 
@@ -144,15 +166,25 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(404).json({ message: 'Email not found in our system' });
     }
 
+    // Ensure password_resets table exists
+    await ensurePasswordResetsTable();
+
     // Generate OTP
     const otp = generateOTP();
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    // Store OTP in database (create password_reset table if needed)
-    await db.query(
-      'INSERT INTO password_resets (email, otp, otp_expiry, created_at) VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE otp = ?, otp_expiry = ?, created_at = NOW()',
-      [email, otp, otpExpiry, otp, otpExpiry]
-    );
+    // Store OTP in database - PostgreSQL syntax with UPSERT
+    try {
+      await db.query(
+        `INSERT INTO password_resets (email, otp, otp_expiry, created_at) 
+         VALUES (?, ?, ?, NOW())
+         ON CONFLICT (email) DO UPDATE SET otp = EXCLUDED.otp, otp_expiry = EXCLUDED.otp_expiry, created_at = NOW()`,
+        [email, otp, otpExpiry]
+      );
+    } catch (dbError) {
+      console.error('Database insert error:', dbError);
+      throw dbError;
+    }
 
     // Send OTP via email
     const mailOptions = {
@@ -203,6 +235,12 @@ router.post('/verify-otp', async (req, res) => {
 
     if (!email || !otp) {
       return res.status(400).json({ message: 'Email and OTP are required' });
+    }
+
+    // Check if email configuration is set
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      console.error('Email configuration missing');
+      return res.status(500).json({ message: 'Email service not configured. Please contact support.' });
     }
 
     // Check if OTP is valid
