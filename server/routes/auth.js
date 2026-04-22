@@ -11,7 +11,7 @@ let transporter = null;
 const initializeTransporter = () => {
   if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD && process.env.EMAIL_HOST) {
     // Use configured SMTP
-    transporter = nodemailer.createTransport({
+    const config = {
       host: process.env.EMAIL_HOST || 'smtp.gmail.com',
       port: parseInt(process.env.EMAIL_PORT) || 587,
       secure: process.env.EMAIL_SECURE === 'true' || false,
@@ -19,7 +19,16 @@ const initializeTransporter = () => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
       }
-    });
+    };
+
+    // For Gmail, add extra options
+    if (process.env.EMAIL_HOST === 'smtp.gmail.com') {
+      config.tls = {
+        rejectUnauthorized: false
+      };
+    }
+
+    transporter = nodemailer.createTransport(config);
     console.log('Email transporter configured with:', process.env.EMAIL_HOST);
   } else {
     // Use Ethereal (test email service) - synchronous
