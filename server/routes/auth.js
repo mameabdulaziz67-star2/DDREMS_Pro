@@ -6,15 +6,39 @@ const db = require('../config/db');
 const nodemailer = require('nodemailer');
 
 // Configure email transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-  port: process.env.EMAIL_PORT || 587,
-  secure: process.env.EMAIL_SECURE === 'true' || false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD
+let transporter;
+
+const initializeTransporter = async () => {
+  if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD && process.env.EMAIL_HOST) {
+    // Use configured SMTP
+    transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+      port: process.env.EMAIL_PORT || 587,
+      secure: process.env.EMAIL_SECURE === 'true' || false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+      }
+    });
+  } else {
+    // Use Ethereal (test email service)
+    const testAccount = await nodemailer.createTestAccount();
+    transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass
+      }
+    });
+    console.log('Using Ethereal test email service');
+    console.log('Test email account:', testAccount.user);
   }
-});
+};
+
+// Initialize transporter on startup
+initializeTransporter().catch(err => console.error('Transporter init error:', err));
 
 // Generate OTP
 const generateOTP = () => {
