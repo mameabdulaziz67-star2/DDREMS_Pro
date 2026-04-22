@@ -67,12 +67,23 @@ const ProfileApproval = ({ adminRole = 'system_admin' }) => {
 
     try {
       const adminUser = JSON.parse(localStorage.getItem('user'));
-      await axios.post(`${API_BASE}/profiles/approve/${profile.type}/${profile.id}`, {
+      const response = await axios.post(`${API_BASE}/profiles/approve/${profile.type}/${profile.id}`, {
         adminId: adminUser?.id
       });
+      
+      console.log('Approval response:', response.data);
       alert('✅ Profile approved successfully!');
-      fetchProfiles();
+      
+      // Close modal first
       setSelectedProfile(null);
+      
+      // Reset rejection reason
+      setRejectionReason('');
+      
+      // Refresh profiles after a short delay to ensure backend has updated
+      setTimeout(() => {
+        fetchProfiles();
+      }, 500);
     } catch (error) {
       console.error('Error approving profile:', error);
       alert('❌ Failed to approve profile: ' + (error.response?.data?.message || error.message));
@@ -89,14 +100,24 @@ const ProfileApproval = ({ adminRole = 'system_admin' }) => {
 
     try {
       const adminUser = JSON.parse(localStorage.getItem('user'));
-      await axios.post(`${API_BASE}/profiles/reject/${profile.type}/${profile.id}`, {
+      const response = await axios.post(`${API_BASE}/profiles/reject/${profile.type}/${profile.id}`, {
         adminId: adminUser?.id,
         rejectionReason: rejectionReason
       });
+      
+      console.log('Rejection response:', response.data);
       alert('✅ Profile rejected');
-      fetchProfiles();
+      
+      // Close modal first
       setSelectedProfile(null);
+      
+      // Reset rejection reason
       setRejectionReason('');
+      
+      // Refresh profiles after a short delay
+      setTimeout(() => {
+        fetchProfiles();
+      }, 500);
     } catch (error) {
       console.error('Error rejecting profile:', error);
       alert('❌ Failed to reject profile: ' + (error.response?.data?.message || error.message));
@@ -109,13 +130,24 @@ const ProfileApproval = ({ adminRole = 'system_admin' }) => {
 
     try {
       const adminUser = JSON.parse(localStorage.getItem('user'));
-      await axios.post(`${API_BASE}/profiles/suspend/${profile.type}/${profile.id}`, {
+      const response = await axios.post(`${API_BASE}/profiles/suspend/${profile.type}/${profile.id}`, {
         adminId: adminUser?.id,
         reason: reason || 'Suspended by admin'
       });
+      
+      console.log('Suspension response:', response.data);
       alert('✅ Profile suspended');
-      fetchProfiles();
+      
+      // Close modal first
       setSelectedProfile(null);
+      
+      // Reset rejection reason
+      setRejectionReason('');
+      
+      // Refresh profiles after a short delay
+      setTimeout(() => {
+        fetchProfiles();
+      }, 500);
     } catch (error) {
       console.error('Error suspending profile:', error);
       alert('❌ Failed to suspend profile: ' + (error.response?.data?.message || error.message));
