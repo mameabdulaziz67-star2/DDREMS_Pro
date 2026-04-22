@@ -199,6 +199,26 @@ function generateAgreementHTML(
 </html>`;
 }
 
+// Get all agreements (for admin/system admin)
+router.get("/", async (req, res) => {
+  try {
+    const [agreements] = await db.query(`
+      SELECT a.*, p.title as property_title, p.location as property_location, p.price as property_price,
+             seller.name as seller_name, buyer.name as buyer_name, broker.name as broker_name
+      FROM agreements a
+      LEFT JOIN properties p ON a.property_id = p.id
+      LEFT JOIN users seller ON a.seller_id = seller.id
+      LEFT JOIN users buyer ON a.buyer_id = buyer.id
+      LEFT JOIN users broker ON a.broker_id = broker.id
+      ORDER BY a.created_at DESC
+    `);
+    res.json(agreements);
+  } catch (error) {
+    console.error("Get all agreements error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 // Get single agreement with full details
 router.get("/:id", async (req, res) => {
   try {

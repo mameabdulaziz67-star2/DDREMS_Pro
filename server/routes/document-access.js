@@ -10,7 +10,7 @@ router.post('/request', async (req, res) => {
     
     // Check if request already exists
     const [existing] = await db.query(
-      "SELECT * FROM document_access WHERE property_id = ? AND user_id = ? AND status = 'pending'",
+      "SELECT * FROM document_access_requests WHERE property_id = ? AND user_id = ? AND status = 'pending'",
       [property_id, user_id]
     );
     
@@ -19,7 +19,7 @@ router.post('/request', async (req, res) => {
     }
     
     const [result] = await db.query(
-      "INSERT INTO document_access (property_id, user_id, status) VALUES (?, ?, 'pending')",
+      "INSERT INTO document_access_requests (property_id, user_id, status) VALUES (?, ?, 'pending')",
       [property_id, user_id]
     );
     
@@ -34,11 +34,11 @@ router.post('/request', async (req, res) => {
 router.get('/property/:propertyId', async (req, res) => {
   try {
     const [requests] = await db.query(`
-      SELECT da.*, u.name as user_name, u.email as user_email
-      FROM document_access da
-      JOIN users u ON da.user_id = u.id
-      WHERE da.property_id = ?
-      ORDER BY da.requested_at DESC
+      SELECT dar.*, u.name as user_name, u.email as user_email
+      FROM document_access_requests dar
+      JOIN users u ON dar.user_id = u.id
+      WHERE dar.property_id = ?
+      ORDER BY dar.created_at DESC
     `, [req.params.propertyId]);
     
     res.json(requests);
