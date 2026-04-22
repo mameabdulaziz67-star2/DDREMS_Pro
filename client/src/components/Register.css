@@ -33,6 +33,9 @@
 .input-wrapper input { width: 100%; padding: 12px 13px 12px 40px; background: rgba(255,255,255,0.07); border: 1px solid rgba(100,160,255,0.3); border-radius: 8px; font-size: 14px; color: #ffffff; transition: all 0.25s; box-sizing: border-box; }
 .input-wrapper input::placeholder { color: rgba(180,200,255,0.5); }
 .input-wrapper input:focus { outline: none; border-color: #3b82f6; background: rgba(255,255,255,0.11); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+.input-wrapper select { width: 100%; padding: 12px 13px 12px 40px; background: rgba(255,255,255,0.07); border: 1px solid rgba(100,160,255,0.3); border-radius: 8px; font-size: 14px; color: #ffffff; transition: all 0.25s; box-sizing: border-box; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2360a5fa' d='M6 9L1 4h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+.input-wrapper select option { background: #0d1b4b; color: #ffffff; }
+.input-wrapper select:focus { outline: none; border-color: #3b82f6; background-color: rgba(255,255,255,0.11); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2360a5fa' d='M6 9L1 4h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
 .register-as-row { display: flex; align-items: center; gap: 10px; padding: 11px 13px; background: rgba(255,255,255,0.06); border: 1px solid rgba(100,160,255,0.25); border-radius: 8px; }
 .radio-indicator { color: #4ade80; font-size: 14px; line-height: 1; }
 .role-text { font-size: 13px; color: rgba(220,235,255,0.9); }

@@ -64,7 +64,7 @@ const Register = ({ onBackToLogin }) => {
     e.preventDefault();
     setError('');
 
-    if (!formData.name || !formData.email || !formData.password) {
+    if (!formData.name || !formData.email || !formData.password || !formData.role) {
       setError('Please fill in all required fields');
       return;
     }
@@ -162,10 +162,15 @@ const Register = ({ onBackToLogin }) => {
             </div>
 
             <div className="form-group">
-              <label>Register As</label>
-              <div className="register-as-row">
-                <span className="radio-indicator">●</span>
-                <span className="role-text">Customer - Browse and buy properties</span>
+              <label>Register As *</label>
+              <div className="input-wrapper">
+                <span className="input-icon">👥</span>
+                <select name="role" value={formData.role} onChange={handleChange} required>
+                  <option value="">-- Select Your Role --</option>
+                  <option value="buyer">Buyer - Browse and purchase properties</option>
+                  <option value="owner">Owner - List and manage your properties</option>
+                  <option value="broker">Broker - Facilitate property transactions</option>
+                </select>
               </div>
             </div>
 
