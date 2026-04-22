@@ -3,7 +3,7 @@ import './ProfileApproval.css';
 import axios from 'axios';
 import API_BASE_URL from '../../config/api';
 
-const ProfileApproval = () => {
+const ProfileApproval = ({ adminRole = 'system_admin' }) => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('pending');
@@ -36,7 +36,12 @@ const ProfileApproval = () => {
         fetchData('broker')
       ]);
 
-      const allProfiles = [].concat(...results);
+      let allProfiles = [].concat(...results);
+
+      // If property_admin, filter to only show owner and broker profiles (not customers)
+      if (adminRole === 'property_admin') {
+        allProfiles = allProfiles.filter(p => p.type === 'owner' || p.type === 'broker');
+      }
 
       // Filter by status locally (case-insensitive and handles missing status)
       const filteredProfiles = allProfiles.filter(p => {
@@ -137,8 +142,8 @@ const ProfileApproval = () => {
   return (
     <div className="profile-approval">
       <div className="approval-header">
-        <h2>👥 Profile Approval Management</h2>
-        <p>Review, approve, and manage user access</p>
+        <h2>👥 {adminRole === 'property_admin' ? 'Property Owner & Broker' : 'Profile'} Approval Management</h2>
+        <p>{adminRole === 'property_admin' ? 'Review and manage property owner and broker profiles' : 'Review, approve, and manage user access'}</p>
       </div>
 
       <div className="filter-tabs">

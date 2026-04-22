@@ -1426,7 +1426,7 @@ const PropertyAdminDashboard = ({
           }
         />
         <div style={{ padding: "20px" }}>
-          <ProfileApproval />
+          <ProfileApproval adminRole="property_admin" />
         </div>
       </div>
     );

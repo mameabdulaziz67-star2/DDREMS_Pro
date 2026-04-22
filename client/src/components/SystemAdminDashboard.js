@@ -126,7 +126,7 @@ const SystemAdminDashboard = ({ user, onLogout, setCurrentPage }) => {
           }
         />
         <div style={{ padding: '20px' }}>
-          <ProfileApproval />
+          <ProfileApproval adminRole="system_admin" />
         </div>
       </div>
     );

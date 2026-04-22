@@ -159,7 +159,7 @@ const Dashboard = ({ user, onLogout }) => {
           >
             ← Back to Dashboard
           </button>
-          <ProfileApproval />
+          <ProfileApproval adminRole="system_admin" />
         </div>
       </div>
     );
