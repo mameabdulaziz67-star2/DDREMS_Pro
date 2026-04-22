@@ -6,39 +6,38 @@ const db = require('../config/db');
 const nodemailer = require('nodemailer');
 
 // Configure email transporter
-let transporter;
+let transporter = null;
 
-const initializeTransporter = async () => {
+const initializeTransporter = () => {
   if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD && process.env.EMAIL_HOST) {
     // Use configured SMTP
     transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-      port: process.env.EMAIL_PORT || 587,
+      port: parseInt(process.env.EMAIL_PORT) || 587,
       secure: process.env.EMAIL_SECURE === 'true' || false,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
       }
     });
+    console.log('Email transporter configured with:', process.env.EMAIL_HOST);
   } else {
-    // Use Ethereal (test email service)
-    const testAccount = await nodemailer.createTestAccount();
+    // Use Ethereal (test email service) - synchronous
     transporter = nodemailer.createTransport({
       host: 'smtp.ethereal.email',
       port: 587,
       secure: false,
       auth: {
-        user: testAccount.user,
-        pass: testAccount.pass
+        user: 'test@ethereal.email',
+        pass: 'test123456'
       }
     });
     console.log('Using Ethereal test email service');
-    console.log('Test email account:', testAccount.user);
   }
 };
 
-// Initialize transporter on startup
-initializeTransporter().catch(err => console.error('Transporter init error:', err));
+// Initialize transporter immediately
+initializeTransporter();
 
 // Generate OTP
 const generateOTP = () => {
@@ -241,14 +240,16 @@ router.post('/forgot-password', async (req, res) => {
 
     try {
       const info = await transporter.sendMail(mailOptions);
-      console.log('Email sent:', info.response);
+      console.log('OTP Email sent successfully');
+      console.log('Message ID:', info.messageId);
       
       // If using Ethereal, log the preview URL
       if (info.messageId && info.messageId.includes('ethereal')) {
-        console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
+        const previewUrl = nodemailer.getTestMessageUrl(info);
+        console.log('Preview URL:', previewUrl);
       }
     } catch (emailError) {
-      console.error('Email send error:', emailError);
+      console.error('Email send error:', emailError.message);
       // Don't fail the request if email fails - still allow OTP to be used
       console.log('OTP generated but email failed to send. OTP:', otp);
     }
@@ -333,14 +334,16 @@ router.post('/verify-otp', async (req, res) => {
 
     try {
       const info = await transporter.sendMail(mailOptions);
-      console.log('Password email sent:', info.response);
+      console.log('Password reset email sent successfully');
+      console.log('Message ID:', info.messageId);
       
       // If using Ethereal, log the preview URL
       if (info.messageId && info.messageId.includes('ethereal')) {
-        console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
+        const previewUrl = nodemailer.getTestMessageUrl(info);
+        console.log('Preview URL:', previewUrl);
       }
     } catch (emailError) {
-      console.error('Email send error:', emailError);
+      console.error('Email send error:', emailError.message);
       // Don't fail the request if email fails - password is already reset
       console.log('Password reset but email failed to send. Temp password:', tempPassword);
     }
