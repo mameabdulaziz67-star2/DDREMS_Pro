@@ -1335,6 +1335,18 @@ const PropertyAdminDashboard = ({
                     <p style={{ margin: 0, fontWeight: "bold" }}>
                       {selectedMediationRequest.property_title}
                     </p>
+                    <p
+                      style={{
+                        margin: "15px 0 5px 0",
+                        fontSize: "13px",
+                        color: "#64748b",
+                      }}
+                    >
+                      PROPERTY OWNER
+                    </p>
+                    <p style={{ margin: 0, fontWeight: "bold" }}>
+                      {selectedMediationRequest.owner_name || "Not assigned"}
+                    </p>
                   </div>
 
                   <div className="form-group">

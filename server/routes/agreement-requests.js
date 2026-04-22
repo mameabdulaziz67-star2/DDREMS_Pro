@@ -72,15 +72,18 @@ router.get("/customer/:userId", async (req, res) => {
 router.get("/admin/pending", async (req, res) => {
   try {
     const [requests] = await db.query(`
-      SELECT ar.*, p.title as property_title, u.name as customer_name, u.email as customer_email, 'agreement' as request_type
+      SELECT ar.*, p.title as property_title, p.owner_id, u.name as customer_name, u.email as customer_email, 
+             owner.name as owner_name, owner.email as owner_email, 'agreement' as request_type
       FROM agreement_requests ar
       JOIN properties p ON ar.property_id = p.id
       JOIN users u ON ar.customer_id = u.id
+      LEFT JOIN users owner ON p.owner_id = owner.id
       WHERE ar.status IN ('pending', 'pending_admin_review') AND ar.forwarded_to_owner_date IS NULL
       ORDER BY ar.created_at DESC
     `);
     res.json(requests);
   } catch (error) {
+    console.error('Error fetching pending requests:', error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
