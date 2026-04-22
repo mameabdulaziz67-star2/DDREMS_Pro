@@ -1,6 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
 import './Property3DViewer.css';
+
+// Load Three.js from CDN
+const loadThreeJS = () => {
+  return new Promise((resolve) => {
+    if (window.THREE) {
+      resolve(window.THREE);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+    script.onload = () => resolve(window.THREE);
+    document.head.appendChild(script);
+  });
+};
 
 const Property3DViewer = ({ property, onClose }) => {
   const containerRef = useRef(null);
@@ -12,98 +25,104 @@ const Property3DViewer = ({ property, onClose }) => {
   const [rotationSpeed, setRotationSpeed] = useState(0.005);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const initScene = async () => {
+      const THREE = await loadThreeJS();
+      
+      if (!containerRef.current) return;
 
-    // Scene setup
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x87ceeb); // Sky blue
-    sceneRef.current = scene;
+      // Scene setup
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x87ceeb); // Sky blue
+      sceneRef.current = scene;
 
-    // Camera setup
-    const width = containerRef.current.clientWidth;
-    const height = containerRef.current.clientHeight;
-    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    camera.position.set(0, 5, 8);
-    camera.lookAt(0, 0, 0);
-    cameraRef.current = camera;
+      // Camera setup
+      const width = containerRef.current.clientWidth;
+      const height = containerRef.current.clientHeight;
+      const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+      camera.position.set(0, 5, 8);
+      camera.lookAt(0, 0, 0);
+      cameraRef.current = camera;
 
-    // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(width, height);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFShadowShadowMap;
-    containerRef.current.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
+      // Renderer setup
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+      containerRef.current.appendChild(renderer.domElement);
+      rendererRef.current = renderer;
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(10, 15, 10);
-    directionalLight.castShadow = true;
-    directionalLight.shadow.mapSize.width = 2048;
-    directionalLight.shadow.mapSize.height = 2048;
-    directionalLight.shadow.camera.far = 50;
-    directionalLight.shadow.camera.left = -20;
-    directionalLight.shadow.camera.right = 20;
-    directionalLight.shadow.camera.top = 20;
-    directionalLight.shadow.camera.bottom = -20;
-    scene.add(directionalLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(10, 15, 10);
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 2048;
+      directionalLight.shadow.mapSize.height = 2048;
+      directionalLight.shadow.camera.far = 50;
+      directionalLight.shadow.camera.left = -20;
+      directionalLight.shadow.camera.right = 20;
+      directionalLight.shadow.camera.top = 20;
+      directionalLight.shadow.camera.bottom = -20;
+      scene.add(directionalLight);
 
-    // Create building
-    const building = createBuilding(property);
-    scene.add(building);
-    buildingRef.current = building;
+      // Create building
+      const building = createBuilding(property, THREE);
+      scene.add(building);
+      buildingRef.current = building;
 
-    // Ground plane
-    const groundGeometry = new THREE.PlaneGeometry(30, 30);
-    const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x90ee90 });
-    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
-    scene.add(ground);
+      // Ground plane
+      const groundGeometry = new THREE.PlaneGeometry(30, 30);
+      const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x90ee90 });
+      const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+      ground.rotation.x = -Math.PI / 2;
+      ground.receiveShadow = true;
+      scene.add(ground);
 
-    // Add some trees for context
-    addTrees(scene);
+      // Add some trees for context
+      addTrees(scene, THREE);
 
-    setIsLoading(false);
+      setIsLoading(false);
 
-    // Animation loop
-    const animate = () => {
-      requestAnimationFrame(animate);
+      // Animation loop
+      const animate = () => {
+        requestAnimationFrame(animate);
 
-      if (buildingRef.current) {
-        buildingRef.current.rotation.y += rotationSpeed;
-      }
+        if (buildingRef.current) {
+          buildingRef.current.rotation.y += rotationSpeed;
+        }
 
-      renderer.render(scene, camera);
+        renderer.render(scene, camera);
+      };
+
+      animate();
+
+      // Handle window resize
+      const handleResize = () => {
+        const newWidth = containerRef.current?.clientWidth || width;
+        const newHeight = containerRef.current?.clientHeight || height;
+        camera.aspect = newWidth / newHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(newWidth, newHeight);
+      };
+
+      window.addEventListener('resize', handleResize);
+
+      // Cleanup
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        if (containerRef.current && renderer.domElement.parentNode === containerRef.current) {
+          containerRef.current.removeChild(renderer.domElement);
+        }
+        renderer.dispose();
+      };
     };
 
-    animate();
-
-    // Handle window resize
-    const handleResize = () => {
-      const newWidth = containerRef.current?.clientWidth || width;
-      const newHeight = containerRef.current?.clientHeight || height;
-      camera.aspect = newWidth / newHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(newWidth, newHeight);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (containerRef.current && renderer.domElement.parentNode === containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
-    };
+    initScene();
   }, [property, rotationSpeed]);
 
-  const createBuilding = (prop) => {
+  const createBuilding = (prop, THREE) => {
     const group = new THREE.Group();
 
     // Main building structure
@@ -164,7 +183,7 @@ const Property3DViewer = ({ property, onClose }) => {
     return group;
   };
 
-  const addTrees = (scene) => {
+  const addTrees = (scene, THREE) => {
     for (let i = 0; i < 4; i++) {
       const angle = (i / 4) * Math.PI * 2;
       const distance = 12;
