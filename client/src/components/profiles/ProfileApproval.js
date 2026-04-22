@@ -238,7 +238,11 @@ const ProfileApproval = () => {
       )}
 
       {selectedProfile && (
-        <div className="modal-overlay" onClick={() => setSelectedProfile(null)}>
+        <div className="modal-overlay" onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            setSelectedProfile(null);
+          }
+        }}>
           <div className="modal-content large" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div>
