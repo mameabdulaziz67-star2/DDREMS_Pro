@@ -18,6 +18,15 @@ const CustomerProfile = ({ user, onComplete }) => {
   const [docPreview, setDocPreview] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [updatingPassword, setUpdatingPassword] = useState(false);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -66,6 +75,63 @@ const CustomerProfile = ({ user, onComplete }) => {
     } catch (error) {
       console.error('Error requesting edit:', error);
       alert('❌ Failed to send edit request. Please try again.');
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    setPasswordData({
+      ...passwordData,
+      [e.target.name]: e.target.value
+    });
+    setPasswordError('');
+  };
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    setPasswordError('');
+    setPasswordSuccess('');
+
+    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      setPasswordError('Please fill in all password fields');
+      return;
+    }
+
+    if (passwordData.newPassword.length < 8) {
+      setPasswordError('New password must be at least 8 characters long');
+      return;
+    }
+
+    if (!/[A-Z]/.test(passwordData.newPassword) || !/[0-9]/.test(passwordData.newPassword) || !/[^A-Za-z0-9]/.test(passwordData.newPassword)) {
+      setPasswordError('Password must contain uppercase, number, and special character');
+      return;
+    }
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError('New passwords do not match');
+      return;
+    }
+
+    setUpdatingPassword(true);
+    try {
+      await axios.post(`${API_BASE_URL}/api/auth/update-password`, {
+        email: user.email,
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      });
+      setPasswordSuccess('✅ Password updated successfully!');
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+      setTimeout(() => {
+        setShowPasswordModal(false);
+        setPasswordSuccess('');
+      }, 2000);
+    } catch (error) {
+      setPasswordError(error.response?.data?.message || 'Failed to update password. Please try again.');
+    } finally {
+      setUpdatingPassword(false);
     }
   };
 
@@ -170,6 +236,12 @@ const CustomerProfile = ({ user, onComplete }) => {
               onClick={() => setShowViewModal(true)}
             >
               👁️ View Full Profile
+            </button>
+            <button 
+              className="btn-change-password"
+              onClick={() => setShowPasswordModal(true)}
+            >
+              🔐 Change Password
             </button>
             {profile.profile_status === 'approved' && (
               <button 
@@ -424,6 +496,76 @@ const CustomerProfile = ({ user, onComplete }) => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change Password Modal */}
+      {showPasswordModal && (
+        <div className="modal-overlay" onClick={() => setShowPasswordModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>🔐 Change Password</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowPasswordModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleUpdatePassword} className="modal-body">
+              {passwordError && <div className="error-message"><span>⚠️</span> {passwordError}</div>}
+              {passwordSuccess && <div className="success-message"><span>✅</span> {passwordSuccess}</div>}
+
+              <div className="form-group">
+                <label>Current Password *</label>
+                <input
+                  type="password"
+                  name="currentPassword"
+                  value={passwordData.currentPassword}
+                  onChange={handlePasswordChange}
+                  placeholder="Enter your current password"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>New Password *</label>
+                <input
+                  type="password"
+                  name="newPassword"
+                  value={passwordData.newPassword}
+                  onChange={handlePasswordChange}
+                  placeholder="Min 8 chars, uppercase, number, symbol"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Confirm New Password *</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={passwordData.confirmPassword}
+                  onChange={handlePasswordChange}
+                  placeholder="Re-enter your new password"
+                  required
+                />
+              </div>
+
+              <div className="modal-actions">
+                <button type="submit" className="btn-submit" disabled={updatingPassword}>
+                  {updatingPassword ? '⏳ Updating...' : '✅ Update Password'}
+                </button>
+                <button 
+                  type="button" 
+                  className="btn-cancel"
+                  onClick={() => setShowPasswordModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
