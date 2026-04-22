@@ -239,8 +239,8 @@ router.get("/owner/:userId", async (req, res) => {
              cust.name as customer_name, cust.email as customer_email
       FROM agreements a
       JOIN properties p ON a.property_id = p.id
-      LEFT JOIN users cust ON a.customer_id = cust.id
-      WHERE a.owner_id = ?
+      LEFT JOIN users cust ON a.buyer_id = cust.id
+      WHERE a.seller_id = ?
       ORDER BY a.created_at DESC
     `,
       [req.params.userId],
@@ -261,7 +261,7 @@ router.get("/broker/:userId", async (req, res) => {
              cust.name as customer_name, cust.email as customer_email
       FROM agreements a
       JOIN properties p ON a.property_id = p.id
-      LEFT JOIN users cust ON a.customer_id = cust.id
+      LEFT JOIN users cust ON a.buyer_id = cust.id
       WHERE a.broker_id = ?
       ORDER BY a.created_at DESC
     `,
@@ -283,14 +283,15 @@ router.get("/customer/:userId", async (req, res) => {
              owner.name as owner_name, owner.email as owner_email
       FROM agreements a
       JOIN properties p ON a.property_id = p.id
-      LEFT JOIN users owner ON a.owner_id = owner.id
-      WHERE a.customer_id = ?
+      LEFT JOIN users owner ON a.seller_id = owner.id
+      WHERE a.buyer_id = ?
       ORDER BY a.created_at DESC
     `,
       [req.params.userId],
     );
     res.json(agreements);
   } catch (error) {
+    console.error("Get customer agreements error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });

@@ -8,11 +8,12 @@ router.get('/', async (req, res) => {
     const [announcements] = await db.query(`
       SELECT a.*, u.name as created_by 
       FROM announcements a 
-      LEFT JOIN users u ON a.created_by = u.id 
+      LEFT JOIN users u ON a.author_id = u.id 
       ORDER BY a.created_at DESC
     `);
     res.json(announcements);
   } catch (error) {
+    console.error('Error fetching announcements:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
@@ -35,11 +36,12 @@ router.post('/', async (req, res) => {
   try {
     const { title, content, priority } = req.body;
     const [result] = await db.query(
-      'INSERT INTO announcements (title, content, priority, created_by) VALUES (?, ?, ?, ?)',
-      [title, content, priority, 1] // Default to admin user
+      'INSERT INTO announcements (title, content, author_id) VALUES (?, ?, ?)',
+      [title, content, 1] // Default to admin user
     );
     res.status(201).json({ id: result.insertId, message: 'Announcement created successfully' });
   } catch (error) {
+    console.error('Error creating announcement:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
@@ -49,11 +51,12 @@ router.put('/:id', async (req, res) => {
   try {
     const { title, content, priority } = req.body;
     await db.query(
-      'UPDATE announcements SET title = ?, content = ?, priority = ? WHERE id = ?',
-      [title, content, priority, req.params.id]
+      'UPDATE announcements SET title = ?, content = ? WHERE id = ?',
+      [title, content, req.params.id]
     );
     res.json({ message: 'Announcement updated successfully' });
   } catch (error) {
+    console.error('Error updating announcement:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
@@ -64,6 +67,7 @@ router.delete('/:id', async (req, res) => {
     await db.query('DELETE FROM announcements WHERE id = ?', [req.params.id]);
     res.json({ message: 'Announcement deleted successfully' });
   } catch (error) {
+    console.error('Error deleting announcement:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
