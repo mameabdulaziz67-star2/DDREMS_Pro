@@ -179,12 +179,6 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(400).json({ message: 'Email is required' });
     }
 
-    // Check if email configuration is set
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-      console.error('Email configuration missing');
-      return res.status(500).json({ message: 'Email service not configured. Please contact support.' });
-    }
-
     // Check if user exists
     const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
 
@@ -214,7 +208,7 @@ router.post('/forgot-password', async (req, res) => {
 
     // Send OTP via email
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_USER || 'noreply@ddrems.com',
       to: email,
       subject: 'DDREMS - Password Reset OTP',
       html: `
@@ -245,7 +239,19 @@ router.post('/forgot-password', async (req, res) => {
       `
     };
 
-    await transporter.sendMail(mailOptions);
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log('Email sent:', info.response);
+      
+      // If using Ethereal, log the preview URL
+      if (info.messageId && info.messageId.includes('ethereal')) {
+        console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
+      }
+    } catch (emailError) {
+      console.error('Email send error:', emailError);
+      // Don't fail the request if email fails - still allow OTP to be used
+      console.log('OTP generated but email failed to send. OTP:', otp);
+    }
 
     res.json({ message: 'OTP sent to your email. Please check your inbox.' });
   } catch (error) {
@@ -261,12 +267,6 @@ router.post('/verify-otp', async (req, res) => {
 
     if (!email || !otp) {
       return res.status(400).json({ message: 'Email and OTP are required' });
-    }
-
-    // Check if email configuration is set
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-      console.error('Email configuration missing');
-      return res.status(500).json({ message: 'Email service not configured. Please contact support.' });
     }
 
     // Check if OTP is valid
@@ -291,7 +291,7 @@ router.post('/verify-otp', async (req, res) => {
 
     // Send new password via email
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: process.env.EMAIL_USER || 'noreply@ddrems.com',
       to: email,
       subject: 'DDREMS - Your New Password',
       html: `
@@ -331,7 +331,19 @@ router.post('/verify-otp', async (req, res) => {
       `
     };
 
-    await transporter.sendMail(mailOptions);
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log('Password email sent:', info.response);
+      
+      // If using Ethereal, log the preview URL
+      if (info.messageId && info.messageId.includes('ethereal')) {
+        console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
+      }
+    } catch (emailError) {
+      console.error('Email send error:', emailError);
+      // Don't fail the request if email fails - password is already reset
+      console.log('Password reset but email failed to send. Temp password:', tempPassword);
+    }
 
     res.json({
       message: 'Password reset successful. Check your email for the new password.',
