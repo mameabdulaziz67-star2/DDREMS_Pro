@@ -2,19 +2,25 @@ import React, { useState } from 'react';
 import './Login.css';
 import axios from 'axios';
 import Register from './Register';
+import ForgotPassword from './ForgotPassword';
 import API_BASE_URL from '../config/api';
 
 const Login = ({ onLogin }) => {
   const [showRegister, setShowRegister] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   if (showRegister) {
     return <Register onBackToLogin={() => setShowRegister(false)} />;
   }
 
-  return <LoginForm onLogin={onLogin} onShowRegister={() => setShowRegister(true)} />;
+  if (showForgotPassword) {
+    return <ForgotPassword onBackToLogin={() => setShowForgotPassword(false)} />;
+  }
+
+  return <LoginForm onLogin={onLogin} onShowRegister={() => setShowRegister(true)} onShowForgotPassword={() => setShowForgotPassword(true)} />;
 };
 
-const LoginForm = ({ onLogin, onShowRegister }) => {
+const LoginForm = ({ onLogin, onShowRegister, onShowForgotPassword }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -99,6 +105,13 @@ const LoginForm = ({ onLogin, onShowRegister }) => {
               <span className="checkbox-custom"></span>
               <span className="checkbox-text">Remember me</span>
             </label>
+            <button 
+              type="button"
+              className="forgot-password-link"
+              onClick={onShowForgotPassword}
+            >
+              Forgot Password?
+            </button>
           </div>
 
           <button type="submit" className="login-btn" disabled={loading}>

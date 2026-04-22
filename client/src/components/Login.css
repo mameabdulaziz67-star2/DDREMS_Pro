@@ -157,6 +157,9 @@
 /* ── Remember Me ── */
 .remember-me {
   margin-top: -4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .checkbox-label {
@@ -201,6 +204,22 @@
   font-size: 13px;
   color: rgba(210, 230, 255, 0.9);
   letter-spacing: 0.3px;
+}
+
+.forgot-password-link {
+  background: transparent;
+  border: none;
+  color: rgba(100, 180, 255, 0.9);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.forgot-password-link:hover {
+  color: #60a5fa;
+  text-decoration: underline;
 }
 
 /* ── Error ── */
