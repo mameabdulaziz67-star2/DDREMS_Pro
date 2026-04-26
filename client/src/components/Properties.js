@@ -556,6 +556,18 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
                     flexWrap: "wrap",
                   }}
                 >
+                  {user?.role === "property_admin" && (
+                    <button
+                      className="btn-warning"
+                      onClick={() => {
+                        // Navigate to PropertyAdminDashboard with agreement-requests view
+                        window.location.hash = "#/property-admin?view=agreement-requests";
+                      }}
+                      title="Mediate agreement requests for this property"
+                    >
+                      🤝 Mediate
+                    </button>
+                  )}
                   {!hasKey(property.id) && !hasPendingKey(property.id) && (
                     <button
                       className="btn-secondary"
