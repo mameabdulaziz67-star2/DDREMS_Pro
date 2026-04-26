@@ -5,7 +5,7 @@
 .upload-area {
   border: 2px dashed #cbd5e0;
   border-radius: 8px;
-  padding: 30px;
+  padding: 40px 30px;
   text-align: center;
   background: #f7fafc;
   transition: all 0.3s ease;
@@ -13,8 +13,14 @@
 }
 
 .upload-area:hover {
-  border-color: #4299e1;
-  background: #ebf8ff;
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.upload-area.drag-active {
+  border-color: #667eea;
+  background: #e0e7ff;
+  transform: scale(1.02);
 }
 
 .upload-label {
@@ -24,26 +30,37 @@
 
 .upload-icon {
   font-size: 48px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .upload-area p {
   font-size: 16px;
   font-weight: 600;
   color: #2d3748;
-  margin: 10px 0 5px 0;
+  margin: 10px 0 8px 0;
 }
 
 .upload-area span {
-  font-size: 14px;
+  font-size: 13px;
   color: #718096;
+  display: block;
+}
+
+.preview-section {
+  margin-top: 30px;
+}
+
+.preview-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 15px;
 }
 
 .preview-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr));
-  gap: 15px;
-  margin: 20px 0;
+  grid-template-columns: repeat(auto-fill, minmax(min(140px, 100%), 1fr));
+  gap: 12px;
 }
 
 .preview-item {
@@ -52,6 +69,7 @@
   overflow: hidden;
   border: 2px solid #e2e8f0;
   aspect-ratio: 1;
+  background: #f7fafc;
 }
 
 .preview-item img {
@@ -60,22 +78,33 @@
   object-fit: cover;
 }
 
-.remove-preview {
+.preview-actions {
   position: absolute;
   top: 5px;
   right: 5px;
-  background: rgba(239, 68, 68, 0.9);
+  display: flex;
+  gap: 5px;
+}
+
+.remove-preview,
+.set-main {
+  background: rgba(0, 0, 0, 0.6);
   color: white;
   border: none;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   cursor: pointer;
   font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  opacity: 0;
+}
+
+.preview-item:hover .preview-actions {
+  opacity: 1;
 }
 
 .remove-preview:hover {
@@ -83,30 +112,68 @@
   transform: scale(1.1);
 }
 
-.main-badge {
-  position: absolute;
-  bottom: 5px;
-  left: 5px;
-  background: rgba(16, 185, 129, 0.9);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
+.set-main:hover {
+  background: #f59e0b;
+  transform: scale(1.1);
 }
 
-.btn-upload {
-  width: 100%;
-  padding: 12px;
+.main-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.upload-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #e2e8f0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.3s ease;
+}
+
+.progress-bar.complete {
+  background: #10b981;
+}
+
+.progress-bar.error {
+  background: #ef4444;
+}
+
+.upload-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-upload,
+.btn-clear {
+  flex: 1;
+  padding: 12px 20px;
   border: none;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
-  margin-top: 15px;
+}
+
+.btn-upload {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
 }
 
 .btn-upload:hover:not(:disabled) {
@@ -119,10 +186,44 @@
   cursor: not-allowed;
 }
 
+.btn-clear {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.btn-clear:hover:not(:disabled) {
+  background: #cbd5e0;
+}
+
+@media (max-width: 768px) {
+  .upload-area {
+    padding: 30px 20px;
+  }
+
+  .preview-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(120px, 100%), 1fr));
+    gap: 10px;
+  }
+
+  .upload-actions {
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 480px) {
-  .modal-content {
-    width: 96%;
-    padding: 16px;
-    border-radius: 12px;
+  .upload-area {
+    padding: 25px 15px;
+  }
+
+  .upload-icon {
+    font-size: 36px;
+  }
+
+  .upload-area p {
+    font-size: 14px;
+  }
+
+  .preview-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
 }
