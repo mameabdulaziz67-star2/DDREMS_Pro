@@ -72,18 +72,80 @@
 .viewer-canvas {
   flex: 1;
   position: relative;
-  background: linear-gradient(180deg, #87ceeb 0%, #e0f6ff 100%);
+  background: linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 100%);
   width: 100%;
   height: 100%;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
 }
 
-.viewer-canvas canvas {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-  margin: 0;
-  padding: 0;
+.viewer-canvas:active {
+  cursor: grabbing;
+}
+
+.image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  padding: 40px;
+}
+
+.property-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s ease-out;
+  user-select: none;
+}
+
+.image-nav {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px 20px;
+  border-radius: 50px;
+  z-index: 10;
+}
+
+.nav-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.image-counter {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: center;
 }
 
 .viewer-controls {
@@ -174,6 +236,49 @@
   font-weight: 600;
 }
 
+.image-thumbnails {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.image-thumbnails h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #2d3748;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 8px;
+}
+
+.thumbnails-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.thumbnail {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+  opacity: 0.7;
+}
+
+.thumbnail:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.thumbnail.active {
+  border-color: #667eea;
+  opacity: 1;
+  box-shadow: 0 0 8px rgba(102, 126, 234, 0.4);
+}
+
 .loading-spinner {
   position: absolute;
   top: 50%;
@@ -223,5 +328,9 @@
 
   .viewer-header h2 {
     font-size: 18px;
+  }
+
+  .thumbnails-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
