@@ -10,7 +10,7 @@ module.exports = merge(
 	    output:
 	    {
     		filename: 'bundle.[contenthash].js',
-            path: path.resolve(__dirname, '../../client/public/sphr'),
+            path: path.resolve(__dirname, '../../sphr-dist'),
             publicPath: '/sphr/',
 	    },
         plugins:

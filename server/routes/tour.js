@@ -48,7 +48,7 @@ router.get('/:propertyId', async (req, res) => {
     };
 
     // Read the built SPHR index.html and inject space data
-    const sphrIndexPath = path.resolve(__dirname, '../../client/public/sphr/index.html');
+    const sphrIndexPath = path.resolve(__dirname, '../../sphr-dist/index.html');
 
     if (!fs.existsSync(sphrIndexPath)) {
       return res.status(503).send(`
