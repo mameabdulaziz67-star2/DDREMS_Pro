@@ -13,7 +13,6 @@ cmds = ["npm ci"]
 
 [phases.build]
 cmds = [
-  "cd sphr-main && npm install --legacy-peer-deps && ./node_modules/.bin/webpack --config webpack/webpack.prod.js || echo 'SPHR build failed, continuing'",
   "cd client && npm install --legacy-peer-deps && CI=false npm run build"
 ]
 

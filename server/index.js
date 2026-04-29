@@ -703,13 +703,6 @@ for (const [path_, router] of routes) {
   }
 }
 
-// ── Serve SPHR 3D tour static assets ─────────────────────────
-const sphrBuildPath = path.join(__dirname, "../client/public/sphr");
-if (fs.existsSync(sphrBuildPath)) {
-  app.use("/sphr", express.static(sphrBuildPath));
-  console.log("[STATIC] Serving SPHR 3D viewer from /sphr");
-}
-
 // ── Tour page route (must be before React catch-all) ─────────
 app.use("/tour", require("./routes/tour"));
 
