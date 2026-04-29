@@ -12,7 +12,10 @@ JWT_SECRET = "ddrems_jwt_secret_change_in_production"
 cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["cd client && npm install --legacy-peer-deps && npm run build"]
+cmds = [
+  "cd sphr-main && npm install && node_modules/.bin/webpack --config webpack/webpack.prod.js",
+  "cd client && npm install --legacy-peer-deps && npm run build"
+]
 
 [start]
 cmd = "npm start"

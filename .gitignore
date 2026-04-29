@@ -1,3 +1,4 @@
 node_modules
 client/node_modules
+sphr-main/node_modules
 .env
