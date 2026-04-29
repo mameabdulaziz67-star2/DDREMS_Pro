@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
+const fs = require("fs");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
@@ -714,7 +715,6 @@ app.use("/tour", require("./routes/tour"));
 
 // ── Serve React frontend ──────────────────────────────────────
 const buildPath = path.join(__dirname, "../client/build");
-const fs = require("fs");
 if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
   app.get("*", (req, res) => {
