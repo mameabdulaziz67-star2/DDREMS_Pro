@@ -691,6 +691,7 @@ const routes = [
   ["/api/real-estate-agreement",require("./routes/real-estate-agreement")],
   ["/api/broker-engagement",   require("./routes/broker-engagement")],
   ["/api/rental-payments",     require("./routes/rental-payments")],
+  ["/api/property-videos",     require("./routes/property-videos")],
 ];
 
 for (const [path_, router] of routes) {
@@ -700,6 +701,16 @@ for (const [path_, router] of routes) {
     console.error(`[ROUTE] Failed to load ${path_}:`, err.message);
   }
 }
+
+// ── Serve SPHR 3D tour static assets ─────────────────────────
+const sphrBuildPath = path.join(__dirname, "../client/public/sphr");
+if (fs.existsSync(sphrBuildPath)) {
+  app.use("/sphr", express.static(sphrBuildPath));
+  console.log("[STATIC] Serving SPHR 3D viewer from /sphr");
+}
+
+// ── Tour page route (must be before React catch-all) ─────────
+app.use("/tour", require("./routes/tour"));
 
 // ── Serve React frontend ──────────────────────────────────────
 const buildPath = path.join(__dirname, "../client/build");
