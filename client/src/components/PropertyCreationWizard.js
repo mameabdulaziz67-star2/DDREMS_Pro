@@ -79,7 +79,8 @@ const PropertyCreationWizard = ({ user, onComplete, onCancel }) => {
       setStep('images');
     } catch (error) {
       console.error('Error creating property:', error);
-      alert('Failed to create property. Please try again.');
+      const msg = error.response?.data?.error || error.response?.data?.message || error.message;
+      alert(`Failed to create property: ${msg}`);
     }
   };
 

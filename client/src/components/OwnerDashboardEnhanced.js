@@ -174,7 +174,8 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
       alert("✅ Property details saved! Now upload images.");
     } catch (error) {
       console.error("Error adding property:", error);
-      alert("Failed to add property. Please try again.");
+      const msg = error.response?.data?.error || error.response?.data?.message || error.message;
+      alert(`Failed to add property: ${msg}`);
     }
   };
 

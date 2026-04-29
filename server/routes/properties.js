@@ -420,11 +420,15 @@ router.post("/", async (req, res) => {
       ],
     );
 
-    // Create a verification record for the new property
-    await db.query(
-      "INSERT INTO property_verification (property_id, verification_status) VALUES (?, ?)",
-      [result.insertId, "pending"],
-    );
+    // Create a verification record for the new property (non-fatal)
+    try {
+      await db.query(
+        "INSERT INTO property_verification (property_id, verification_status) VALUES (?, ?)",
+        [result.insertId, "pending"],
+      );
+    } catch (verifyErr) {
+      console.warn("[PROPERTY] Could not create verification record:", verifyErr.message);
+    }
 
     res
       .status(201)
