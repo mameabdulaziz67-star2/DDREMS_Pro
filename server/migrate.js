@@ -86,12 +86,44 @@ async function migrate() {
     `);
     console.log("[MIGRATE] properties table OK");
 
-    // Add matterport_model_id if it doesn't exist yet
+    // Add missing columns to properties (safe — IF NOT EXISTS)
+    const propertyAlterations = [
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS matterport_model_id VARCHAR(50)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS address VARCHAR(255)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS city VARCHAR(100)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS state VARCHAR(100)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS zip_code VARCHAR(20)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS features TEXT`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS views INT DEFAULT 0`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS condition VARCHAR(50)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS property_type VARCHAR(50)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS location_name VARCHAR(255)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS size_m2 DECIMAL(10,2)`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS near_school BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS near_hospital BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS near_market BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS parking BOOLEAN DEFAULT FALSE`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS security_rating INT DEFAULT 3`,
+      `ALTER TABLE properties ADD COLUMN IF NOT EXISTS distance_to_center_km DECIMAL(6,2)`,
+    ];
+    for (const sql of propertyAlterations) {
+      await client.query(sql);
+    }
+    console.log("[MIGRATE] properties columns OK");
+
+    // property_verification table
     await client.query(`
-      ALTER TABLE properties
-        ADD COLUMN IF NOT EXISTS matterport_model_id VARCHAR(50)
+      CREATE TABLE IF NOT EXISTS property_verification (
+        id SERIAL PRIMARY KEY,
+        property_id INT REFERENCES properties(id) ON DELETE CASCADE,
+        verification_status VARCHAR(20) DEFAULT 'pending',
+        verification_notes TEXT,
+        verified_by INT REFERENCES users(id) ON DELETE SET NULL,
+        verified_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
     `);
-    console.log("[MIGRATE] properties.matterport_model_id OK");
+    console.log("[MIGRATE] property_verification table OK");
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS transactions (

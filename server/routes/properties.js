@@ -339,6 +339,16 @@ router.post("/", async (req, res) => {
       state,
       zip_code,
       features,
+      condition,
+      property_type,
+      location_name,
+      size_m2,
+      near_school,
+      near_hospital,
+      near_market,
+      parking,
+      security_rating,
+      distance_to_center_km,
     } = req.body;
 
     // Validate lat/lng if provided
@@ -368,8 +378,10 @@ router.post("/", async (req, res) => {
     const [result] = await db.query(
       `INSERT INTO properties (
         title, description, price, location, latitude, longitude, type, status, broker_id, owner_id, 
-        bedrooms, bathrooms, area, address, city, state, zip_code, features, listing_type
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        bedrooms, bathrooms, area, address, city, state, zip_code, features, listing_type,
+        condition, property_type, location_name, size_m2,
+        near_school, near_hospital, near_market, parking, security_rating, distance_to_center_km
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         title,
         description,
@@ -392,6 +404,16 @@ router.post("/", async (req, res) => {
         zip_code || null,
         features ? JSON.stringify(features) : null,
         listing_type || "sale",
+        condition || null,
+        property_type || type || null,
+        location_name || location || null,
+        size_m2 || area || null,
+        near_school || false,
+        near_hospital || false,
+        near_market || false,
+        parking || false,
+        security_rating ? parseInt(security_rating) : 3,
+        distance_to_center_km ? parseFloat(distance_to_center_km) : null,
       ],
     );
 
