@@ -349,6 +349,7 @@ router.post("/", async (req, res) => {
       parking,
       security_rating,
       distance_to_center_km,
+      matterport_model_id,
     } = req.body;
 
     // Validate lat/lng if provided
@@ -380,8 +381,9 @@ router.post("/", async (req, res) => {
         title, description, price, location, latitude, longitude, type, status, broker_id, owner_id, 
         bedrooms, bathrooms, area, address, city, state, zip_code, features, listing_type,
         condition, property_type, location_name, size_m2,
-        near_school, near_hospital, near_market, parking, security_rating, distance_to_center_km
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        near_school, near_hospital, near_market, parking, security_rating, distance_to_center_km,
+        matterport_model_id
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         title,
         description,
@@ -414,6 +416,7 @@ router.post("/", async (req, res) => {
         parking || false,
         security_rating ? parseInt(security_rating) : 3,
         distance_to_center_km ? parseFloat(distance_to_center_km) : null,
+        matterport_model_id || null,
       ],
     );
 

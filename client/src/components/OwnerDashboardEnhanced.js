@@ -56,6 +56,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
     bathrooms: "",
     area: "",
     description: "",
+    matterport_model_id: "",
     distance_to_center_km: "3",
     near_school: false,
     near_hospital: false,
@@ -227,6 +228,7 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
       bathrooms: "",
       area: "",
       description: "",
+      matterport_model_id: "",
       distance_to_center_km: "3",
       near_school: false,
       near_hospital: false,
@@ -900,6 +902,25 @@ const OwnerDashboardEnhanced = ({ user, onLogout }) => {
                           })
                         }
                         placeholder="e.g. 41.8661"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>
+                        Matterport 3D Tour ID{" "}
+                        <span style={{ fontSize: "0.8em", color: "#6b7280" }}>
+                          (optional)
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        value={propertyForm.matterport_model_id}
+                        onChange={(e) =>
+                          setPropertyForm({
+                            ...propertyForm,
+                            matterport_model_id: e.target.value,
+                          })
+                        }
+                        placeholder="e.g. SxQL3iGyoDo (from Matterport share URL)"
                       />
                     </div>
                     <div className="form-group">

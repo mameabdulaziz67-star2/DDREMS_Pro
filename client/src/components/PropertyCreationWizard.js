@@ -29,6 +29,7 @@ const PropertyCreationWizard = ({ user, onComplete, onCancel }) => {
     bathrooms: '',
     area: '',
     description: '',
+    matterport_model_id: '',
     distance_to_center_km: '3',
     near_school: false,
     near_hospital: false,
@@ -274,6 +275,16 @@ const PropertyCreationWizard = ({ user, onComplete, onCancel }) => {
                     value={propertyForm.longitude}
                     onChange={(e) => setPropertyForm({ ...propertyForm, longitude: e.target.value })}
                     placeholder="e.g., 38.7469"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Matterport 3D Tour ID</label>
+                  <input
+                    type="text"
+                    value={propertyForm.matterport_model_id}
+                    onChange={(e) => setPropertyForm({ ...propertyForm, matterport_model_id: e.target.value })}
+                    placeholder="e.g., SxQL3iGyoDo (from Matterport share URL)"
                   />
                 </div>
 
