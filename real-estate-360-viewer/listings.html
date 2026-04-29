@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property Listings - DDREMS</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; padding: 40px 20px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { font-size: 2rem; margin-bottom: 10px; color: #1a1a2e; }
+    .subtitle { color: #666; margin-bottom: 40px; }
+    .properties-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
+    .property-card {
+      background: white; border-radius: 20px; overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;
+    }
+    .property-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+    .card-image {
+      width: 100%; height: 220px; background: #1a1a2e;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 48px; overflow: hidden; position: relative;
+    }
+    .card-image img { width: 100%; height: 100%; object-fit: cover; }
+    .card-image .fallback { font-size: 48px; }
+    .card-content { padding: 20px; }
+    .card-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; color: #1a1a2e; }
+    .card-price { font-size: 1.3rem; font-weight: bold; color: #3b82f6; margin-bottom: 8px; }
+    .card-address { color: #666; font-size: 0.85rem; margin-bottom: 15px; }
+    .view-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white; border: none; padding: 10px 20px;
+      border-radius: 10px; cursor: pointer; font-weight: 600;
+      width: 100%; transition: opacity 0.2s; font-size: 0.95rem;
+    }
+    .view-btn:hover { opacity: 0.9; }
+    .badge {
+      display: inline-block; background: #e0e7ff; color: #3b82f6;
+      padding: 4px 10px; border-radius: 20px; font-size: 0.7rem;
+      font-weight: 600; margin-bottom: 10px;
+    }
+    .loading { text-align: center; padding: 60px; color: #666; font-size: 1.1rem; }
+    .error { text-align: center; padding: 60px; color: #e53e3e; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>&#127968; Available Properties</h1>
+    <p class="subtitle">Click "View 3D Tour" to explore any property in 360&deg;</p>
+    <div class="properties-grid" id="properties-grid">
+      <div class="loading">Loading properties...</div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+
+    async function loadProperties() {
+      const grid = document.getElementById('properties-grid');
+      try {
+        const res = await fetch(API_BASE + '/api/properties');
+        if (!res.ok) throw new Error('Failed to fetch');
+        const properties = await res.json();
+
+        if (!properties.length) {
+          grid.innerHTML = '<div class="loading">No properties found.</div>';
+          return;
+        }
+
+        grid.innerHTML = '';
+        properties.forEach(property => {
+          const card = document.createElement('div');
+          card.className = 'property-card';
+          const imageHtml = property.main_image
+            ? `<img src="${property.main_image}" alt="${property.title}" />`
+            : `<span class="fallback">&#127968;</span>`;
+          card.innerHTML = `
+            <div class="card-image">${imageHtml}</div>
+            <div class="card-content">
+              <div class="badge">3D Tour Available</div>
+              <div class="card-title">${property.title}</div>
+              <div class="card-price">$${Number(property.price).toLocaleString()}</div>
+              <div class="card-address">${property.location || 'Location not specified'}</div>
+              <button class="view-btn" data-id="${property.id}">&#128269; View 3D Tour</button>
+            </div>`;
+          grid.appendChild(card);
+        });
+
+        document.querySelectorAll('.view-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            window.location.href = `index.html?property=${btn.dataset.id}`;
+          });
+        });
+      } catch (err) {
+        grid.innerHTML = `<div class="error">Failed to load properties: ${err.message}</div>`;
+      }
+    }
+
+    loadProperties();
+  </script>
+</body>
+</html>

@@ -706,6 +706,76 @@ for (const [path_, router] of routes) {
 // ── Tour page route (must be before React catch-all) ─────────
 app.use("/tour", require("./routes/tour"));
 
+// ── 360 Viewer property API (used by real-estate-360-viewer) ─
+app.get("/api/property/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const db = require("./config/db");
+
+    const [rows] = await db.query(
+      `SELECT p.*, u.name as owner_name
+       FROM properties p
+       LEFT JOIN users u ON p.owner_id = u.id
+       WHERE p.id = ?`,
+      [id]
+    );
+
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ message: "Property not found" });
+    }
+
+    const property = rows[0];
+
+    const [images] = await db.query(
+      `SELECT image_url, image_type FROM property_images
+       WHERE property_id = ? ORDER BY is_primary DESC, created_at ASC`,
+      [id]
+    );
+
+    const imageList = (images || []).map(i => i.image_url).filter(Boolean);
+
+    // Build rooms object — each image becomes a named room
+    const roomNames = ["Living Room", "Kitchen", "Bedroom", "Bathroom", "Dining Room",
+                       "Garden", "Garage", "Office", "Balcony", "Hallway"];
+    const rooms = {};
+    imageList.forEach((url, i) => {
+      const key = `room${i}`;
+      rooms[key] = {
+        name: roomNames[i] || `Room ${i + 1}`,
+        image: url,
+        connections: imageList.length > 1
+          ? [i > 0 ? `room${i-1}` : null, i < imageList.length-1 ? `room${i+1}` : null].filter(Boolean)
+          : []
+      };
+    });
+
+    res.json({
+      id: property.id,
+      title: property.title,
+      price: property.price,
+      address: property.location,
+      location: property.location,
+      bedrooms: property.bedrooms,
+      bathrooms: property.bathrooms,
+      area: property.area,
+      type: property.type,
+      images: imageList,
+      rooms: Object.keys(rooms).length ? rooms : null,
+      initialRoom: Object.keys(rooms)[0] || null,
+    });
+  } catch (err) {
+    console.error("[API/property]", err.message);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
+// ── Serve 360 viewer static files ────────────────────────────
+const viewerPath = path.join(__dirname, "../real-estate-360-viewer");
+if (fs.existsSync(viewerPath)) {
+  app.use("/360", express.static(viewerPath));
+  console.log("[STATIC] Serving 360 viewer at /360");
+}
+
 // ── Serve React frontend ──────────────────────────────────────
 const buildPath = path.join(__dirname, "../client/build");
 if (fs.existsSync(buildPath)) {
