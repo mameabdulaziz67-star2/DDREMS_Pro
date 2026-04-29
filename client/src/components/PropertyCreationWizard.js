@@ -3,15 +3,18 @@ import axios from 'axios';
 import API_BASE_URL from '../config/api';
 import ImageUploader from './shared/ImageUploader';
 import DocumentUploader from './shared/DocumentUploader';
+import VideoUploader from './shared/VideoUploader';
 import './PropertyCreationWizard.css';
 
 const PropertyCreationWizard = ({ user, onComplete, onCancel }) => {
-  const [step, setStep] = useState('form'); // form, images, documents, preview
+  const [step, setStep] = useState('form'); // form, images, video, documents, preview
   const [newPropertyId, setNewPropertyId] = useState(null);
   const [previewProperty, setPreviewProperty] = useState(null);
   const [previewImages, setPreviewImages] = useState([]);
+  const [previewVideo, setPreviewVideo] = useState(null);
   const [previewDocs, setPreviewDocs] = useState([]);
   const [imageCount, setImageCount] = useState(0);
+  const [videoCount, setVideoCount] = useState(0);
   const [docCount, setDocCount] = useState(0);
 
   const [propertyForm, setPropertyForm] = useState({

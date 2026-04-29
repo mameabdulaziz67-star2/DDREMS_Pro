@@ -86,6 +86,13 @@ async function migrate() {
     `);
     console.log("[MIGRATE] properties table OK");
 
+    // Add matterport_model_id if it doesn't exist yet
+    await client.query(`
+      ALTER TABLE properties
+        ADD COLUMN IF NOT EXISTS matterport_model_id VARCHAR(50)
+    `);
+    console.log("[MIGRATE] properties.matterport_model_id OK");
+
     await client.query(`
       CREATE TABLE IF NOT EXISTS transactions (
         id SERIAL PRIMARY KEY,
