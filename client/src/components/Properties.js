@@ -259,8 +259,9 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
   };
 
   const open3DViewer = (property) => {
-    setProperty3D(property);
-    setShow3DViewer(true);
+    // Open the 3D tour in a new full-screen tab
+    const tourUrl = `${API_BASE_URL}/tour/${property.id}`;
+    window.open(tourUrl, '_blank', 'noopener,noreferrer');
   };
 
   const filteredProperties = properties.filter((property) => {
@@ -1245,15 +1246,6 @@ const Properties = ({ user, onLogout, viewMode = "all" }) => {
             </div>
           </div>
         </div>
-      )}
-      {show3DViewer && property3D && (
-        <Property3DViewer 
-          property={property3D} 
-          onClose={() => {
-            setShow3DViewer(false);
-            setProperty3D(null);
-          }} 
-        />
       )}
     </div>
   );
