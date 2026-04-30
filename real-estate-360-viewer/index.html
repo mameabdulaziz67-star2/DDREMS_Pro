@@ -7,8 +7,8 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #000; overflow: hidden; width: 100vw; height: 100vh; font-family: system-ui, sans-serif; }
-    canvas { display: block; width: 100%; height: 100%; }
-
+    canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+    canvas:active { cursor: grabbing; }
     #loading {
       position: fixed; inset: 0; background: #111;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -21,50 +21,47 @@
       border-radius: 50%; animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     #header {
       position: fixed; top: 0; left: 0; right: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+      background: linear-gradient(to bottom, rgba(0,0,0,0.85), transparent);
       padding: 16px 24px; z-index: 20;
-      display: flex; justify-content: space-between; align-items: flex-start;
+      display: none; justify-content: space-between; align-items: flex-start;
     }
     #property-info { color: white; }
-    #property-title { font-size: 1.2rem; font-weight: 700; }
-    #property-price { font-size: 1rem; color: #a78bfa; margin-top: 2px; }
+    #property-title { font-size: 1.15rem; font-weight: 700; }
+    #property-price { font-size: 0.95rem; color: #a78bfa; margin-top: 3px; }
     #back-btn {
       background: rgba(255,255,255,0.15); border: none; color: white;
       padding: 8px 16px; border-radius: 20px; cursor: pointer;
-      font-size: 0.85rem; transition: background 0.2s; white-space: nowrap;
+      font-size: 0.85rem; transition: background 0.2s; white-space: nowrap; flex-shrink: 0;
     }
     #back-btn:hover { background: rgba(255,255,255,0.3); }
-
     #rooms-nav {
-      position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+      position: fixed; top: 76px; left: 50%; transform: translateX(-50%);
       display: flex; gap: 8px; z-index: 20; flex-wrap: wrap; justify-content: center;
-      padding: 0 16px;
+      padding: 0 16px; max-width: 100vw;
     }
     .room-btn {
-      background: rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.65); border: 2px solid rgba(255,255,255,0.2);
       color: white; padding: 6px 14px; border-radius: 20px;
-      cursor: pointer; font-size: 0.8rem; transition: all 0.2s;
+      cursor: pointer; font-size: 0.8rem; transition: all 0.2s; white-space: nowrap;
     }
-    .room-btn:hover { background: rgba(102,126,234,0.6); border-color: #667eea; }
+    .room-btn:hover { background: rgba(102,126,234,0.7); border-color: #667eea; }
     .room-btn.active { background: #667eea; border-color: #667eea; }
-
     #hint {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      background: rgba(0,0,0,0.7); color: white; padding: 10px 20px;
+      background: rgba(0,0,0,0.75); color: white; padding: 10px 22px;
       border-radius: 20px; font-size: 0.9rem; z-index: 10; pointer-events: none;
       animation: fadeout 3s forwards 1.5s;
     }
     @keyframes fadeout { to { opacity: 0; } }
-
     #nav {
       position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
       display: none; align-items: center; gap: 12px;
-      background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 50px;
+      background: rgba(0,0,0,0.75); padding: 10px 20px; border-radius: 50px;
       color: white; z-index: 20;
     }
+    #nav.visible { display: flex; }
     #nav button {
       background: rgba(255,255,255,0.15); border: none; color: white;
       width: 36px; height: 36px; border-radius: 50%; font-size: 18px;
@@ -73,200 +70,200 @@
     #nav button:hover { background: rgba(255,255,255,0.3); }
     #nav button:disabled { opacity: 0.3; cursor: default; }
     #counter { font-size: 14px; min-width: 60px; text-align: center; }
-
     #no-images {
       position: fixed; inset: 0; display: none; flex-direction: column;
       align-items: center; justify-content: center; color: #888;
-      background: #111; gap: 12px;
+      background: #111; gap: 14px; text-align: center; padding: 20px;
     }
-    #no-images a { color: #667eea; text-decoration: none; margin-top: 8px; }
+    #no-images a {
+      color: #667eea; text-decoration: none; margin-top: 6px;
+      padding: 8px 20px; border: 1px solid #667eea; border-radius: 20px;
+    }
+    #no-images a:hover { background: rgba(102,126,234,0.15); }
   </style>
 </head>
 <body>
   <div id="loading"><div class="spinner"></div><p id="loading-text">Loading property...</p></div>
-
   <div id="no-images">
-    <span style="font-size:56px;opacity:0.3">&#127968;</span>
-    <p>No 360&deg; images available for this property.</p>
+    <span style="font-size:56px;opacity:0.25">&#127968;</span>
+    <p style="font-size:1.1rem">No 360&deg; images available for this property.</p>
     <a href="listings.html">&#8592; Back to listings</a>
   </div>
-
-  <div id="header" style="display:none">
+  <div id="header">
     <div id="property-info">
-      <div id="property-title">Loading...</div>
+      <div id="property-title"></div>
       <div id="property-price"></div>
     </div>
     <button id="back-btn" onclick="window.location.href='listings.html'">&#8592; All Properties</button>
   </div>
-
   <div id="rooms-nav"></div>
-  <div id="hint">&#128065;&#65039; Drag to look around &nbsp;|&nbsp; Scroll to zoom</div>
+  <div id="hint">&#128065; Drag to look around &nbsp;|&nbsp; Scroll to zoom</div>
   <canvas id="canvas"></canvas>
-
   <div id="nav">
-    <button id="prev">&#10094;</button>
+    <button id="prev" disabled>&#10094;</button>
     <span id="counter">1 / 1</span>
-    <button id="next">&#10095;</button>
+    <button id="next" disabled>&#10095;</button>
   </div>
 
   <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
   <script type="module">
     import * as THREE from 'three';
 
-    const params = new URLSearchParams(window.location.search);
-    const propertyId = params.get('property');
-    const API_BASE = window.location.origin;
+    var params   = new URLSearchParams(window.location.search);
+    var propId   = params.get('property');
+    var API_BASE = window.location.origin;
 
-    const loading = document.getElementById('loading');
-    const loadingText = document.getElementById('loading-text');
-    const noImages = document.getElementById('no-images');
-    const header = document.getElementById('header');
-    const roomsNav = document.getElementById('rooms-nav');
-    const nav = document.getElementById('nav');
-    const counter = document.getElementById('counter');
-    const prevBtn = document.getElementById('prev');
-    const nextBtn = document.getElementById('next');
+    var elLoading  = document.getElementById('loading');
+    var elLoadTxt  = document.getElementById('loading-text');
+    var elNoImages = document.getElementById('no-images');
+    var elHeader   = document.getElementById('header');
+    var elRooms    = document.getElementById('rooms-nav');
+    var elNav      = document.getElementById('nav');
+    var elCounter  = document.getElementById('counter');
+    var elPrev     = document.getElementById('prev');
+    var elNext     = document.getElementById('next');
+    var elCanvas   = document.getElementById('canvas');
 
-    if (!propertyId) {
-      window.location.href = 'listings.html';
-      throw new Error('No property ID');
-    }
+    if (!propId) { window.location.href = 'listings.html'; }
 
-    // Three.js setup
-    const canvas = document.getElementById('canvas');
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    var renderer = new THREE.WebGLRenderer({ canvas: elCanvas, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    var scene  = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, 0.01);
 
-    const geometry = new THREE.SphereGeometry(500, 60, 40);
-    geometry.scale(-1, 1, 1);
+    var geo = new THREE.SphereGeometry(500, 60, 40);
+    geo.scale(-1, 1, 1);
 
-    const loader = new THREE.TextureLoader();
-    let mesh = null;
-    let currentIdx = 0;
-    let allImages = [];
+    var texLoader = new THREE.TextureLoader();
+    texLoader.crossOrigin = 'anonymous';
 
-    function loadImage(idx) {
-      loading.classList.remove('hidden');
-      loader.load(
+    var mesh       = null;
+    var currentIdx = 0;
+    var allImages  = [];
+
+    function showImage(idx) {
+      elLoading.classList.remove('hidden');
+      texLoader.load(
         allImages[idx],
-        (texture) => {
+        function(tex) {
+          tex.colorSpace = THREE.SRGBColorSpace;
           if (mesh) { mesh.material.map.dispose(); mesh.material.dispose(); scene.remove(mesh); }
-          mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ map: texture }));
+          mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: tex }));
           scene.add(mesh);
-          loading.classList.add('hidden');
-          counter.textContent = `${idx + 1} / ${allImages.length}`;
-          prevBtn.disabled = idx === 0;
-          nextBtn.disabled = idx === allImages.length - 1;
+          elLoading.classList.add('hidden');
+          elCounter.textContent = (idx + 1) + ' / ' + allImages.length;
+          elPrev.disabled = (idx === 0);
+          elNext.disabled = (idx === allImages.length - 1);
         },
         undefined,
-        () => {
+        function() {
           if (mesh) scene.remove(mesh);
-          mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0x1a1a2e }));
+          mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x1a1a2e }));
           scene.add(mesh);
-          loading.classList.add('hidden');
+          elLoading.classList.add('hidden');
+          elCounter.textContent = (idx + 1) + ' / ' + allImages.length + ' (error)';
         }
       );
     }
 
-    // Load property data from API
+    function showNoImages() {
+      elLoading.classList.add('hidden');
+      elNoImages.style.display = 'flex';
+    }
+
     async function init() {
       try {
-        loadingText.textContent = 'Loading property...';
+        elLoadTxt.textContent = 'Fetching property data...';
+        var res = await fetch(API_BASE + '/api/property/' + propId);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        var prop = await res.json();
 
-        // Fetch property details
-        const propRes = await fetch(`${API_BASE}/api/property/${propertyId}`);
-        if (!propRes.ok) throw new Error('Property not found');
-        const property = await propRes.json();
+        document.getElementById('property-title').textContent = prop.title || 'Property Tour';
+        if (prop.price) {
+          document.getElementById('property-price').textContent = '$' + Number(prop.price).toLocaleString();
+        }
+        document.title = (prop.title || 'Property') + ' - 360 Tour';
+        elHeader.style.display = 'flex';
 
-        document.getElementById('property-title').textContent = property.title;
-        document.getElementById('property-price').textContent = property.price
-          ? `$${Number(property.price).toLocaleString()}`
-          : '';
-        document.title = `${property.title} - 360 Tour`;
-        header.style.display = 'flex';
-
-        // Build rooms nav and image list from property.rooms
-        if (property.rooms && Object.keys(property.rooms).length) {
-          const rooms = property.rooms;
-          Object.entries(rooms).forEach(([key, room], i) => {
-            const btn = document.createElement('button');
-            btn.className = 'room-btn' + (i === 0 ? ' active' : '');
-            btn.textContent = room.name || key;
-            btn.dataset.key = key;
-            btn.onclick = () => {
-              document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
+        if (prop.rooms && Object.keys(prop.rooms).length > 0) {
+          var roomKeys = Object.keys(prop.rooms);
+          roomKeys.forEach(function(key, i) {
+            var room = prop.rooms[key];
+            var btn  = document.createElement('button');
+            btn.className   = 'room-btn' + (i === 0 ? ' active' : '');
+            btn.textContent = room.name || ('Room ' + (i + 1));
+            btn.onclick = function() {
+              elRooms.querySelectorAll('.room-btn').forEach(function(b) { b.classList.remove('active'); });
               btn.classList.add('active');
-              allImages = [room.image];
+              allImages  = [room.image];
               currentIdx = 0;
-              loadImage(0);
-              nav.style.display = 'none';
+              showImage(0);
+              elNav.classList.remove('visible');
             };
-            roomsNav.appendChild(btn);
+            elRooms.appendChild(btn);
           });
+          allImages  = [prop.rooms[roomKeys[0]].image];
+          currentIdx = 0;
+          showImage(0);
 
-          // Start with first room
-          const firstRoom = Object.values(rooms)[0];
-          allImages = [firstRoom.image];
-          loadImage(0);
-        } else if (property.images && property.images.length) {
-          // Fallback: use flat image list
-          allImages = property.images;
-          loadImage(0);
-          if (allImages.length > 1) nav.style.display = 'flex';
+        } else if (prop.images && prop.images.length > 0) {
+          allImages  = prop.images;
+          currentIdx = 0;
+          showImage(0);
+          if (allImages.length > 1) elNav.classList.add('visible');
+
         } else {
-          loading.classList.add('hidden');
-          noImages.style.display = 'flex';
-          return;
+          showNoImages();
         }
 
       } catch (err) {
-        loading.classList.add('hidden');
-        noImages.style.display = 'flex';
         console.error('[360 Viewer]', err.message);
+        showNoImages();
       }
     }
 
     init();
 
-    prevBtn.onclick = () => { if (currentIdx > 0) loadImage(--currentIdx); };
-    nextBtn.onclick = () => { if (currentIdx < allImages.length - 1) loadImage(++currentIdx); };
+    elPrev.onclick = function() { if (currentIdx > 0) showImage(--currentIdx); };
+    elNext.onclick = function() { if (currentIdx < allImages.length - 1) showImage(++currentIdx); };
 
-    // Mouse drag
-    let isDragging = false, prevMouse = { x: 0, y: 0 }, lon = 0, lat = 0;
-    canvas.addEventListener('mousedown', (e) => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
-    window.addEventListener('mouseup', () => { isDragging = false; });
-    canvas.addEventListener('mousemove', (e) => {
+    var isDragging = false;
+    var prevMouse  = { x: 0, y: 0 };
+    var lon = 0, lat = 0;
+
+    elCanvas.addEventListener('mousedown', function(e) {
+      isDragging = true;
+      prevMouse  = { x: e.clientX, y: e.clientY };
+    });
+    window.addEventListener('mouseup', function() { isDragging = false; });
+    elCanvas.addEventListener('mousemove', function(e) {
       if (!isDragging) return;
       lon -= (e.clientX - prevMouse.x) * 0.15;
-      lat = Math.max(-85, Math.min(85, lat + (e.clientY - prevMouse.y) * 0.15));
+      lat  = Math.max(-85, Math.min(85, lat + (e.clientY - prevMouse.y) * 0.15));
       prevMouse = { x: e.clientX, y: e.clientY };
     });
 
-    // Touch
-    let prevTouch = null;
-    canvas.addEventListener('touchstart', (e) => { prevTouch = e.touches[0]; }, { passive: true });
-    canvas.addEventListener('touchmove', (e) => {
+    var prevTouch = null;
+    elCanvas.addEventListener('touchstart', function(e) { prevTouch = e.touches[0]; }, { passive: true });
+    elCanvas.addEventListener('touchmove', function(e) {
       if (!prevTouch) return;
       lon -= (e.touches[0].clientX - prevTouch.clientX) * 0.2;
-      lat = Math.max(-85, Math.min(85, lat + (e.touches[0].clientY - prevTouch.clientY) * 0.2));
+      lat  = Math.max(-85, Math.min(85, lat + (e.touches[0].clientY - prevTouch.clientY) * 0.2));
       prevTouch = e.touches[0];
     }, { passive: true });
-    canvas.addEventListener('touchend', () => { prevTouch = null; });
+    elCanvas.addEventListener('touchend', function() { prevTouch = null; });
 
-    // Zoom
-    let fov = 75;
-    canvas.addEventListener('wheel', (e) => {
+    var fov = 75;
+    elCanvas.addEventListener('wheel', function(e) {
       fov = Math.max(30, Math.min(100, fov + e.deltaY * 0.05));
       camera.fov = fov;
       camera.updateProjectionMatrix();
     }, { passive: true });
 
-    window.addEventListener('resize', () => {
+    window.addEventListener('resize', function() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -274,8 +271,8 @@
 
     (function animate() {
       requestAnimationFrame(animate);
-      const phi = THREE.MathUtils.degToRad(90 - lat);
-      const theta = THREE.MathUtils.degToRad(lon);
+      var phi   = THREE.MathUtils.degToRad(90 - lat);
+      var theta = THREE.MathUtils.degToRad(lon);
       camera.lookAt(
         500 * Math.sin(phi) * Math.cos(theta),
         500 * Math.cos(phi),
