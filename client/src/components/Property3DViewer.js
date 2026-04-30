@@ -9,13 +9,13 @@ const Property3DViewer = ({ property, onClose }) => {
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [useFallback, setUseFallback] = useState(false);
+  // Default to 3D tour (false = show tour, true = show gallery)
+  const [showGallery, setShowGallery] = useState(false);
 
-  // Tour URL served by Express
   const tourUrl = `${API_BASE_URL}/tour/${property.id}`;
 
   useEffect(() => {
-    const checkImages = async () => {
+    const fetchImages = async () => {
       try {
         const res = await axios.get(`${API_BASE_URL}/api/property-images/property/${property.id}`);
         const imgs = res.data || [];
@@ -27,25 +27,33 @@ const Property3DViewer = ({ property, onClose }) => {
         setLoading(false);
       }
     };
-    checkImages();
+    fetchImages();
   }, [property.id]);
-
-  const handleIframeError = () => setUseFallback(true);
 
   return (
     <div className="property-3d-viewer-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="property-3d-viewer-container">
+
         <div className="viewer-header">
-          <h2>🏠 3D Tour — {property.title || 'Property'}</h2>
+          <h2>🏠 {showGallery ? 'Gallery' : '3D Tour'} — {property.title || 'Property'}</h2>
           <div className="viewer-header-actions">
             {hasImages && (
-              <button
-                className={`view-toggle-btn ${useFallback ? 'active' : ''}`}
-                onClick={() => setUseFallback(!useFallback)}
-                title={useFallback ? 'Switch to 3D Tour' : 'Switch to Gallery'}
-              >
-                {useFallback ? '🌐 3D Tour' : '🖼️ Gallery'}
-              </button>
+              <>
+                <button
+                  className={`view-toggle-btn ${!showGallery ? 'active' : ''}`}
+                  onClick={() => setShowGallery(false)}
+                  title="View 3D Tour"
+                >
+                  🌐 3D Tour
+                </button>
+                <button
+                  className={`view-toggle-btn ${showGallery ? 'active' : ''}`}
+                  onClick={() => setShowGallery(true)}
+                  title="View Gallery"
+                >
+                  🖼️ Gallery
+                </button>
+              </>
             )}
             <button className="close-btn" onClick={onClose} aria-label="Close viewer">✕</button>
           </div>
@@ -57,13 +65,14 @@ const Property3DViewer = ({ property, onClose }) => {
               <div className="spinner" />
               <p>Loading...</p>
             </div>
+
           ) : !hasImages ? (
             <div className="viewer-no-tour">
               <span className="no-tour-icon">🏠</span>
               <p>No images available for this property.</p>
             </div>
-          ) : useFallback ? (
-            /* Image gallery fallback */
+
+          ) : showGallery ? (
             <div className="viewer-gallery">
               <img
                 src={images[currentIndex]?.image_url}
@@ -78,9 +87,10 @@ const Property3DViewer = ({ property, onClose }) => {
                 </div>
               )}
             </div>
+
           ) : (
-            /* SPHR 3D tour */
-            <>
+            /* 3D Tour iframe */
+            <div className="iframe-wrapper">
               {!iframeLoaded && (
                 <div className="viewer-loading">
                   <div className="spinner" />
@@ -88,15 +98,15 @@ const Property3DViewer = ({ property, onClose }) => {
                 </div>
               )}
               <iframe
+                key={tourUrl}
                 title={`3D Tour - ${property.title}`}
                 src={tourUrl}
                 className={`sphr-iframe ${iframeLoaded ? 'loaded' : ''}`}
                 allowFullScreen
                 allow="xr-spatial-tracking"
                 onLoad={() => setIframeLoaded(true)}
-                onError={handleIframeError}
               />
-            </>
+            </div>
           )}
 
           <div className="viewer-sidebar">
@@ -111,6 +121,7 @@ const Property3DViewer = ({ property, onClose }) => {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
