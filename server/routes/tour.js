@@ -41,6 +41,7 @@ canvas:active{cursor:grabbing}
 .sp{width:56px;height:56px;border:4px solid #2d2d4e;border-top-color:#667eea;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #loading p{font-size:1rem;color:#a0aec0}
+#mode-badge{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#a78bfa;padding:5px 14px;border-radius:20px;font-size:.75rem;z-index:50;pointer-events:none;backdrop-filter:blur(4px);border:1px solid rgba(167,139,250,.3)}
 #nav{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);display:none;align-items:center;gap:14px;background:rgba(0,0,0,.75);padding:12px 24px;border-radius:50px;color:#fff;z-index:50;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1)}
 #nav.show{display:flex}
 #nav button{background:rgba(255,255,255,.15);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center}
@@ -69,6 +70,7 @@ canvas:active{cursor:grabbing}
   </div>
   <button id="back" onclick="window.close()">&#10005; Close Tour</button>
 </div>
+<div id="mode-badge" style="display:none"></div>
 <div id="hint">&#128065; Drag to look around &nbsp;&nbsp;&#124;&nbsp;&nbsp; Scroll to zoom</div>
 <canvas id="c"></canvas>
 <div id="nav">
@@ -79,28 +81,75 @@ canvas:active{cursor:grabbing}
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
+
 var imgs = ${imagesJson};
-var eL=document.getElementById('loading'),eN=document.getElementById('none'),eNav=document.getElementById('nav'),eCtr=document.getElementById('ctr'),ePv=document.getElementById('pv'),eNx=document.getElementById('nx'),eC=document.getElementById('c');
+var eL=document.getElementById('loading'),eN=document.getElementById('none'),eNav=document.getElementById('nav'),eCtr=document.getElementById('ctr'),ePv=document.getElementById('pv'),eNx=document.getElementById('nx'),eC=document.getElementById('c'),eBadge=document.getElementById('mode-badge');
+
 if(!imgs||!imgs.length){
   eL.classList.add('hidden');
   eN.style.display='flex';
 } else {
-  var rdr=new THREE.WebGLRenderer({canvas:eC,antialias:true,alpha:false});
+  var rdr=new THREE.WebGLRenderer({canvas:eC,antialias:true});
   rdr.setPixelRatio(Math.min(devicePixelRatio,2));
   rdr.setSize(innerWidth,innerHeight);
-  var sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,1000);
+
+  var sc=new THREE.Scene();
+  // Start with a comfortable 90° FOV — feels natural for both 360 and flat images
+  var fov=90;
+  var cam=new THREE.PerspectiveCamera(fov,innerWidth/innerHeight,.1,2000);
   cam.position.set(0,0,.01);
-  var geo=new THREE.SphereGeometry(500,64,48);
-  geo.scale(-1,1,1);
+
+  // Sphere for 360° equirectangular images (inverted so texture shows inside)
+  var geoSphere=new THREE.SphereGeometry(500,64,48);
+  geoSphere.scale(-1,1,1);
+
+  // Plane for flat/regular images — sized to fill view naturally
+  var geoPlane=new THREE.PlaneGeometry(2,2);
+
   var ldr=new THREE.TextureLoader();
   ldr.crossOrigin='anonymous';
-  var mesh=null,idx=0;
+  var mesh=null,idx=0,is360=false;
+  var lon=0,lat=0;
+
+  function detect360(tex){
+    // A 360° equirectangular image has roughly 2:1 width:height ratio
+    var w=tex.image.width,h=tex.image.height;
+    return w>0 && h>0 && (w/h)>=1.8;
+  }
+
   function load(i){
     eL.classList.remove('hidden');
+    lon=0; lat=0; // reset view on each image
     ldr.load(imgs[i],function(t){
       t.colorSpace=THREE.SRGBColorSpace;
       if(mesh){mesh.material.map.dispose();mesh.material.dispose();sc.remove(mesh);}
-      mesh=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({map:t}));
+
+      is360=detect360(t);
+
+      if(is360){
+        // True 360° panorama — wrap on sphere, camera inside
+        cam.position.set(0,0,.01);
+        cam.fov=90;
+        cam.updateProjectionMatrix();
+        mesh=new THREE.Mesh(geoSphere,new THREE.MeshBasicMaterial({map:t}));
+        eBadge.textContent='360° Panorama';
+        eBadge.style.display='block';
+      } else {
+        // Regular photo — show on a large flat plane in front of camera
+        // Position camera back so the image fills the view nicely
+        cam.position.set(0,0,1.2);
+        cam.fov=60;
+        cam.updateProjectionMatrix();
+        // Scale plane to match image aspect ratio
+        var aspect=t.image.width/t.image.height;
+        var planeH=2, planeW=planeH*aspect;
+        var geo=new THREE.PlaneGeometry(planeW,planeH);
+        mesh=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({map:t,side:THREE.FrontSide}));
+        mesh.position.set(0,0,0);
+        eBadge.textContent='Standard Photo';
+        eBadge.style.display='block';
+      }
+
       sc.add(mesh);
       eL.classList.add('hidden');
       eCtr.textContent=(i+1)+' / '+imgs.length;
@@ -108,48 +157,67 @@ if(!imgs||!imgs.length){
       eNx.disabled=(i===imgs.length-1);
     },undefined,function(){
       if(mesh)sc.remove(mesh);
-      mesh=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0x0d0d1a}));
+      mesh=new THREE.Mesh(geoSphere,new THREE.MeshBasicMaterial({color:0x0d0d1a}));
       sc.add(mesh);
       eL.classList.add('hidden');
       eCtr.textContent=(i+1)+' / '+imgs.length+' (load error)';
     });
   }
+
   load(0);
   if(imgs.length>1) eNav.classList.add('show');
   ePv.onclick=function(){if(idx>0)load(--idx);};
   eNx.onclick=function(){if(idx<imgs.length-1)load(++idx);};
-  var drag=false,pm={x:0,y:0},lon=0,lat=0;
+
+  // Controls — only rotate for 360, pan for flat
+  var drag=false,pm={x:0,y:0};
   eC.addEventListener('mousedown',function(e){drag=true;pm={x:e.clientX,y:e.clientY};});
   window.addEventListener('mouseup',function(){drag=false;});
   eC.addEventListener('mousemove',function(e){
     if(!drag)return;
-    lon-=(e.clientX-pm.x)*.15;
-    lat=Math.max(-85,Math.min(85,lat+(e.clientY-pm.y)*.15));
+    var dx=e.clientX-pm.x, dy=e.clientY-pm.y;
+    if(is360){
+      lon-=dx*.15;
+      lat=Math.max(-85,Math.min(85,lat+dy*.15));
+    } else {
+      // Pan the flat image
+      if(mesh){mesh.position.x+=dx*.003;mesh.position.y-=dy*.003;}
+    }
     pm={x:e.clientX,y:e.clientY};
   });
+
   var pt=null;
   eC.addEventListener('touchstart',function(e){pt=e.touches[0];},{passive:true});
   eC.addEventListener('touchmove',function(e){
     if(!pt)return;
-    lon-=(e.touches[0].clientX-pt.clientX)*.2;
-    lat=Math.max(-85,Math.min(85,lat+(e.touches[0].clientY-pt.clientY)*.2));
+    var dx=e.touches[0].clientX-pt.clientX, dy=e.touches[0].clientY-pt.clientY;
+    if(is360){
+      lon-=dx*.2;
+      lat=Math.max(-85,Math.min(85,lat+dy*.2));
+    } else {
+      if(mesh){mesh.position.x+=dx*.003;mesh.position.y-=dy*.003;}
+    }
     pt=e.touches[0];
   },{passive:true});
   eC.addEventListener('touchend',function(){pt=null;});
-  var fov=75;
+
   eC.addEventListener('wheel',function(e){
-    fov=Math.max(30,Math.min(100,fov+e.deltaY*.05));
+    fov=Math.max(30,Math.min(110,fov+e.deltaY*.05));
     cam.fov=fov;cam.updateProjectionMatrix();
   },{passive:true});
+
   window.addEventListener('resize',function(){
     cam.aspect=innerWidth/innerHeight;
     cam.updateProjectionMatrix();
     rdr.setSize(innerWidth,innerHeight);
   });
+
   (function anim(){
     requestAnimationFrame(anim);
-    var phi=THREE.MathUtils.degToRad(90-lat),theta=THREE.MathUtils.degToRad(lon);
-    cam.lookAt(500*Math.sin(phi)*Math.cos(theta),500*Math.cos(phi),500*Math.sin(phi)*Math.sin(theta));
+    if(is360){
+      var phi=THREE.MathUtils.degToRad(90-lat),theta=THREE.MathUtils.degToRad(lon);
+      cam.lookAt(500*Math.sin(phi)*Math.cos(theta),500*Math.cos(phi),500*Math.sin(phi)*Math.sin(theta));
+    }
     rdr.render(sc,cam);
   })();
 }
