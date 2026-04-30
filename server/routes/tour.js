@@ -1,16 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path');
-const fs = require('fs');
 const db = require('../config/db');
 
-// Serve the 360° tour page for a property
-// GET /tour/:propertyId
 router.get('/:propertyId', async (req, res) => {
   try {
     const { propertyId } = req.params;
 
-    // Fetch property images
     const [images] = await db.query(
       `SELECT image_url FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, created_at ASC`,
       [propertyId]
@@ -18,21 +13,109 @@ router.get('/:propertyId', async (req, res) => {
 
     const imageUrls = (images || []).map(img => img.image_url).filter(Boolean);
 
-    // Read the viewer HTML and inject image data
-    const viewerPath = path.resolve(__dirname, '../tour-viewer.html');
+    const imagesJson = JSON.stringify(imageUrls);
 
-    if (!fs.existsSync(viewerPath)) {
-      return res.status(503).send('<h2>Tour viewer not found.</h2>');
-    }
-
-    const html = fs.readFileSync(viewerPath, 'utf8')
-      .replace('__IMAGES_DATA__', JSON.stringify(imageUrls));
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Property Tour</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;overflow:hidden;width:100vw;height:100vh;font-family:system-ui,sans-serif}
+canvas{display:block;width:100%;height:100%;cursor:grab}
+canvas:active{cursor:grabbing}
+#loading{position:fixed;inset:0;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;z-index:100;gap:16px}
+#loading.hidden{display:none}
+.sp{width:48px;height:48px;border:4px solid #333;border-top-color:#667eea;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:none;align-items:center;gap:12px;background:rgba(0,0,0,.75);padding:10px 20px;border-radius:50px;color:#fff;z-index:20}
+#nav.show{display:flex}
+#nav button{background:rgba(255,255,255,.15);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;transition:background .2s}
+#nav button:hover{background:rgba(255,255,255,.3)}
+#nav button:disabled{opacity:.3;cursor:default}
+#ctr{font-size:14px;min-width:60px;text-align:center}
+#hint{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);color:#fff;padding:10px 22px;border-radius:20px;font-size:.9rem;z-index:10;pointer-events:none;animation:fo 3s forwards 1.5s}
+@keyframes fo{to{opacity:0}}
+#none{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;color:#888;background:#111;gap:12px;text-align:center;padding:20px}
+</style>
+</head>
+<body>
+<div id="loading"><div class="sp"></div><p id="lt">Loading 3D Tour...</p></div>
+<div id="none"><span style="font-size:48px;opacity:.3">&#127968;</span><p>No images available for this property.</p></div>
+<div id="hint">&#128065; Drag to look around &nbsp;|&nbsp; Scroll to zoom</div>
+<canvas id="c"></canvas>
+<div id="nav"><button id="pv" disabled>&#10094;</button><span id="ctr">1/1</span><button id="nx" disabled>&#10095;</button></div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+var imgs=${imagesJson};
+var eL=document.getElementById('loading'),eN=document.getElementById('none'),eNav=document.getElementById('nav'),eCtr=document.getElementById('ctr'),ePv=document.getElementById('pv'),eNx=document.getElementById('nx'),eC=document.getElementById('c');
+if(!imgs||!imgs.length){eL.classList.add('hidden');eN.style.display='flex';}
+else{
+var rdr=new THREE.WebGLRenderer({canvas:eC,antialias:true});
+rdr.setPixelRatio(Math.min(devicePixelRatio,2));
+rdr.setSize(innerWidth,innerHeight);
+var sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,1000);
+cam.position.set(0,0,.01);
+var geo=new THREE.SphereGeometry(500,60,40);geo.scale(-1,1,1);
+var ldr=new THREE.TextureLoader();ldr.crossOrigin='anonymous';
+var mesh=null,idx=0;
+function load(i){
+  eL.classList.remove('hidden');
+  ldr.load(imgs[i],function(t){
+    t.colorSpace=THREE.SRGBColorSpace;
+    if(mesh){mesh.material.map.dispose();mesh.material.dispose();sc.remove(mesh);}
+    mesh=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({map:t}));
+    sc.add(mesh);eL.classList.add('hidden');
+    eCtr.textContent=(i+1)+'/'+imgs.length;
+    ePv.disabled=(i===0);eNx.disabled=(i===imgs.length-1);
+  },undefined,function(){
+    if(mesh)sc.remove(mesh);
+    mesh=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0x1a1a2e}));
+    sc.add(mesh);eL.classList.add('hidden');
+    eCtr.textContent=(i+1)+'/'+imgs.length+' (err)';
+  });
+}
+load(0);
+if(imgs.length>1)eNav.classList.add('show');
+ePv.onclick=function(){if(idx>0)load(--idx);};
+eNx.onclick=function(){if(idx<imgs.length-1)load(++idx);};
+var drag=false,pm={x:0,y:0},lon=0,lat=0;
+eC.addEventListener('mousedown',function(e){drag=true;pm={x:e.clientX,y:e.clientY};});
+window.addEventListener('mouseup',function(){drag=false;});
+eC.addEventListener('mousemove',function(e){
+  if(!drag)return;
+  lon-=(e.clientX-pm.x)*.15;
+  lat=Math.max(-85,Math.min(85,lat+(e.clientY-pm.y)*.15));
+  pm={x:e.clientX,y:e.clientY};
+});
+var pt=null;
+eC.addEventListener('touchstart',function(e){pt=e.touches[0];},{passive:true});
+eC.addEventListener('touchmove',function(e){
+  if(!pt)return;
+  lon-=(e.touches[0].clientX-pt.clientX)*.2;
+  lat=Math.max(-85,Math.min(85,lat+(e.touches[0].clientY-pt.clientY)*.2));
+  pt=e.touches[0];
+},{passive:true});
+eC.addEventListener('touchend',function(){pt=null;});
+var fov=75;
+eC.addEventListener('wheel',function(e){fov=Math.max(30,Math.min(100,fov+e.deltaY*.05));cam.fov=fov;cam.updateProjectionMatrix();},{passive:true});
+window.addEventListener('resize',function(){cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();rdr.setSize(innerWidth,innerHeight);});
+(function anim(){requestAnimationFrame(anim);var phi=THREE.MathUtils.degToRad(90-lat),theta=THREE.MathUtils.degToRad(lon);cam.lookAt(500*Math.sin(phi)*Math.cos(theta),500*Math.cos(phi),500*Math.sin(phi)*Math.sin(theta));rdr.render(sc,cam);})();
+}
+</script>
+</body>
+</html>`;
 
     res.setHeader('Content-Type', 'text/html');
     res.send(html);
   } catch (err) {
     console.error('[TOUR] Error:', err.message);
-    res.status(500).send('Server error loading tour');
+    res.status(500).send(`<html><body style="font-family:sans-serif;padding:40px;background:#111;color:#fff">
+      <h2>Tour Error</h2><p>${err.message}</p>
+    </body></html>`);
   }
 });
 
